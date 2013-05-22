@@ -24,9 +24,11 @@ private:
     void readsettings();
     void writesettings();
     void setconnects();
+    void opendb(QString);
 
 private slots:
     void open();
+    void closeDatabase();
     void settings();
     void aboutProgram();
     void mark_Object();

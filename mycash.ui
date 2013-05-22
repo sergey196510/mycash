@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>787</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -29,7 +29,7 @@
     </property>
     <addaction name="action_Create"/>
     <addaction name="action_Open"/>
-    <addaction name="actionC_lose"/>
+    <addaction name="action_Close"/>
     <addaction name="separator"/>
     <addaction name="action_Settings"/>
     <addaction name="separator"/>
@@ -42,7 +42,15 @@
     <addaction name="actionAbout_program"/>
     <addaction name="actionAbout_QT"/>
    </widget>
+   <widget class="QMenu" name="menu_Accounts">
+    <property name="title">
+     <string>&amp;Accounts</string>
+    </property>
+    <addaction name="action_ListAccounts"/>
+    <addaction name="action_NewAccounts"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Accounts"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -64,7 +72,7 @@
     <string>&amp;Open</string>
    </property>
   </action>
-  <action name="actionC_lose">
+  <action name="action_Close">
    <property name="text">
     <string>C&amp;lose</string>
    </property>
@@ -87,6 +95,16 @@
   <action name="action_Settings">
    <property name="text">
     <string>&amp;Settings</string>
+   </property>
+  </action>
+  <action name="action_ListAccounts">
+   <property name="text">
+    <string>&amp;List</string>
+   </property>
+  </action>
+  <action name="action_NewAccounts">
+   <property name="text">
+    <string>&amp;New</string>
    </property>
   </action>
  </widget>

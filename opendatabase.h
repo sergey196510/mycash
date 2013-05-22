@@ -22,6 +22,7 @@ private:
 
 private slots:
     void select_filename();
+    void nameChanged(QString);
 };
 
 #endif // OPENDATABASE_H

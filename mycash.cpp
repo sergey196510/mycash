@@ -26,19 +26,22 @@ MyCash::~MyCash()
 
 void MyCash::setconnects()
 {
-    connect(this, SIGNAL(call_mark()), SLOT(mark_Object()));
-    connect(ui->action_Open, SIGNAL(triggered()), SLOT(open()));
-    connect(ui->action_Settings, SIGNAL(triggered()), SLOT(settings()));
-    connect(ui->action_Quit, SIGNAL(triggered()), SLOT(close()));
+    connect(this,                    SIGNAL(call_mark()), SLOT(mark_Object()));
+    connect(ui->action_Open,         SIGNAL(triggered()), SLOT(open()));
+    connect(ui->action_Close,        SIGNAL(triggered()), SLOT(closeDatabase()));
+    connect(ui->action_Settings,     SIGNAL(triggered()), SLOT(settings()));
+    connect(ui->action_Quit,         SIGNAL(triggered()), SLOT(close()));
+
     connect(ui->actionAbout_program, SIGNAL(triggered()), SLOT(aboutProgram()));
-    connect(ui->actionAbout_QT, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    connect(ui->actionAbout_QT,      SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 }
 
 void MyCash::mark_Object()
 {
     ui->action_Create->setEnabled(!opened);
     ui->action_Open->setEnabled(!opened);
-    ui->actionC_lose->setEnabled(opened);
+    ui->action_Close->setEnabled(opened);
+    ui->menu_Accounts->setEnabled(opened);
 }
 
 void MyCash::readsettings()
@@ -69,7 +72,31 @@ void MyCash::open()
         return;
     }
 
+    opendb(filename);
+
+    emit call_mark();
+
     delete db;
+}
+
+void MyCash::closeDatabase()
+{
+    QSqlDatabase db = QSqlDatabase::database();
+    db.close();
+    opened = false;
+    emit call_mark();
+}
+
+void MyCash::opendb(QString dbname)
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+
+    db.setDatabaseName(dbname);
+    if (!db.open()) {
+        opened = false;
+//        db->lastError().setDatabaseText()
+    }
+    opened = true;
 }
 
 void MyCash::settings()
