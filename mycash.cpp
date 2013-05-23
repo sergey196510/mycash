@@ -19,6 +19,11 @@ MyCash::MyCash(QWidget *parent) :
     if (!dbname.isEmpty())
 	opendb(dbname);
 
+    QDockWidget *pdock = new QDockWidget("MyDock", this);
+    QLabel * plbl = new QLabel("Label in Dock", pdock);
+    pdock->setWidget(plbl);
+    addDockWidget(Qt::LeftDockWidgetArea, pdock);
+
     emit call_mark();
 }
 
@@ -40,6 +45,12 @@ void MyCash::setconnects()
 
     connect(ui->actionAbout_program, SIGNAL(triggered()), SLOT(aboutProgram()));
     connect(ui->actionAbout_QT,      SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+    ui->mainToolBar->addAction(ui->action_Create);
+    ui->mainToolBar->addAction(ui->action_Open);
+    ui->mainToolBar->addAction(ui->action_Close);
+    ui->mainToolBar->addSeparator();
+    ui->mainToolBar->addAction(ui->action_Quit);
 }
 
 void MyCash::mark_Object()
