@@ -16,6 +16,7 @@ public:
     explicit OpenDatabase(QWidget *parent = 0);
     ~OpenDatabase();
     QString filename();
+    void set_filename(QString name);
     
 private:
     Ui::OpenDatabase *ui;

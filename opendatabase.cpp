@@ -34,6 +34,11 @@ QString OpenDatabase::filename()
     return ui->nameEdit->text();
 }
 
+void OpenDatabase::set_filename(QString name)
+{
+    ui->nameEdit->setText(name);
+}
+
 void OpenDatabase::nameChanged(QString str)
 {
 //    qDebug() << str;

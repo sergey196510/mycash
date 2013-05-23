@@ -15,11 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mycash.cpp \
     database.cpp \
-    opendatabase.cpp
+    opendatabase.cpp \
+    listaccounts.cpp
 
 HEADERS  += mycash.h \
     database.h \
-    opendatabase.h
+    opendatabase.h \
+    listaccounts.h
 
 FORMS    += mycash.ui \
-    opendatabase.ui
+    opendatabase.ui \
+    listaccounts.ui

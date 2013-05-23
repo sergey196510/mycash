@@ -20,6 +20,7 @@ signals:
 
 private:
     bool opened;
+    QString dbname;
     Ui::MyCash *ui;
     void readsettings();
     void writesettings();
@@ -32,6 +33,7 @@ private slots:
     void settings();
     void aboutProgram();
     void mark_Object();
+    void list_accounts();
 
 };
 

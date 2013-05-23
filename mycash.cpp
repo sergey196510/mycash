@@ -3,6 +3,7 @@
 #include "mycash.h"
 #include "ui_mycash.h"
 #include "opendatabase.h"
+#include "listaccounts.h"
 
 MyCash::MyCash(QWidget *parent) :
     QMainWindow(parent),
@@ -14,6 +15,9 @@ MyCash::MyCash(QWidget *parent) :
 
     readsettings();
     setconnects();
+
+    if (!dbname.isEmpty())
+	opendb(dbname);
 
     emit call_mark();
 }
@@ -32,6 +36,8 @@ void MyCash::setconnects()
     connect(ui->action_Settings,     SIGNAL(triggered()), SLOT(settings()));
     connect(ui->action_Quit,         SIGNAL(triggered()), SLOT(close()));
 
+    connect(ui->action_ListAccounts, SIGNAL(triggered()), SLOT(list_accounts()));
+
     connect(ui->actionAbout_program, SIGNAL(triggered()), SLOT(aboutProgram()));
     connect(ui->actionAbout_QT,      SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 }
@@ -48,33 +54,33 @@ void MyCash::readsettings()
 {
     QSettings settings("MyCash", "MyCash");
     restoreGeometry(settings.value("geometry").toByteArray());
+    dbname = settings.value("dbname", "").toString();
 }
 
 void MyCash::writesettings()
 {
     QSettings settings("MyCash", "MyCash");
     settings.setValue("geometry", saveGeometry());
+    settings.setValue("dbname", dbname);
 }
 
 void MyCash::open()
 {
     OpenDatabase *db = new OpenDatabase(this);
-    QString filename;
 
+    db->set_filename(dbname);
     if (db->exec() == QDialog::Rejected) {
         delete db;
         return;
     }
 
-    filename = db->filename();
-    if (filename.isEmpty()) {
+    dbname = db->filename();
+    if (dbname.isEmpty()) {
         delete db;
         return;
     }
 
-    opendb(filename);
-
-    emit call_mark();
+    opendb(dbname);
 
     delete db;
 }
@@ -96,7 +102,17 @@ void MyCash::opendb(QString dbname)
         opened = false;
 //        db->lastError().setDatabaseText()
     }
-    opened = true;
+    else
+	opened = true;
+
+    emit call_mark();
+}
+
+void MyCash::list_accounts()
+{
+    ListAccounts *la = new ListAccounts;
+
+    setCentralWidget(la);
 }
 
 void MyCash::settings()
