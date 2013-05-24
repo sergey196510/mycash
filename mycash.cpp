@@ -35,6 +35,8 @@ MyCash::~MyCash()
 
 void MyCash::setconnects()
 {
+    ui->action_Quit->setIcon(QPixmap(":icons/stop_16.png"));
+
     connect(this,                    SIGNAL(call_mark()), SLOT(mark_Object()));
     connect(ui->action_Open,         SIGNAL(triggered()), SLOT(open()));
     connect(ui->action_Close,        SIGNAL(triggered()), SLOT(closeDatabase()));

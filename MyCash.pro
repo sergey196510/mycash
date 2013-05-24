@@ -26,3 +26,6 @@ HEADERS  += mycash.h \
 FORMS    += mycash.ui \
     opendatabase.ui \
     listaccounts.ui
+
+RESOURCES += \
+    icons.qrc
