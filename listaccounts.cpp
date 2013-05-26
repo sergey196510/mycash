@@ -1,6 +1,11 @@
 #include "listaccounts.h"
 #include "ui_listaccounts.h"
-#include "QtSql"
+
+ListAccountsModel::ListAccountsModel(QObject *parent) :
+    QSqlTableModel(parent)
+{
+
+}
 
 ListAccounts::ListAccounts(QWidget *parent) :
     QWidget(parent),
@@ -8,7 +13,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QSqlTableModel *model = new QSqlTableModel;
+    ListAccountsModel *model = new ListAccountsModel;
 
     model->setTable("account");
     model->select();
