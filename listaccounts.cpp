@@ -2,7 +2,7 @@
 #include "ui_listaccounts.h"
 
 ListAccountsModel::ListAccountsModel(QObject *parent) :
-    QSqlTableModel(parent)
+    QSqlQueryModel(parent)
 {
 
 }
@@ -15,8 +15,8 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
     ListAccountsModel *model = new ListAccountsModel;
 
-    model->setTable("account");
-    model->select();
+    model->setQuery("SELECT a.id,a.name,t.name,a.balance FROM account a, account_type t WHERE a.type = t.id");
+//    model->select();
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);

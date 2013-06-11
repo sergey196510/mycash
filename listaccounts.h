@@ -8,7 +8,7 @@ namespace Ui {
 class ListAccounts;
 }
 
-class ListAccountsModel : public QSqlTableModel
+class ListAccountsModel : public QSqlQueryModel
 {
     Q_OBJECT
 

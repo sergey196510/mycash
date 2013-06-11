@@ -16,16 +16,19 @@ SOURCES += main.cpp\
         mycash.cpp \
     database.cpp \
     opendatabase.cpp \
-    listaccounts.cpp
+    listaccounts.cpp \
+    editaccount.cpp
 
 HEADERS  += mycash.h \
     database.h \
     opendatabase.h \
-    listaccounts.h
+    listaccounts.h \
+    editaccount.h
 
 FORMS    += mycash.ui \
     opendatabase.ui \
-    listaccounts.ui
+    listaccounts.ui \
+    editaccount.ui
 
 RESOURCES += \
     icons.qrc

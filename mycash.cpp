@@ -19,10 +19,11 @@ MyCash::MyCash(QWidget *parent) :
     if (!dbname.isEmpty())
 	opendb(dbname);
 
-    QDockWidget *pdock = new QDockWidget("MyDock", this);
-    QLabel * plbl = new QLabel("Label in Dock", pdock);
-    pdock->setWidget(plbl);
-    addDockWidget(Qt::LeftDockWidgetArea, pdock);
+//    QDockWidget *pdock = new QDockWidget("MyDock", this);
+//    QLabel * plbl = new QLabel("Label in Dock", pdock);
+//    pdock->addAction(ui->action_ListAccounts);
+//    pdock->setWidget(plbl);
+//    addDockWidget(Qt::LeftDockWidgetArea, pdock);
 
     emit call_mark();
 }
