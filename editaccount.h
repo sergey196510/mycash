@@ -14,6 +14,9 @@ class EditAccount : public QDialog
 public:
     explicit EditAccount(QWidget *parent = 0);
     ~EditAccount();
+    QString name();
+    int type();
+    double balance();
     
 private:
     Ui::EditAccount *ui;

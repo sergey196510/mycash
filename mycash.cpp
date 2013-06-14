@@ -126,6 +126,8 @@ void MyCash::list_accounts()
 {
     ListAccounts *la = new ListAccounts;
 
+    connect(ui->action_NewAccounts, SIGNAL(triggered()), la, SLOT(new_account()));
+
     setCentralWidget(la);
 }
 

@@ -17,13 +17,15 @@ SOURCES += main.cpp\
     database.cpp \
     opendatabase.cpp \
     listaccounts.cpp \
-    editaccount.cpp
+    editaccount.cpp \
+    accounttypecombobox.cpp
 
 HEADERS  += mycash.h \
     database.h \
     opendatabase.h \
     listaccounts.h \
-    editaccount.h
+    editaccount.h \
+    accounttypecombobox.h
 
 FORMS    += mycash.ui \
     opendatabase.ui \
