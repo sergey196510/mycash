@@ -30,7 +30,7 @@ public slots:
 private:
     Ui::ListAccounts *ui;
     ListAccountsModel *model;
-    QString query = "SELECT a.id,a.name,t.name,a.balance FROM account a, account_type t WHERE a.type = t.id";
+    QString query;
 };
 
 #endif // LISTACCOUNTS_H

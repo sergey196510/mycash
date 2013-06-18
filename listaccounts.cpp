@@ -14,6 +14,8 @@ ListAccounts::ListAccounts(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    query = "SELECT a.id,a.name,t.name,a.balance FROM account a, account_type t WHERE a.type = t.id";
+
     model = new ListAccountsModel;
 
     model->setQuery(query);
