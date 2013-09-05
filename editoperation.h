@@ -3,6 +3,13 @@
 
 #include <QDialog>
 
+struct operation_data {
+    int from;
+    int to;
+    double summ;
+    QString date;
+};
+
 namespace Ui {
 class EditOperation;
 }
@@ -14,6 +21,7 @@ class EditOperation : public QDialog
 public:
     explicit EditOperation(QWidget *parent = 0);
     ~EditOperation();
+    void data(operation_data &);
     
 private:
     Ui::EditOperation *ui;

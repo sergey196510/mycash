@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QtSql>
+#include "database.h"
 
 namespace Ui {
 class ListOperations;
@@ -19,6 +20,7 @@ public:
 private:
     Ui::ListOperations *ui;
     QString query;
+    Database db;
 
 private slots:
     void new_operation();

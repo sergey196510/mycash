@@ -1,4 +1,3 @@
-#include "QtSql"
 #include "database.h"
 
 Database::Database()
@@ -16,4 +15,9 @@ double Database::get_accout_summ(int type)
         return 0;
 
     return query.value(0).toDouble();
+}
+
+bool Database::save_operation(const int from, const int to, const double summ, const QString date)
+{
+
 }

@@ -24,7 +24,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="accountcomboBox"/>
+      <widget class="AccountComboBox" name="accountcomboBox"/>
      </item>
      <item>
       <widget class="QLabel" name="label_4">
@@ -85,6 +85,11 @@
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>
    <header location="global">mydateedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountComboBox</class>
+   <extends>QComboBox</extends>
+   <header>accountcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

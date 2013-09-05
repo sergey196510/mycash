@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     accounttypecombobox.cpp \
     listoperations.cpp \
     mydateedit.cpp \
-    editoperation.cpp
+    editoperation.cpp \
+    accountcombobox.cpp
 
 HEADERS  += mycash.h \
     database.h \
@@ -31,7 +32,8 @@ HEADERS  += mycash.h \
     accounttypecombobox.h \
     listoperations.h \
     mydateedit.h \
-    editoperation.h
+    editoperation.h \
+    accountcombobox.h
 
 FORMS    += mycash.ui \
     opendatabase.ui \

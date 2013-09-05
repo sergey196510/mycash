@@ -27,8 +27,12 @@ ListOperations::~ListOperations()
 void ListOperations::new_operation()
 {
     EditOperation eo;
+    operation_data d;
 
-    eo.exec();
+    if (eo.exec() == QDialog::Accepted) {
+        eo.data(d);
+        db.save_operation(d.from, d.to, d.summ, d.date);
+    }
 }
 
 void ListOperations::change_current_account(int idx)

@@ -17,7 +17,7 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="1">
-      <widget class="QComboBox" name="from_account"/>
+      <widget class="AccountComboBox" name="from_account"/>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
@@ -41,7 +41,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QComboBox" name="to_Account"/>
+      <widget class="AccountComboBox" name="to_Account"/>
      </item>
      <item row="2" column="1">
       <widget class="QDoubleSpinBox" name="summSpinBox"/>
@@ -96,6 +96,11 @@
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>
    <header location="global">mydateedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountComboBox</class>
+   <extends>QComboBox</extends>
+   <header>accountcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

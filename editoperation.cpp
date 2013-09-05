@@ -15,3 +15,11 @@ EditOperation::~EditOperation()
 {
     delete ui;
 }
+
+void EditOperation::data(operation_data &d)
+{
+    d.from = ui->from_account->value();
+    d.to   = ui->to_Account->value();
+    d.summ = ui->summSpinBox->value();
+    d.date = ui->dateEdit->value();
+}
