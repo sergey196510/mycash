@@ -8,6 +8,7 @@ class Database
 public:
     Database();
 //    bool isOpened() { return opened; }
+    double get_accout_summ(int);
 };
 
 #endif // DATABASE_H

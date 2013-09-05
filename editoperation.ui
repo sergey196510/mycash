@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EditAccount</class>
- <widget class="QDialog" name="EditAccount">
+ <class>EditOperation</class>
+ <widget class="QDialog" name="EditOperation">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>411</width>
-    <height>114</height>
+    <width>507</width>
+    <height>141</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,35 +16,45 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="1">
-      <widget class="AccountTypeComboBox" name="typeBox"/>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="from_account"/>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Account name:</string>
+        <string>From account:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Summ:</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Account type:</string>
+        <string>To account:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="nameEdit"/>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Balance:</string>
-       </property>
-      </widget>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="to_Account"/>
      </item>
      <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="balanceSpinBox"/>
+      <widget class="QDoubleSpinBox" name="summSpinBox"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Date:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="MyDateEdit" name="dateEdit"/>
      </item>
     </layout>
    </item>
@@ -83,18 +93,11 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AccountTypeComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">accounttypecombobox.h</header>
+   <class>MyDateEdit</class>
+   <extends>QDateEdit</extends>
+   <header location="global">mydateedit.h</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>nameEdit</tabstop>
-  <tabstop>typeBox</tabstop>
-  <tabstop>balanceSpinBox</tabstop>
-  <tabstop>okButton</tabstop>
-  <tabstop>cancelButton</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

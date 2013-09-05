@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "QtSql"
+#include "database.h"
 
 namespace Ui {
 class ListAccounts;
@@ -31,6 +32,7 @@ private:
     Ui::ListAccounts *ui;
     ListAccountsModel *model;
     QString query;
+    Database db;
 };
 
 #endif // LISTACCOUNTS_H

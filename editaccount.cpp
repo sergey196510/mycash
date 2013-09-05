@@ -1,3 +1,4 @@
+#include "QtSql"
 #include "editaccount.h"
 #include "ui_editaccount.h"
 
@@ -7,10 +8,13 @@ EditAccount::EditAccount(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(nameCheck(QString)));
     connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
 
     ui->balanceSpinBox->setRange(-1000000, 1000000);
+
+    ui->okButton->setEnabled(false);
 }
 
 EditAccount::~EditAccount()
@@ -31,4 +35,35 @@ int EditAccount::type()
 double EditAccount::balance()
 {
     return ui->balanceSpinBox->value();
+}
+
+Account_Data EditAccount::data()
+{
+    Account_Data d;
+
+    d.name = ui->nameEdit->text();
+    d.type = ui->typeBox->value();
+    d.balance = ui->balanceSpinBox->value();
+
+    return d;
+}
+
+void EditAccount::nameCheck(QString str)
+{
+    if (str.length() > 0 && nameFind(str) == true)
+        ui->okButton->setEnabled(true);
+    else
+        ui->okButton->setEnabled(false);
+}
+
+bool EditAccount::nameFind(QString name)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT name FROM account WHERE name = :name");
+    query.bindValue(":name", name);
+    if (!query.exec() || !query.next())
+            return true;
+
+    return false;
 }

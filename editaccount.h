@@ -3,6 +3,12 @@
 
 #include <QDialog>
 
+struct Account_Data {
+    QString name;
+    int type;
+    double balance;
+};
+
 namespace Ui {
 class EditAccount;
 }
@@ -17,9 +23,14 @@ public:
     QString name();
     int type();
     double balance();
+    Account_Data data();
     
 private:
     Ui::EditAccount *ui;
+    bool nameFind(QString);
+
+private slots:
+    void nameCheck(QString);
 };
 
 #endif // EDITACCOUNT_H

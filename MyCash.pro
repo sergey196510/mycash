@@ -18,19 +18,27 @@ SOURCES += main.cpp\
     opendatabase.cpp \
     listaccounts.cpp \
     editaccount.cpp \
-    accounttypecombobox.cpp
+    accounttypecombobox.cpp \
+    listoperations.cpp \
+    mydateedit.cpp \
+    editoperation.cpp
 
 HEADERS  += mycash.h \
     database.h \
     opendatabase.h \
     listaccounts.h \
     editaccount.h \
-    accounttypecombobox.h
+    accounttypecombobox.h \
+    listoperations.h \
+    mydateedit.h \
+    editoperation.h
 
 FORMS    += mycash.ui \
     opendatabase.ui \
     listaccounts.ui \
-    editaccount.ui
+    editaccount.ui \
+    listoperations.ui \
+    editoperation.ui
 
 RESOURCES += \
     icons.qrc

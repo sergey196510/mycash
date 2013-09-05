@@ -14,15 +14,16 @@ ListAccounts::ListAccounts(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    query = "SELECT a.id,a.name,t.name,a.balance FROM account a, account_type t WHERE a.type = t.id";
+    query = "SELECT a.id,a.name,t.name,a.balance FROM account a, account_type t WHERE a.type = t.id ORDER BY type";
 
     model = new ListAccountsModel;
-
     model->setQuery(query);
+
 //    model->select();
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
+    ui->treeView->resizeColumnToContents(1);
 
     QAction *nacct = new QAction(tr("New account"), this);
     QAction *eacct = new QAction(tr("Edit balance"), this);
@@ -33,7 +34,11 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui->treeView->addAction(dacct);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
+    ui->treeView->setAlternatingRowColors(true);
+
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
+
+    ui->act_summ->setNum(db.get_accout_summ(1));
 }
 
 ListAccounts::~ListAccounts()
@@ -51,6 +56,10 @@ void ListAccounts::new_account()
         int type = ea.type();
         double balance = ea.balance();
         QSqlQuery q;
+
+        if (name.length() == 0) {
+            return;
+        }
 
         q.prepare("INSERT INTO account(name, type, balance) VALUES(:name, :type, :balance)");
         q.bindValue(":name", name);

@@ -44,10 +44,10 @@
    </widget>
    <widget class="QMenu" name="menu_Accounts">
     <property name="title">
-     <string>&amp;Accounts</string>
+     <string>&amp;Objects</string>
     </property>
     <addaction name="action_ListAccounts"/>
-    <addaction name="action_NewAccounts"/>
+    <addaction name="action_ListOperations"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Accounts"/>
@@ -99,12 +99,12 @@
   </action>
   <action name="action_ListAccounts">
    <property name="text">
-    <string>&amp;List</string>
+    <string>&amp;Accounts</string>
    </property>
   </action>
-  <action name="action_NewAccounts">
+  <action name="action_ListOperations">
    <property name="text">
-    <string>&amp;New</string>
+    <string>&amp;Operations</string>
    </property>
   </action>
  </widget>
