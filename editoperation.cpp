@@ -7,6 +7,13 @@ EditOperation::EditOperation(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->okButton->setEnabled(false);
+
+    ui->summSpinBox->setRange(-1000000, 1000000);
+
+    connect(ui->from_account, SIGNAL(currentIndexChanged(int)), SLOT(check_Ok()));
+    connect(ui->to_Account, SIGNAL(currentIndexChanged(int)), SLOT(check_Ok()));
+    connect(ui->summSpinBox, SIGNAL(valueChanged(double)), SLOT(check_Ok()));
     connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
 }
@@ -14,6 +21,14 @@ EditOperation::EditOperation(QWidget *parent) :
 EditOperation::~EditOperation()
 {
     delete ui;
+}
+
+void EditOperation::check_Ok()
+{
+    if (ui->from_account->value() > 0 && ui->to_Account->value() > 0 && ui->summSpinBox->value() > 0)
+        ui->okButton->setEnabled(true);
+    else
+        ui->okButton->setEnabled(false);
 }
 
 void EditOperation::data(operation_data &d)

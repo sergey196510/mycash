@@ -38,7 +38,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
 
-    ui->act_summ->setNum(db.get_accout_summ(1));
+    ui->act_summ->setNum(db.get_account_summ(1));
 }
 
 ListAccounts::~ListAccounts()

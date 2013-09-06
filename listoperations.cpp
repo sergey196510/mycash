@@ -15,6 +15,8 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->tableView->addAction(noper);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
+    ui->account_ostatok->setNum(db.get_account_balance(ui->accountcomboBox->value()));
+
     connect(noper, SIGNAL(triggered()), SLOT(new_operation()));
     connect(ui->accountcomboBox, SIGNAL(currentIndexChanged(int)), SLOT(change_current_account(int)));
 }
@@ -37,5 +39,5 @@ void ListOperations::new_operation()
 
 void ListOperations::change_current_account(int idx)
 {
-
+    ui->account_ostatok->setNum(db.get_account_balance(ui->accountcomboBox->value()));
 }

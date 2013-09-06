@@ -25,6 +25,9 @@ public:
     
 private:
     Ui::EditOperation *ui;
+
+private slots:
+    void check_Ok();
 };
 
 #endif // EDITOPERATION_H

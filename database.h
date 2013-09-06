@@ -10,7 +10,8 @@ class Database
 public:
     Database();
 //    bool isOpened() { return opened; }
-    double get_accout_summ(int);
+    double get_account_summ(int);
+    double get_account_balance(int);
     bool   save_operation(const int, const int, const double, const QString);
 };
 
