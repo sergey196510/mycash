@@ -29,7 +29,34 @@ double Database::get_account_balance(int id)
     return query.value(0).toDouble();
 }
 
-bool Database::save_operation(const int from, const int to, const double summ, const QString date)
+bool Database::new_operation(const int from, const int to, const double summ, const QString date)
+{
+    QSqlQuery query;
+
+    query.prepare("INSERT INTO operation(acc_from, acc_to, summ, dt) VALUES(:from, :to, :summ, :dt)");
+    query.bindValue(":from", from);
+    query.bindValue(":to", to);
+    query.bindValue(":summ", summ);
+    query.bindValue(":dt", date);
+    if (!query.exec())
+        return false;
+    else
+        return true;
+}
+
+bool Database::change_account_balance(const int id, const double summ)
 {
 
+}
+
+bool Database::save_operation(const int from, const int to, const double summ, const QString date)
+{
+    if (new_operation(from, to, summ, date) == false)
+        return false;
+    if (change_account_balance(from, -summ) == false)
+        return false;
+    if (change_account_balance(to, summ) == false)
+        return false;
+
+    return true;
 }

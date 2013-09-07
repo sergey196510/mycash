@@ -19,6 +19,7 @@ public:
     
 private:
     Ui::ListOperations *ui;
+    QSqlQueryModel *model;
     QString query;
     Database db;
 

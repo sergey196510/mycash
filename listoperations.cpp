@@ -8,9 +8,17 @@ ListOperations::ListOperations(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    query = "SELECT";
+    query = "SELECT acc_from, acc_to, summ, dt FROM operation ORDER BY dt";
+
+    model = new QSqlQueryModel;
+    model->setQuery(query);
 
     QAction *noper = new QAction(tr("New operation"), this);
+
+    ui->tableView->setModel(model);
+    ui->tableView->resizeRowsToContents();
+    ui->tableView->resizeColumnsToContents();
+    ui->tableView->setAlternatingRowColors(true);
 
     ui->tableView->addAction(noper);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -34,6 +42,7 @@ void ListOperations::new_operation()
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
         db.save_operation(d.from, d.to, d.summ, d.date);
+        model->setQuery(query);
     }
 }
 
