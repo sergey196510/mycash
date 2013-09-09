@@ -9,6 +9,15 @@ namespace Ui {
 class ListOperations;
 }
 
+class ListOperationsModel : public QSqlQueryModel
+{
+    Q_OBJECT
+
+public:
+    explicit ListOperationsModel(QObject *parent = 0);
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+};
+
 class ListOperations : public QWidget
 {
     Q_OBJECT
@@ -19,7 +28,7 @@ public:
     
 private:
     Ui::ListOperations *ui;
-    QSqlQueryModel *model;
+    ListOperationsModel *model;
     QString query;
     Database db;
 

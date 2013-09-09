@@ -46,7 +46,23 @@ bool Database::new_operation(const int from, const int to, const double summ, co
 
 bool Database::change_account_balance(const int id, const double summ)
 {
+    QSqlQuery query;
+    int type, flag;
 
+    query.prepare("SELECT id FROM account_type ap, account a WHERE a.type = at.id AND a.id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec())
+        return false;
+    type = query.value(0).toInt();
+
+    if (type == 1 || type == 4)
+        flag = 1;
+    else
+        flag = -1;
+
+    summ *= flag;
+
+    return true;
 }
 
 bool Database::save_operation(const int from, const int to, const double summ, const QString date)

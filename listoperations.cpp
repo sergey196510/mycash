@@ -2,15 +2,44 @@
 #include "ui_listoperations.h"
 #include "editoperation.h"
 
+ListOperationsModel::ListOperationsModel(QObject *parent) :
+    QSqlQueryModel(parent)
+{
+
+}
+
+QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
+{
+    QVariant value = QSqlQueryModel::data(index, role);
+
+    switch (role) {
+        case Qt::DisplayRole:
+        if (index.column() == 2) {
+            return value;
+        }
+        else if (index.column() == 3) {
+            return value.toDate().toString("dddd dd MMMM yyyy");
+        }
+        else
+            return value;
+
+        case Qt::TextAlignmentRole:
+            if (index.column() == 2)
+                return int(Qt::AlignRight | Qt::AlignVCenter);
+    }
+
+    return value;
+}
+
 ListOperations::ListOperations(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListOperations)
 {
     ui->setupUi(this);
 
-    query = "SELECT acc_from, acc_to, summ, dt FROM operation ORDER BY dt";
+    query = "SELECT a.name, acc_to, summ, dt FROM account a, operation o WHERE o.acc_from = a.id ORDER BY dt";
 
-    model = new QSqlQueryModel;
+    model = new ListOperationsModel;
     model->setQuery(query);
 
     QAction *noper = new QAction(tr("New operation"), this);
