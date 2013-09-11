@@ -51,14 +51,23 @@ bool Database::change_account_balance(const int id, const double delta)
     double summ;
     int type, flag;
 
+    query.exec("BEGIN TRANSACTION");
+
     query.prepare("SELECT type FROM account WHERE id = :id");
     query.bindValue(":id", id);
-    if (!query.exec())
+    if (!query.exec() || !query.next()) {
+	query.exec("ROLLBACK TRANSACTION");
         return false;
+    }
     type = query.value(0).toInt();
 
     if (type == 1 || type == 4)
         flag = 1;
+    else if (type < 1 || type > 4) {
+	qDebug() << "type is unknown: " << type;
+	query.exec("ROLLBACK TRANSACTION");
+        return false;
+    }
     else
         flag = -1;
 
@@ -67,9 +76,12 @@ bool Database::change_account_balance(const int id, const double delta)
     query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
     query.bindValue(":id", id);
     query.bindValue(":summ", summ);
-    if (!query.exec())
+    if (!query.exec()) {
+	query.exec("ROLLBACK TRANSACTION");
 	return false;
+    }
 
+    query.exec("COMMIT TRANSACTION");
     return true;
 }
 
