@@ -1,3 +1,6 @@
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
 MyCash
 MyCash.pro.user
 Makefile
@@ -5,3 +8,7 @@ Makefile
 moc_*.*
 ui_*.*
 qrc_*.*
+CMakeLists.txt.user
+icons.qrc.depends
+mycash
+mycash.cbp

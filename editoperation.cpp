@@ -37,4 +37,5 @@ void EditOperation::data(operation_data &d)
     d.to   = ui->to_Account->value();
     d.summ = ui->summSpinBox->value();
     d.date = ui->dateEdit->value();
+    d.descr = ui->descrEdit->text();
 }

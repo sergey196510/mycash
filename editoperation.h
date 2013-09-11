@@ -8,6 +8,7 @@ struct operation_data {
     int to;
     double summ;
     QString date;
+    QString descr;
 };
 
 namespace Ui {

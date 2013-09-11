@@ -15,7 +15,7 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 2) {
-            return value;
+            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
         }
         else if (index.column() == 3) {
             return value.toDate().toString("dddd dd MMMM yyyy");
@@ -25,6 +25,8 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 
         case Qt::TextAlignmentRole:
             if (index.column() == 2)
+                return int(Qt::AlignRight | Qt::AlignVCenter);
+            if (index.column() == 3)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
     }
 
@@ -37,10 +39,15 @@ ListOperations::ListOperations(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    query = "SELECT a.name, acc_to, summ, dt FROM account a, operation o WHERE o.acc_from = a.id ORDER BY dt";
+    query = "SELECT a.name, acc_to, summ, dt, descr FROM account a, operation o WHERE o.acc_from = a.id ORDER BY dt";
 
     model = new ListOperationsModel;
     model->setQuery(query);
+    model->setHeaderData(0, Qt::Horizontal, tr("From Account"));
+    model->setHeaderData(1, Qt::Horizontal, tr("To Account"));
+    model->setHeaderData(2, Qt::Horizontal, tr("Summ"));
+    model->setHeaderData(3, Qt::Horizontal, tr("Date"));
+    model->setHeaderData(4, Qt::Horizontal, tr("Description"));
 
     QAction *noper = new QAction(tr("New operation"), this);
 
@@ -48,6 +55,9 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->tableView->resizeRowsToContents();
     ui->tableView->resizeColumnsToContents();
     ui->tableView->setAlternatingRowColors(true);
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
     ui->tableView->addAction(noper);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -70,7 +80,7 @@ void ListOperations::new_operation()
 
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
-        db.save_operation(d.from, d.to, d.summ, d.date);
+        db.save_operation(d.from, d.to, d.summ, d.date, d.descr);
         model->setQuery(query);
     }
 }

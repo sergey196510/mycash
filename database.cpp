@@ -29,27 +29,29 @@ double Database::get_account_balance(int id)
     return query.value(0).toDouble();
 }
 
-bool Database::new_operation(const int from, const int to, const double summ, const QString date)
+bool Database::new_operation(const int from, const int to, const double summ, const QString date, const QString descr)
 {
     QSqlQuery query;
 
-    query.prepare("INSERT INTO operation(acc_from, acc_to, summ, dt) VALUES(:from, :to, :summ, :dt)");
+    query.prepare("INSERT INTO operation(acc_from, acc_to, summ, dt, descr) VALUES(:from, :to, :summ, :dt, :descr)");
     query.bindValue(":from", from);
     query.bindValue(":to", to);
     query.bindValue(":summ", summ);
     query.bindValue(":dt", date);
+    query.bindValue(":descr", descr);
     if (!query.exec())
         return false;
     else
         return true;
 }
 
-bool Database::change_account_balance(const int id, const double summ)
+bool Database::change_account_balance(const int id, const double delta)
 {
     QSqlQuery query;
+    double summ;
     int type, flag;
 
-    query.prepare("SELECT id FROM account_type ap, account a WHERE a.type = at.id AND a.id = :id");
+    query.prepare("SELECT type FROM account WHERE id = :id");
     query.bindValue(":id", id);
     if (!query.exec())
         return false;
@@ -60,19 +62,36 @@ bool Database::change_account_balance(const int id, const double summ)
     else
         flag = -1;
 
-    summ *= flag;
+    summ = delta * flag;
+
+    query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
+    query.bindValue(":id", id);
+    query.bindValue(":summ", summ);
+    if (!query.exec())
+	return false;
 
     return true;
 }
 
-bool Database::save_operation(const int from, const int to, const double summ, const QString date)
+bool Database::save_operation(const int from, const int to, const double summ, const QString date, const QString descr)
 {
-    if (new_operation(from, to, summ, date) == false)
-        return false;
-    if (change_account_balance(from, -summ) == false)
-        return false;
-    if (change_account_balance(to, summ) == false)
-        return false;
+    QSqlQuery q;
 
+    q.exec("BEGIN TRANSACTION");
+
+    if (new_operation(from, to, summ, date, descr) == false) {
+	q.exec("ROLLBACK TRANSACTION");
+        return false;
+    }
+    if (change_account_balance(from, -summ) == false) {
+	q.exec("ROLLBACK TRANSACTION");
+        return false;
+    }
+    if (change_account_balance(to, summ) == false) {
+	q.exec("ROLLBACK TRANSACTION");
+        return false;
+    }
+
+    q.exec("COMMIT TRANSACTION");
     return true;
 }
