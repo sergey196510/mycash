@@ -113,6 +113,15 @@
    <header>accountcombobox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>from_account</tabstop>
+  <tabstop>to_Account</tabstop>
+  <tabstop>summSpinBox</tabstop>
+  <tabstop>dateEdit</tabstop>
+  <tabstop>descrEdit</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

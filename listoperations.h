@@ -35,6 +35,7 @@ private:
 private slots:
     void new_operation();
     void change_current_account(int);
+    void change_date();
 };
 
 #endif // LISTOPERATIONS_H

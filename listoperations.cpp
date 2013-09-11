@@ -37,9 +37,15 @@ ListOperations::ListOperations(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListOperations)
 {
+    QString fdate, ldate;
+
     ui->setupUi(this);
 
-    query = "SELECT a.name, acc_to, summ, dt, descr FROM account a, operation o WHERE o.acc_from = a.id ORDER BY dt";
+    ui->fdate->setDate(QDate().currentDate().addDays(-30));
+    fdate = ui->fdate->value();
+    ldate = ui->ldate->value();
+
+    query = "SELECT a.name, acc_to, summ, dt, descr FROM account a, operation o WHERE o.acc_from = a.id AND dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
 
     model = new ListOperationsModel;
     model->setQuery(query);
@@ -62,10 +68,12 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->tableView->addAction(noper);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    ui->account_ostatok->setNum(db.get_account_balance(ui->accountcomboBox->value()));
+    change_current_account(0);
 
     connect(noper, SIGNAL(triggered()), SLOT(new_operation()));
     connect(ui->accountcomboBox, SIGNAL(currentIndexChanged(int)), SLOT(change_current_account(int)));
+    connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(change_date()));
+    connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(change_date()));
 }
 
 ListOperations::~ListOperations()
@@ -87,5 +95,16 @@ void ListOperations::new_operation()
 
 void ListOperations::change_current_account(int idx)
 {
-    ui->account_ostatok->setNum(db.get_account_balance(ui->accountcomboBox->value()));
+    ui->account_ostatok->setText(tr("%1").arg(db.get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
+}
+
+void ListOperations::change_date()
+{
+    QString fdate, ldate;
+
+    fdate = ui->fdate->value();
+    ldate = ui->ldate->value();
+    query = "SELECT a.name, acc_to, summ, dt, descr FROM account a, operation o WHERE o.acc_from = a.id AND dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
+
+    model->setQuery(query);
 }
