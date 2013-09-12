@@ -14,6 +14,12 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
         case Qt::DisplayRole:
+        if (index.column() == 0) {
+            return value;
+        }
+        else if (index.column() == 1) {
+            return value;
+        }
         if (index.column() == 2) {
             return tr("%1").arg(value.toDouble(), 0, 'f', 2);
         }
@@ -45,7 +51,7 @@ ListOperations::ListOperations(QWidget *parent) :
     fdate = ui->fdate->value();
     ldate = ui->ldate->value();
 
-    query = "SELECT a.name, acc_to, summ, dt, descr FROM account a, operation o WHERE o.acc_from = a.id AND dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
+    query = "SELECT acc_from, acc_to, summ, dt, descr FROM operation WHERE dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
 
     model = new ListOperationsModel;
     model->setQuery(query);
@@ -55,7 +61,9 @@ ListOperations::ListOperations(QWidget *parent) :
     model->setHeaderData(3, Qt::Horizontal, tr("Date"));
     model->setHeaderData(4, Qt::Horizontal, tr("Description"));
 
-    QAction *noper = new QAction(tr("New operation"), this);
+    QAction *debt = new QAction(tr("Debet"), this);
+    QAction *cred = new QAction(tr("Credit"), this);
+    QAction *tran = new QAction(tr("Transfer"), this);
 
     ui->tableView->setModel(model);
     ui->tableView->resizeRowsToContents();
@@ -65,12 +73,15 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    ui->tableView->addAction(noper);
+    ui->tableView->addAction(debt);
+    ui->tableView->addAction(cred);
+    ui->tableView->addAction(tran);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     change_current_account(0);
 
-    connect(noper, SIGNAL(triggered()), SLOT(new_operation()));
+    connect(debt, SIGNAL(triggered()), SLOT(debet_operation()));
+    connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
     connect(ui->accountcomboBox, SIGNAL(currentIndexChanged(int)), SLOT(change_current_account(int)));
     connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(change_date()));
     connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(change_date()));
@@ -81,10 +92,49 @@ ListOperations::~ListOperations()
     delete ui;
 }
 
-void ListOperations::new_operation()
+void ListOperations::debet_operation()
 {
     EditOperation eo;
     operation_data d;
+
+    d.from = 0;
+    d.to = ui->accountcomboBox->value();
+    d.summ = 0;
+    eo.setdata(d);
+
+    if (eo.exec() == QDialog::Accepted) {
+        eo.data(d);
+        db.save_operation(d.from, d.to, d.summ, d.date, d.descr);
+        model->setQuery(query);
+    }
+}
+
+void ListOperations::credit_operation()
+{
+    EditOperation eo;
+    operation_data d;
+
+    d.from = ui->accountcomboBox->value();
+    d.to = 0;
+    d.summ = 0;
+    eo.setdata(d);
+
+    if (eo.exec() == QDialog::Accepted) {
+        eo.data(d);
+        db.save_operation(d.from, d.to, d.summ, d.date, d.descr);
+        model->setQuery(query);
+    }
+}
+
+void ListOperations::transfer_operation()
+{
+    EditOperation eo;
+    operation_data d;
+
+    d.from = ui->accountcomboBox->value();
+    d.to = 0;
+    d.summ = 0;
+    eo.setdata(d);
 
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);

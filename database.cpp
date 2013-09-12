@@ -29,6 +29,18 @@ double Database::get_account_balance(int id)
     return query.value(0).toDouble();
 }
 
+QString Database::get_account_name(int id)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT name FROM account WHERE id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec() || !query.next())
+        return 0;
+
+    return query.value(0).toString();
+}
+
 bool Database::new_operation(const int from, const int to, const double summ, const QString date, const QString descr)
 {
     QSqlQuery query;

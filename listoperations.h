@@ -16,6 +16,9 @@ class ListOperationsModel : public QSqlQueryModel
 public:
     explicit ListOperationsModel(QObject *parent = 0);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+private:
+    Database db;
 };
 
 class ListOperations : public QWidget
@@ -33,7 +36,9 @@ private:
     Database db;
 
 private slots:
-    void new_operation();
+    void debet_operation();
+    void credit_operation();
+    void transfer_operation();
     void change_current_account(int);
     void change_date();
 };

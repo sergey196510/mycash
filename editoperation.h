@@ -23,6 +23,7 @@ public:
     explicit EditOperation(QWidget *parent = 0);
     ~EditOperation();
     void data(operation_data &);
+    void setdata(operation_data &);
     
 private:
     Ui::EditOperation *ui;
