@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
-set (CMAKE_C_COMPILER clang)
-set (CMAKE_CXX_COMPILER clang++)
+#set (CMAKE_C_COMPILER clang)
+#set (CMAKE_CXX_COMPILER clang++)
 
 # set project's name
   PROJECT( mycash )
@@ -21,6 +21,7 @@ set (CMAKE_CXX_COMPILER clang++)
     mycash.cpp
     mydateedit.cpp
     opendatabase.cpp
+    createdatabase.cpp
   )
   
   # another list, this time it includes all header files that should be treated with moc
@@ -35,6 +36,7 @@ set (CMAKE_CXX_COMPILER clang++)
     mycash.h
     mydateedit.h
     opendatabase.h
+    createdatabase.h
   )
   
   # some .ui files
@@ -45,6 +47,7 @@ set (CMAKE_CXX_COMPILER clang++)
     listoperations.ui
     mycash.ui
     opendatabase.ui
+    createdatabase.ui
   )
   
   # and finally an resource file

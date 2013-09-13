@@ -28,6 +28,7 @@ private:
     void opendb(QString);
 
 private slots:
+    void create();
     void open();
     void closeDatabase();
     void settings();

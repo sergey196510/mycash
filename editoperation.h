@@ -2,6 +2,7 @@
 #define EDITOPERATION_H
 
 #include <QDialog>
+#include "database.h"
 
 struct operation_data {
     int from;
@@ -27,9 +28,11 @@ public:
     
 private:
     Ui::EditOperation *ui;
+    Database *db;
 
 private slots:
     void check_Ok();
+    void check_balance(double);
 };
 
 #endif // EDITOPERATION_H

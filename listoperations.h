@@ -15,10 +15,11 @@ class ListOperationsModel : public QSqlQueryModel
 
 public:
     explicit ListOperationsModel(QObject *parent = 0);
+    ~ListOperationsModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 private:
-    Database db;
+    Database *db;
 };
 
 class ListOperations : public QWidget
@@ -33,7 +34,7 @@ private:
     Ui::ListOperations *ui;
     ListOperationsModel *model;
     QString query;
-    Database db;
+    Database *db;
 
 private slots:
     void debet_operation();

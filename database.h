@@ -10,6 +10,7 @@ class Database
 public:
     Database();
 //    bool isOpened() { return opened; }
+    int     get_account_type(int);
     double  get_account_summ(int);
     double  get_account_balance(int);
     QString get_account_name(int);

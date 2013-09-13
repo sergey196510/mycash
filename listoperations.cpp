@@ -5,7 +5,12 @@
 ListOperationsModel::ListOperationsModel(QObject *parent) :
     QSqlQueryModel(parent)
 {
+    db = new Database;
+}
 
+ListOperationsModel::~ListOperationsModel()
+{
+    delete db;
 }
 
 QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
@@ -15,10 +20,12 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 0) {
-            return value;
+            return db->get_account_name(value.toInt());
+//            return value;
         }
         else if (index.column() == 1) {
-            return value;
+            return db->get_account_name(value.toInt());
+//            return value;
         }
         if (index.column() == 2) {
             return tr("%1").arg(value.toDouble(), 0, 'f', 2);
@@ -47,6 +54,8 @@ ListOperations::ListOperations(QWidget *parent) :
 
     ui->setupUi(this);
 
+    db = new Database;
+
     ui->fdate->setDate(QDate().currentDate().addDays(-30));
     fdate = ui->fdate->value();
     ldate = ui->ldate->value();
@@ -72,6 +81,7 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableView->setShowGrid(false);
 
     ui->tableView->addAction(debt);
     ui->tableView->addAction(cred);
@@ -81,6 +91,7 @@ ListOperations::ListOperations(QWidget *parent) :
     change_current_account(0);
 
     connect(debt, SIGNAL(triggered()), SLOT(debet_operation()));
+    connect(cred, SIGNAL(triggered()), SLOT(credit_operation()));
     connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
     connect(ui->accountcomboBox, SIGNAL(currentIndexChanged(int)), SLOT(change_current_account(int)));
     connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(change_date()));
@@ -90,6 +101,7 @@ ListOperations::ListOperations(QWidget *parent) :
 ListOperations::~ListOperations()
 {
     delete ui;
+    delete db;
 }
 
 void ListOperations::debet_operation()
@@ -104,7 +116,7 @@ void ListOperations::debet_operation()
 
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
-        db.save_operation(d.from, d.to, d.summ, d.date, d.descr);
+        db->save_operation(d.from, d.to, d.summ, d.date, d.descr);
         model->setQuery(query);
     }
 }
@@ -121,7 +133,7 @@ void ListOperations::credit_operation()
 
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
-        db.save_operation(d.from, d.to, d.summ, d.date, d.descr);
+        db->save_operation(d.from, d.to, d.summ, d.date, d.descr);
         model->setQuery(query);
     }
 }
@@ -138,14 +150,14 @@ void ListOperations::transfer_operation()
 
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
-        db.save_operation(d.from, d.to, d.summ, d.date, d.descr);
+        db->save_operation(d.from, d.to, d.summ, d.date, d.descr);
         model->setQuery(query);
     }
 }
 
 void ListOperations::change_current_account(int idx)
 {
-    ui->account_ostatok->setText(tr("%1").arg(db.get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
+    ui->account_ostatok->setText(tr("%1").arg(db->get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
 }
 
 void ListOperations::change_date()
