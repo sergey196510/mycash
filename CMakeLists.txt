@@ -16,12 +16,14 @@ cmake_minimum_required(VERSION 2.8)
     editaccount.cpp
     editoperation.cpp
     listaccounts.cpp
+    listagents.cpp
     listoperations.cpp
     main.cpp
     mycash.cpp
     mydateedit.cpp
     opendatabase.cpp
     createdatabase.cpp
+    correctbalance.cpp
   )
   
   # another list, this time it includes all header files that should be treated with moc
@@ -32,11 +34,13 @@ cmake_minimum_required(VERSION 2.8)
     editaccount.h
     editoperation.h
     listaccounts.h
+    listagents.h
     listoperations.h
     mycash.h
     mydateedit.h
     opendatabase.h
     createdatabase.h
+    correctbalance.h
   )
   
   # some .ui files
@@ -44,10 +48,12 @@ cmake_minimum_required(VERSION 2.8)
     editaccount.ui
     editoperation.ui
     listaccounts.ui
+    listagents.ui
     listoperations.ui
     mycash.ui
     opendatabase.ui
     createdatabase.ui
+    correctbalance.ui
   )
   
   # and finally an resource file

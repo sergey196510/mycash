@@ -54,9 +54,19 @@
       </spacer>
      </item>
      <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Select account:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="AccountComboBox" name="search_comboBox"/>
+     </item>
+     <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>First date:</string>
+        <string>Date:</string>
        </property>
       </widget>
      </item>
@@ -66,7 +76,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Last date:</string>
+        <string>-</string>
        </property>
       </widget>
      </item>

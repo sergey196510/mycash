@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QtSql>
 #include "database.h"
+#include "editoperation.h"
 
 namespace Ui {
 class ListOperations;
@@ -35,13 +36,16 @@ private:
     ListOperationsModel *model;
     QString query;
     Database *db;
+    EditOperation eo;
+    operation_data d;
+    void edit_operation();
 
 private slots:
     void debet_operation();
     void credit_operation();
     void transfer_operation();
+    void select_list_operations(int);
     void change_current_account(int);
-    void change_date();
 };
 
 #endif // LISTOPERATIONS_H

@@ -37,6 +37,11 @@ double EditAccount::balance()
     return ui->balanceSpinBox->value();
 }
 
+QString EditAccount::descr()
+{
+    return ui->descrEdit->text();
+}
+
 Account_Data EditAccount::data()
 {
     Account_Data d;
@@ -44,6 +49,7 @@ Account_Data EditAccount::data()
     d.name = ui->nameEdit->text();
     d.type = ui->typeBox->value();
     d.balance = ui->balanceSpinBox->value();
+    d.descr = ui->descrEdit->text();
 
     return d;
 }

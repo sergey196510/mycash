@@ -7,6 +7,7 @@ struct Account_Data {
     QString name;
     int type;
     double balance;
+    QString descr;
 };
 
 namespace Ui {
@@ -23,6 +24,7 @@ public:
     QString name();
     int type();
     double balance();
+    QString descr();
     Account_Data data();
     
 private:

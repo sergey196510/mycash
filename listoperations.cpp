@@ -1,6 +1,5 @@
 #include "listoperations.h"
 #include "ui_listoperations.h"
-#include "editoperation.h"
 
 ListOperationsModel::ListOperationsModel(QObject *parent) :
     QSqlQueryModel(parent)
@@ -94,8 +93,9 @@ ListOperations::ListOperations(QWidget *parent) :
     connect(cred, SIGNAL(triggered()), SLOT(credit_operation()));
     connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
     connect(ui->accountcomboBox, SIGNAL(currentIndexChanged(int)), SLOT(change_current_account(int)));
-    connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(change_date()));
-    connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(change_date()));
+    connect(ui->search_comboBox, SIGNAL(currentIndexChanged(int)), SLOT(select_list_operations(int)));
+    connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(select_list_operations(int)));
+    connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(select_list_operations(int)));
 }
 
 ListOperations::~ListOperations()
@@ -104,55 +104,48 @@ ListOperations::~ListOperations()
     delete db;
 }
 
+void ListOperations::edit_operation()
+{
+    if (eo.exec() == QDialog::Accepted) {
+        eo.data(d);
+        db->save_operation(d.from, d.to, d.summ, d.date, d.descr);
+        model->setQuery(query);
+        ui->tableView->resizeRowsToContents();
+        ui->tableView->resizeColumnsToContents();
+        change_current_account(0);
+        ui->tableView->selectRow(0);
+        ui->accountcomboBox->setValue(d.to);
+    }
+}
+
 void ListOperations::debet_operation()
 {
-    EditOperation eo;
-    operation_data d;
-
     d.from = 0;
     d.to = ui->accountcomboBox->value();
     d.summ = 0;
     eo.setdata(d);
 
-    if (eo.exec() == QDialog::Accepted) {
-        eo.data(d);
-        db->save_operation(d.from, d.to, d.summ, d.date, d.descr);
-        model->setQuery(query);
-    }
+    edit_operation();
 }
 
 void ListOperations::credit_operation()
 {
-    EditOperation eo;
-    operation_data d;
-
     d.from = ui->accountcomboBox->value();
     d.to = 0;
     d.summ = 0;
     eo.setdata(d);
 
-    if (eo.exec() == QDialog::Accepted) {
-        eo.data(d);
-        db->save_operation(d.from, d.to, d.summ, d.date, d.descr);
-        model->setQuery(query);
-    }
+    edit_operation();
 }
 
 void ListOperations::transfer_operation()
 {
-    EditOperation eo;
-    operation_data d;
-
     d.from = ui->accountcomboBox->value();
     d.to = 0;
     d.summ = 0;
     eo.setdata(d);
 
-    if (eo.exec() == QDialog::Accepted) {
-        eo.data(d);
-        db->save_operation(d.from, d.to, d.summ, d.date, d.descr);
-        model->setQuery(query);
-    }
+    edit_operation();
 }
 
 void ListOperations::change_current_account(int idx)
@@ -160,13 +153,20 @@ void ListOperations::change_current_account(int idx)
     ui->account_ostatok->setText(tr("%1").arg(db->get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
 }
 
-void ListOperations::change_date()
+void ListOperations::select_list_operations(int idx)
 {
+    int id;
     QString fdate, ldate;
 
+    id = ui->search_comboBox->value();
     fdate = ui->fdate->value();
     ldate = ui->ldate->value();
-    query = "SELECT a.name, acc_to, summ, dt, descr FROM account a, operation o WHERE o.acc_from = a.id AND dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
+
+    if (id > 0) {
+        query = "SELECT acc_from, acc_to, summ, dt, descr FROM operation WHERE (acc_from = " + QString("%1").arg(id) + " OR acc_to = " + QString("%1").arg(id) + ") AND dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
+    }
+    else
+        query = "SELECT acc_from, acc_to, summ, dt, descr FROM operation WHERE dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
 
     model->setQuery(query);
 }

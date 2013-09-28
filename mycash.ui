@@ -48,6 +48,7 @@
     </property>
     <addaction name="action_ListAccounts"/>
     <addaction name="action_ListOperations"/>
+    <addaction name="action_ListAgents"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Accounts"/>
@@ -105,6 +106,11 @@
   <action name="action_ListOperations">
    <property name="text">
     <string>&amp;Operations</string>
+   </property>
+  </action>
+  <action name="action_ListAgents">
+   <property name="text">
+    <string>Agents</string>
    </property>
   </action>
  </widget>

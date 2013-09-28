@@ -6,6 +6,7 @@
 #include "opendatabase.h"
 #include "listaccounts.h"
 #include "listoperations.h"
+#include "listagents.h"
 
 MyCash::MyCash(QWidget *parent) :
     QMainWindow(parent),
@@ -49,6 +50,7 @@ void MyCash::setconnects()
 
     connect(ui->action_ListAccounts, SIGNAL(triggered()), SLOT(list_accounts()));
     connect(ui->action_ListOperations, SIGNAL(triggered()), SLOT(list_operations()));
+    connect(ui->action_ListAgents, SIGNAL(triggered()), SLOT(list_agents()));
 
     connect(ui->actionAbout_program, SIGNAL(triggered()), SLOT(aboutProgram()));
     connect(ui->actionAbout_QT,      SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -153,6 +155,13 @@ void MyCash::list_operations()
     ListOperations *lo = new ListOperations;
 
     setCentralWidget(lo);
+}
+
+void MyCash::list_agents()
+{
+    ListAgents *la = new ListAgents;
+
+    setCentralWidget(la);
 }
 
 void MyCash::settings()

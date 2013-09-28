@@ -36,6 +36,7 @@ private slots:
     void mark_Object();
     void list_accounts();
     void list_operations();
+    void list_agents();
 
 };
 

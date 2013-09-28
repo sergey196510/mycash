@@ -1,6 +1,7 @@
 #ifndef LISTACCOUNTS_H
 #define LISTACCOUNTS_H
 
+#include <QtGui>
 #include <QWidget>
 #include "QtSql"
 #include "database.h"
@@ -15,6 +16,7 @@ class ListAccountsModel : public QSqlQueryModel
 
 public:
     explicit ListAccountsModel(QObject *parent = 0);
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 };
 
 class ListAccounts : public QWidget
@@ -25,8 +27,9 @@ public:
     explicit ListAccounts(QWidget *parent = 0);
     ~ListAccounts();
 
-public slots:
+private slots:
     void new_account();
+    void correct_balance();
     
 private:
     Ui::ListAccounts *ui;
