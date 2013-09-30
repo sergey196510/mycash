@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QtSql>
+#include <QFont>
 #include "database.h"
 #include "editoperation.h"
 
@@ -44,8 +45,9 @@ private slots:
     void debet_operation();
     void credit_operation();
     void transfer_operation();
-    void select_list_operations(int);
+    void select_list_operations();
     void change_current_account(int);
+    void select_font();
 };
 
 #endif // LISTOPERATIONS_H

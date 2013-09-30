@@ -76,6 +76,7 @@ ListOperations::ListOperations(QWidget *parent) :
     QAction *debt = new QAction(tr("Debet"), this);
     QAction *cred = new QAction(tr("Credit"), this);
     QAction *tran = new QAction(tr("Transfer"), this);
+    QAction *font = new QAction(tr("Select font"), this);
 
     ui->tableView->setModel(model);
     ui->tableView->resizeRowsToContents();
@@ -89,6 +90,7 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->tableView->addAction(debt);
     ui->tableView->addAction(cred);
     ui->tableView->addAction(tran);
+    ui->tableView->addAction(font);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     change_current_account(0);
@@ -96,10 +98,11 @@ ListOperations::ListOperations(QWidget *parent) :
     connect(debt, SIGNAL(triggered()), SLOT(debet_operation()));
     connect(cred, SIGNAL(triggered()), SLOT(credit_operation()));
     connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
+    connect(font, SIGNAL(triggered()), SLOT(select_font()));
     connect(ui->accountcomboBox, SIGNAL(currentIndexChanged(int)), SLOT(change_current_account(int)));
-    connect(ui->search_comboBox, SIGNAL(currentIndexChanged(int)), SLOT(select_list_operations(int)));
-    connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(select_list_operations(int)));
-    connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(select_list_operations(int)));
+    connect(ui->search_comboBox, SIGNAL(currentIndexChanged(int)), SLOT(select_list_operations()));
+    connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(select_list_operations()));
+    connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(select_list_operations()));
 }
 
 ListOperations::~ListOperations()
@@ -117,10 +120,9 @@ void ListOperations::edit_operation(int oper)
         ui->tableView->resizeRowsToContents();
         ui->tableView->resizeColumnsToContents();
         change_current_account(0);
-        ui->tableView->selectRow(0);
-	if (oper == 1)
-	    ui->accountcomboBox->setValue(d.from);
-	else
+        if (oper == 1)
+            ui->accountcomboBox->setValue(d.from);
+        else
     	    ui->accountcomboBox->setValue(d.to);
     }
 
@@ -163,7 +165,7 @@ void ListOperations::change_current_account(int idx)
     current_account = ui->accountcomboBox->value();
 }
 
-void ListOperations::select_list_operations(int idx)
+void ListOperations::select_list_operations()
 {
     int id;
     QString fdate, ldate;
@@ -179,4 +181,17 @@ void ListOperations::select_list_operations(int idx)
         query = "SELECT acc_from, acc_to, summ, dt, descr FROM operation WHERE dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
 
     model->setQuery(query);
+}
+
+void ListOperations::select_font()
+{
+    bool bOk;
+
+    QFont fnt = QFontDialog::getFont(&bOk);
+    if (bOk) {
+        ui->tableView->setFont(fnt);
+        ui->tableView->resizeRowsToContents();
+        ui->tableView->resizeColumnsToContents();
+        ui->tableView->horizontalHeader()->setStretchLastSection(true);
+    }
 }
