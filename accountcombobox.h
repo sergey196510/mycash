@@ -10,8 +10,7 @@ class AccountComboBox : public QComboBox
     Q_OBJECT
 public:
     explicit AccountComboBox(QWidget *parent = 0);
-    void load();
-    void load2();
+    void load(int type = 0);
     int value();
     void setValue(int i);
 

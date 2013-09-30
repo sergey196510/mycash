@@ -15,6 +15,7 @@ cmake_minimum_required(VERSION 2.8)
     database.cpp
     editaccount.cpp
     editoperation.cpp
+    global.cpp
     listaccounts.cpp
     listagents.cpp
     listoperations.cpp
@@ -33,6 +34,7 @@ cmake_minimum_required(VERSION 2.8)
     database.h
     editaccount.h
     editoperation.h
+    global.h
     listaccounts.h
     listagents.h
     listoperations.h

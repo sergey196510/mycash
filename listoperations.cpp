@@ -1,5 +1,6 @@
 #include "listoperations.h"
 #include "ui_listoperations.h"
+#include "global.h"
 
 ListOperationsModel::ListOperationsModel(QObject *parent) :
     QSqlQueryModel(parent)
@@ -55,6 +56,9 @@ ListOperations::ListOperations(QWidget *parent) :
 
     db = new Database;
 
+    ui->accountcomboBox->load(1);
+    ui->accountcomboBox->setValue(current_account);
+    change_current_account(0);
     ui->fdate->setDate(QDate().currentDate().addDays(-30));
     fdate = ui->fdate->value();
     ldate = ui->ldate->value();
@@ -104,7 +108,7 @@ ListOperations::~ListOperations()
     delete db;
 }
 
-void ListOperations::edit_operation()
+void ListOperations::edit_operation(int oper)
 {
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
@@ -114,8 +118,13 @@ void ListOperations::edit_operation()
         ui->tableView->resizeColumnsToContents();
         change_current_account(0);
         ui->tableView->selectRow(0);
-        ui->accountcomboBox->setValue(d.to);
+	if (oper == 1)
+	    ui->accountcomboBox->setValue(d.from);
+	else
+    	    ui->accountcomboBox->setValue(d.to);
     }
+
+    current_account = ui->accountcomboBox->value();
 }
 
 void ListOperations::debet_operation()
@@ -125,7 +134,7 @@ void ListOperations::debet_operation()
     d.summ = 0;
     eo.setdata(d);
 
-    edit_operation();
+    edit_operation(1);
 }
 
 void ListOperations::credit_operation()
@@ -135,7 +144,7 @@ void ListOperations::credit_operation()
     d.summ = 0;
     eo.setdata(d);
 
-    edit_operation();
+    edit_operation(2);
 }
 
 void ListOperations::transfer_operation()
@@ -145,12 +154,13 @@ void ListOperations::transfer_operation()
     d.summ = 0;
     eo.setdata(d);
 
-    edit_operation();
+    edit_operation(2);
 }
 
 void ListOperations::change_current_account(int idx)
 {
     ui->account_ostatok->setText(tr("%1").arg(db->get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
+    current_account = ui->accountcomboBox->value();
 }
 
 void ListOperations::select_list_operations(int idx)

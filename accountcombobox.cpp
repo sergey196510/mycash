@@ -7,7 +7,7 @@ AccountComboBox::AccountComboBox(QWidget *parent) :
     this->setEditable(false);
 }
 
-void AccountComboBox::load()
+void AccountComboBox::load(int type)
 {
     QSqlQuery q;
     QSqlRecord r;
@@ -19,7 +19,14 @@ void AccountComboBox::load()
 
     addItem(tr("Account not present"), 0);
 
-    q.exec("SELECT id,name FROM account ORDER BY name");
+    if (type == 0) {
+	q.prepare("SELECT id,name FROM account ORDER BY name");
+    }
+    else {
+	q.prepare("SELECT id,name FROM account WHERE type = :type ORDER BY name");
+	q.bindValue(":type", type);
+    }
+    q.exec();
     while (q.next()) {
         r = q.record();
         id = q.value(r.indexOf("id")).toInt();
@@ -30,15 +37,6 @@ void AccountComboBox::load()
 //        if (curr == id)
 //            this->setCurrentIndex(num);
     }
-}
-
-void AccountComboBox::load2()
-{
-//	QTreeModel *mdl;
-
-//	mdl->setQuery("SELECT name FROM account ORDER BY name");
-
-//	setModel(mdl);
 }
 
 int AccountComboBox::value()

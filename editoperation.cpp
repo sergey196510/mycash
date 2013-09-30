@@ -1,5 +1,6 @@
 #include "editoperation.h"
 #include "ui_editoperation.h"
+#include "global.h"
 
 EditOperation::EditOperation(QWidget *parent) :
     QDialog(parent),

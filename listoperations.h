@@ -38,7 +38,7 @@ private:
     Database *db;
     EditOperation eo;
     operation_data d;
-    void edit_operation();
+    void edit_operation(int);
 
 private slots:
     void debet_operation();

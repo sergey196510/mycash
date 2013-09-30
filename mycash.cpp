@@ -7,6 +7,7 @@
 #include "listaccounts.h"
 #include "listoperations.h"
 #include "listagents.h"
+#include "global.h"
 
 MyCash::MyCash(QWidget *parent) :
     QMainWindow(parent),
@@ -79,6 +80,7 @@ void MyCash::readsettings()
     QSettings settings("MyCash", "MyCash");
     restoreGeometry(settings.value("geometry").toByteArray());
     dbname = settings.value("dbname", "").toString();
+    current_account = settings.value("current_account", "").toInt();
 }
 
 void MyCash::writesettings()
@@ -86,6 +88,7 @@ void MyCash::writesettings()
     QSettings settings("MyCash", "MyCash");
     settings.setValue("geometry", saveGeometry());
     settings.setValue("dbname", dbname);
+    settings.setValue("current_account", current_account);
 }
 
 void MyCash::create()
