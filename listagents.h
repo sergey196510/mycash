@@ -2,6 +2,7 @@
 #define LISTAGENTS_H
 
 #include <QWidget>
+#include <QtSql>
 
 namespace Ui {
 class ListAgents;
@@ -17,6 +18,13 @@ public:
     
 private:
     Ui::ListAgents *ui;
+    QString query;
+    QSqlQueryModel *model;
+
+private slots:
+    void check_new_button(QString);
+    void check_select_line();
+    void save_new_record();
 };
 
 #endif // LISTAGENTS_H

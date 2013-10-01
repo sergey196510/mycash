@@ -64,7 +64,7 @@ cmake_minimum_required(VERSION 2.8)
   )
   
   # enable warnings
-  ADD_DEFINITIONS( -g )
+#  ADD_DEFINITIONS( -g )
   
   # by default only QtCore and QtGui modules are enabled
   # other modules must be enabled like this:
