@@ -1,6 +1,7 @@
 #ifndef LISTAGENTS_H
 #define LISTAGENTS_H
 
+#include <QtGui>
 #include <QWidget>
 #include <QtSql>
 
@@ -25,6 +26,7 @@ private slots:
     void check_new_button(QString);
     void check_select_line();
     void save_new_record();
+    void del_record();
 };
 
 #endif // LISTAGENTS_H

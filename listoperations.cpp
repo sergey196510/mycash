@@ -31,7 +31,8 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
             return tr("%1").arg(value.toDouble(), 0, 'f', 2);
         }
         else if (index.column() == 3) {
-            return value.toDate().toString("dddd dd MMMM yyyy");
+//            return value.toDate().toString("dddd dd MMMM yyyy");
+            return value.toDate().toString(Qt::SystemLocaleLongDate);
         }
         else
             return value;
