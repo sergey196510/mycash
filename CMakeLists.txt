@@ -11,6 +11,7 @@ cmake_minimum_required(VERSION 2.8)
   # note that we don't need \ at the end of line
   SET( mycash_SRCS
     accountcombobox.cpp
+    agentcombobox.cpp
     accounttypecombobox.cpp
     database.cpp
     editaccount.cpp
@@ -30,6 +31,7 @@ cmake_minimum_required(VERSION 2.8)
   # another list, this time it includes all header files that should be treated with moc
   SET( mycash_MOC_HDRS
     accountcombobox.h
+    agentcombobox.h
     accounttypecombobox.h
     database.h
     editaccount.h

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>507</width>
-    <height>215</height>
+    <height>223</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,27 +16,17 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="summSpinBox"/>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Date:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="MyDateEdit" name="dateEdit"/>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>To account:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="AccountComboBox" name="to_Account"/>
      </item>
      <item row="0" column="0">
@@ -46,25 +36,45 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Summ:</string>
        </property>
       </widget>
      </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="summSpinBox"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Date:</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="AccountComboBox" name="from_account"/>
      </item>
-     <item row="4" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Description:</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="5" column="1">
       <widget class="QLineEdit" name="descrEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Agent:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="AgentComboBox" name="agent_comboBox"/>
      </item>
     </layout>
    </item>
@@ -110,7 +120,12 @@
   <customwidget>
    <class>AccountComboBox</class>
    <extends>QComboBox</extends>
-   <header>accountcombobox.h</header>
+   <header location="global">accountcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AgentComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">agentcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

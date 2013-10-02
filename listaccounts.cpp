@@ -12,11 +12,13 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
 QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
 {
     QVariant value = QSqlQueryModel::data(index, role);
+    QLocale russian(QLocale::Russian, QLocale::RussianFederation);
 
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 3) {
-            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
+//            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
+            return russian.toString(value.toDouble());
         }
         else
             return value;
@@ -116,9 +118,9 @@ void ListAccounts::correct_balance()
         double new_balance = cb.balance();
 
         if (new_balance < current_balance)
-            db.save_operation(id, cb.account(), new_balance-current_balance, cb.date(), tr("Correct"));
+            db.save_operation(id, cb.account(), 0, new_balance-current_balance, cb.date(), tr("Correct"));
         else
-            db.save_operation(cb.account(), id, new_balance-current_balance, cb.date(), tr("Correct"));
+            db.save_operation(cb.account(), 0, id, new_balance-current_balance, cb.date(), tr("Correct"));
 
         model->setQuery(query);
     }

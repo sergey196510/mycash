@@ -53,13 +53,14 @@ QString Database::get_account_name(int id)
     return query.value(0).toString();
 }
 
-bool Database::new_operation(const int from, const int to, const double summ, const QString date, const QString descr)
+bool Database::new_operation(const int from, const int to, const int agent, const double summ, const QString date, const QString descr)
 {
     QSqlQuery query;
 
-    query.prepare("INSERT INTO operation(acc_from, acc_to, summ, dt, descr) VALUES(:from, :to, :summ, :dt, :descr)");
+    query.prepare("INSERT INTO operation(acc_from, acc_to, agent, summ, dt, descr) VALUES(:from, :to, :agent, :summ, :dt, :descr)");
     query.bindValue(":from", from);
     query.bindValue(":to", to);
+    query.bindValue(":agent", agent);
     query.bindValue(":summ", summ);
     query.bindValue(":dt", date);
     query.bindValue(":descr", descr);
@@ -109,13 +110,13 @@ bool Database::change_account_balance(const int id, const double delta)
     return true;
 }
 
-bool Database::save_operation(const int from, const int to, const double summ, const QString date, const QString descr)
+bool Database::save_operation(const int from, const int to, const int agent, const double summ, const QString date, const QString descr)
 {
     QSqlQuery q;
 
     q.exec("BEGIN TRANSACTION");
 
-    if (new_operation(from, to, summ, date, descr) == false) {
+    if (new_operation(from, to, agent, summ, date, descr) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }

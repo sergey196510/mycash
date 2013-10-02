@@ -9,7 +9,7 @@ MyDateEdit::MyDateEdit(QWidget *d = 0) :
 	setCalendarPopup(true);
         setCalendarWidget(cw);
 
-	setDate(QDate().currentDate());
+    setDate(QDate().currentDate());
 }
 
 MyDateEdit::~MyDateEdit()

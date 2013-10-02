@@ -63,6 +63,8 @@ void ListAgents::check_select_line()
         ui->nameEdit->setText(q.value(0).toString());
         ui->cityEdit->setText(q.value(1).toString());
         ui->addrEdit->setText(q.value(2).toString());
+        ui->phoneEdit->setText(q.value(3).toString());
+        ui->contactEdit->setText(q.value(4).toString());
     }
 
     ui->editButton->setEnabled(true);
@@ -94,6 +96,7 @@ void ListAgents::save_new_record()
 void ListAgents::del_record()
 {
     QModelIndexList list;
+    QSqlQuery q;
     int id;
 
     list = ui->tableView->selectionModel()->selectedIndexes();
@@ -104,4 +107,9 @@ void ListAgents::del_record()
 
     id = list.at(0).data((Qt::DisplayRole)).toInt();
 
+    q.prepare("DELETE FROM agent WHERE id = :id");
+    q.bindValue(":id", id);
+    q.exec();
+
+    model->setQuery(query);
 }

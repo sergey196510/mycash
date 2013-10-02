@@ -52,6 +52,7 @@ void EditOperation::data(operation_data &d)
 {
     d.from = ui->from_account->value();
     d.to   = ui->to_Account->value();
+    d.agent = ui->agent_comboBox->value();
     d.summ = ui->summSpinBox->value();
     d.date = ui->dateEdit->value();
     d.descr = ui->descrEdit->text();
@@ -61,5 +62,6 @@ void EditOperation::setdata(operation_data &d)
 {
     ui->from_account->setValue(d.from);
     ui->to_Account->setValue(d.to);
+    ui->agent_comboBox->setValue(d.agent);
     ui->summSpinBox->setValue(d.summ);
 }

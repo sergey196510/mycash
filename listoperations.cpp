@@ -16,6 +16,7 @@ ListOperationsModel::~ListOperationsModel()
 QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 {
     QVariant value = QSqlQueryModel::data(index, role);
+    QLocale russian(QLocale::Russian, QLocale::RussianFederation);
 
     switch (role) {
         case Qt::DisplayRole:
@@ -28,7 +29,8 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 //            return value;
         }
         if (index.column() == 2) {
-            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
+//            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
+            return russian.toString(value.toDouble());
         }
         else if (index.column() == 3) {
 //            return value.toDate().toString("dddd dd MMMM yyyy");
@@ -60,7 +62,7 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->accountcomboBox->load(1);
     ui->accountcomboBox->setValue(current_account);
     change_current_account(0);
-    ui->fdate->setDate(QDate().currentDate().addDays(-30));
+    ui->fdate->setDate(QDate().currentDate().addDays(-29));
     fdate = ui->fdate->value();
     ldate = ui->ldate->value();
 
@@ -116,7 +118,7 @@ void ListOperations::edit_operation(int oper)
 {
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
-        db->save_operation(d.from, d.to, d.summ, d.date, d.descr);
+        db->save_operation(d.from, d.to, d.agent, d.summ, d.date, d.descr);
         model->setQuery(query);
         ui->tableView->resizeRowsToContents();
         ui->tableView->resizeColumnsToContents();
@@ -162,7 +164,10 @@ void ListOperations::transfer_operation()
 
 void ListOperations::change_current_account(int idx)
 {
-    ui->account_ostatok->setText(tr("%1").arg(db->get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
+    QLocale russian(QLocale::Russian, QLocale::RussianFederation);
+
+//    ui->account_ostatok->setText(tr("%1").arg(db->get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
+    ui->account_ostatok->setText(russian.toString(db->get_account_balance(ui->accountcomboBox->value())));
     current_account = ui->accountcomboBox->value();
 }
 
