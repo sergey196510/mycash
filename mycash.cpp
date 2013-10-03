@@ -81,6 +81,7 @@ void MyCash::readsettings()
     restoreGeometry(settings.value("geometry").toByteArray());
     dbname = settings.value("dbname", "").toString();
     current_account = settings.value("current_account", "").toInt();
+//    fnt = settings.value("operations_font");
 }
 
 void MyCash::writesettings()
@@ -89,6 +90,7 @@ void MyCash::writesettings()
     settings.setValue("geometry", saveGeometry());
     settings.setValue("dbname", dbname);
     settings.setValue("current_account", current_account);
+    settings.setValue("operations_font", fnt);
 }
 
 void MyCash::create()

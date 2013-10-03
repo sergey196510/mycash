@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QtSql>
-#include <QFont>
 #include "database.h"
 #include "editoperation.h"
 
@@ -41,6 +40,9 @@ private:
     operation_data d;
     void edit_operation(int);
 
+signals:
+    void call_reload_table();
+
 private slots:
     void debet_operation();
     void credit_operation();
@@ -48,6 +50,7 @@ private slots:
     void select_list_operations();
     void change_current_account(int);
     void select_font();
+    void reload_table();
 };
 
 #endif // LISTOPERATIONS_H

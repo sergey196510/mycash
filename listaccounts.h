@@ -5,6 +5,7 @@
 #include <QWidget>
 #include "QtSql"
 #include "database.h"
+#include "global.h"
 
 namespace Ui {
 class ListAccounts;

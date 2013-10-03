@@ -15,8 +15,8 @@ ListOperationsModel::~ListOperationsModel()
 
 QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 {
+    QDate curr = QDate::currentDate();
     QVariant value = QSqlQueryModel::data(index, role);
-    QLocale russian(QLocale::Russian, QLocale::RussianFederation);
 
     switch (role) {
         case Qt::DisplayRole:
@@ -30,11 +30,16 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
         }
         if (index.column() == 2) {
 //            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
-            return russian.toString(value.toDouble());
+//            return locale->toString(value.toDouble());
+            return locale->toCurrencyString(value.toDouble());
         }
         else if (index.column() == 3) {
 //            return value.toDate().toString("dddd dd MMMM yyyy");
-            return value.toDate().toString(Qt::SystemLocaleLongDate);
+            QDate dt = value.toDate();
+            if (dt.daysTo(curr) < 7)
+                return value.toDate().toString(Qt::SystemLocaleLongDate);
+            else
+                return value.toDate().toString(Qt::SystemLocaleDate);
         }
         else
             return value;
@@ -120,8 +125,7 @@ void ListOperations::edit_operation(int oper)
         eo.data(d);
         db->save_operation(d.from, d.to, d.agent, d.summ, d.date, d.descr);
         model->setQuery(query);
-        ui->tableView->resizeRowsToContents();
-        ui->tableView->resizeColumnsToContents();
+        emit call_reload_table();
         change_current_account(0);
         if (oper == 1)
             ui->accountcomboBox->setValue(d.from);
@@ -164,10 +168,8 @@ void ListOperations::transfer_operation()
 
 void ListOperations::change_current_account(int idx)
 {
-    QLocale russian(QLocale::Russian, QLocale::RussianFederation);
-
 //    ui->account_ostatok->setText(tr("%1").arg(db->get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
-    ui->account_ostatok->setText(russian.toString(db->get_account_balance(ui->accountcomboBox->value())));
+    ui->account_ostatok->setText(::locale->toCurrencyString(db->get_account_balance(ui->accountcomboBox->value())));
     current_account = ui->accountcomboBox->value();
 }
 
@@ -187,17 +189,23 @@ void ListOperations::select_list_operations()
         query = "SELECT acc_from, acc_to, summ, dt, descr FROM operation WHERE dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
 
     model->setQuery(query);
+    emit call_reload_table();
 }
 
 void ListOperations::select_font()
 {
     bool bOk;
 
-    QFont fnt = QFontDialog::getFont(&bOk);
+    fnt = QFontDialog::getFont(&bOk);
     if (bOk) {
         ui->tableView->setFont(fnt);
-        ui->tableView->resizeRowsToContents();
-        ui->tableView->resizeColumnsToContents();
-        ui->tableView->horizontalHeader()->setStretchLastSection(true);
+        emit call_reload_table();
     }
+}
+
+void ListOperations::reload_table()
+{
+    ui->tableView->resizeRowsToContents();
+    ui->tableView->resizeColumnsToContents();
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
 }
