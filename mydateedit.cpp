@@ -1,4 +1,5 @@
 #include "mydateedit.h"
+#include "global.h"
 
 MyDateEdit::MyDateEdit(QWidget *d = 0) :
 	QDateEdit(d)

@@ -17,7 +17,8 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole:
         if (index.column() == 3) {
 //            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
-            return locale->toCurrencyString(value.toDouble());
+            return default_locale->toCurrencyString(value.toDouble());
+//            return english->toCurrencyString(value.toDouble());
         }
         else
             return value;

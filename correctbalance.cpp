@@ -9,10 +9,10 @@ CorrectBalance::CorrectBalance(QWidget *parent) :
 
     ui->okButton->setEnabled(false);
 
-    ui->doubleSpinBox->setRange(-1000000, 1000000);
+//    ui->doubleSpinBox->setRange(-1000000, 1000000);
 
     connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_ok()));
-    connect(ui->doubleSpinBox, SIGNAL(valueChanged(double)), SLOT(check_ok()));
+    connect(ui->summEdit, SIGNAL(textChanged(QString)), SLOT(check_ok()));
     connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
 }
@@ -24,7 +24,7 @@ CorrectBalance::~CorrectBalance()
 
 void CorrectBalance::check_ok()
 {
-    if (ui->doubleSpinBox->value() == 0 || ui->comboBox->value() == 0)
+    if (ui->summEdit->text().toDouble() == 0 || ui->comboBox->value() == 0)
         ui->okButton->setEnabled(false);
     else
         ui->okButton->setEnabled(true);
@@ -37,12 +37,12 @@ void CorrectBalance::setAccount(int value)
 
 void CorrectBalance::setBalance(double value)
 {
-    ui->doubleSpinBox->setValue(value);
+    ui->summEdit->setText(default_locale->toCurrencyString(value));
 }
 
 double CorrectBalance::balance()
 {
-    return ui->doubleSpinBox->value();
+    return ui->summEdit->text().toDouble();
 }
 
 int CorrectBalance::account()

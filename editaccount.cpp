@@ -1,6 +1,7 @@
 #include "QtSql"
 #include "editaccount.h"
 #include "ui_editaccount.h"
+#include "global.h"
 
 EditAccount::EditAccount(QWidget *parent) :
     QDialog(parent),
@@ -12,6 +13,7 @@ EditAccount::EditAccount(QWidget *parent) :
     connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
 
+    ui->balanceSpinBox->setSuffix(default_locale->toCurrencyString(0));
     ui->balanceSpinBox->setRange(-1000000, 1000000);
 
     ui->okButton->setEnabled(false);

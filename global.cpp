@@ -2,5 +2,6 @@
 
 QString version = "0.1";
 int     current_account = 0;
-QLocale *locale;
+QLocale *default_locale;
+QLocale *english;
 QFont   fnt;

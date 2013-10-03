@@ -31,7 +31,7 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
         if (index.column() == 2) {
 //            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
 //            return locale->toString(value.toDouble());
-            return locale->toCurrencyString(value.toDouble());
+            return default_locale->toCurrencyString(value.toDouble());
         }
         else if (index.column() == 3) {
 //            return value.toDate().toString("dddd dd MMMM yyyy");
@@ -169,7 +169,7 @@ void ListOperations::transfer_operation()
 void ListOperations::change_current_account(int idx)
 {
 //    ui->account_ostatok->setText(tr("%1").arg(db->get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
-    ui->account_ostatok->setText(::locale->toCurrencyString(db->get_account_balance(ui->accountcomboBox->value())));
+    ui->account_ostatok->setText(default_locale->toCurrencyString(db->get_account_balance(ui->accountcomboBox->value())));
     current_account = ui->accountcomboBox->value();
 }
 

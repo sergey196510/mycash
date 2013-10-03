@@ -2,6 +2,7 @@
 #define CORRECTBALANCE_H
 
 #include <QDialog>
+#include "global.h"
 
 namespace Ui {
 class CorrectBalance;
