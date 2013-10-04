@@ -63,5 +63,5 @@ void EditOperation::setdata(operation_data &d)
     ui->from_account->setValue(d.from);
     ui->to_Account->setValue(d.to);
     ui->agent_comboBox->setValue(d.agent);
-    ui->summSpinBox->setSuffix(default_locale->toCurrencyString(d.summ));
+    ui->summSpinBox->setValue(d.summ);
 }

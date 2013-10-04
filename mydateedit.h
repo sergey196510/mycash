@@ -5,15 +5,23 @@
 #include <QCalendarWidget>
 
 
+class MyCalendarWidget : public QCalendarWidget
+{
+    Q_OBJECT
+
+public:
+    MyCalendarWidget(QWidget *parent = 0);
+};
+
 class MyDateEdit : public QDateEdit
 {
 	Q_OBJECT
 
 private:
-	QCalendarWidget *cw;
+    MyCalendarWidget *cw;
 
 public:
-	MyDateEdit(QWidget *);
+    MyDateEdit(QWidget *);
 	~MyDateEdit();
 	QString value() { return date().toString("yyyy-MM-dd"); }
 };

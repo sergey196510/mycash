@@ -5,6 +5,7 @@
 #include "createdatabase.h"
 #include "opendatabase.h"
 #include "listaccounts.h"
+#include "listcurrency.h"
 #include "listoperations.h"
 #include "listagents.h"
 #include "global.h"
@@ -52,6 +53,7 @@ void MyCash::setconnects()
     connect(ui->action_ListAccounts, SIGNAL(triggered()), SLOT(list_accounts()));
     connect(ui->action_ListOperations, SIGNAL(triggered()), SLOT(list_operations()));
     connect(ui->action_ListAgents, SIGNAL(triggered()), SLOT(list_agents()));
+    connect(ui->action_ListCurrencies, SIGNAL(triggered()), SLOT(list_currency()));
 
     connect(ui->actionAbout_program, SIGNAL(triggered()), SLOT(aboutProgram()));
     connect(ui->actionAbout_QT,      SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -155,6 +157,13 @@ void MyCash::list_accounts()
     setCentralWidget(la);
 }
 
+void MyCash::list_currency()
+{
+    ListCurrency *lc = new ListCurrency;
+
+    setCentralWidget(lc);
+}
+
 void MyCash::list_operations()
 {
     ListOperations *lo = new ListOperations;
@@ -176,5 +185,5 @@ void MyCash::settings()
 
 void MyCash::aboutProgram()
 {
-    QMessageBox::about(this, tr("MyCash"), tr("MyCash ver 0.1"));
+    QMessageBox::about(this, tr("MyCash"), tr("MyCash ver ") + version);
 }

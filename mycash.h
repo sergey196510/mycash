@@ -35,6 +35,7 @@ private slots:
     void aboutProgram();
     void mark_Object();
     void list_accounts();
+    void list_currency();
     void list_operations();
     void list_agents();
 

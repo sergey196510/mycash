@@ -11,9 +11,11 @@ int main(int argc, char *argv[])
     translator.load("qt_ru", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     a.installTranslator(&translator);
 
-//    locale = new QLocale(QLocale::Russian, QLocale::RussianFederation);
     default_locale = new QLocale();
-    english = new QLocale(QLocale::C);
+    english = new QLocale(QLocale::Ukrainian);
+
+    qDebug() << default_locale->currencySymbol(default_locale->CurrencyDisplayName);
+
 
     MyCash w;
     w.show();

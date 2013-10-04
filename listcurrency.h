@@ -1,6 +1,7 @@
 #ifndef LISTCURRENCY_H
 #define LISTCURRENCY_H
 
+#include <QtGui>
 #include <QWidget>
 
 namespace Ui {
@@ -17,6 +18,10 @@ public:
 
 private:
     Ui::ListCurrency *ui;
+
+private slots:
+    void check_new_button(QString);
+    void check_symbol(QString);
 };
 
 #endif // LISTCURRENCY_H

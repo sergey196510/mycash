@@ -111,6 +111,7 @@ ListOperations::ListOperations(QWidget *parent) :
     connect(ui->search_comboBox, SIGNAL(currentIndexChanged(int)), SLOT(select_list_operations()));
     connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(select_list_operations()));
     connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(select_list_operations()));
+    connect(this, SIGNAL(call_reload_table()), SLOT(reload_table()));
 }
 
 ListOperations::~ListOperations()
