@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>507</width>
-    <height>223</height>
+    <height>227</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,9 +43,6 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="summSpinBox"/>
-     </item>
      <item row="4" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
@@ -75,6 +72,9 @@
      </item>
      <item row="1" column="1">
       <widget class="AgentComboBox" name="agent_comboBox"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="currencyEdit" name="summSpinBox"/>
      </item>
     </layout>
    </item>
@@ -113,14 +113,19 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>AccountComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">accountcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>
    <header location="global">mydateedit.h</header>
   </customwidget>
   <customwidget>
-   <class>AccountComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">accountcombobox.h</header>
+   <class>currencyEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">currencyedit.h</header>
   </customwidget>
   <customwidget>
    <class>AgentComboBox</class>
@@ -131,7 +136,6 @@
  <tabstops>
   <tabstop>from_account</tabstop>
   <tabstop>to_Account</tabstop>
-  <tabstop>summSpinBox</tabstop>
   <tabstop>dateEdit</tabstop>
   <tabstop>descrEdit</tabstop>
   <tabstop>okButton</tabstop>

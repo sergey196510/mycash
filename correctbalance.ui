@@ -47,7 +47,7 @@
       <widget class="MyDateEdit" name="dateEdit"/>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="summEdit"/>
+      <widget class="currencyEdit" name="summEdit"/>
      </item>
     </layout>
    </item>
@@ -107,6 +107,11 @@
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>
    <header location="global">mydateedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>currencyEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">currencyedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

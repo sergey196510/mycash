@@ -42,6 +42,11 @@ ListAccounts::ListAccounts(QWidget *parent) :
     model = new ListAccountsModel;
     model->setQuery(query);
 
+    model->setHeaderData(1, Qt::Horizontal, tr("Name"));
+    model->setHeaderData(2, Qt::Horizontal, tr("Type"));
+    model->setHeaderData(3, Qt::Horizontal, tr("Balance"));
+    model->setHeaderData(4, Qt::Horizontal, tr("Description"));
+
 //    model->select();
 
     ui->treeView->setModel(model);

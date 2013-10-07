@@ -10,13 +10,15 @@ EditOperation::EditOperation(QWidget *parent) :
 
     db = new Database;
 
+    ui->okButton->setIcon(QPixmap(":icons/accept.png"));
+    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     ui->okButton->setEnabled(false);
 
-    ui->summSpinBox->setRange(-1000000, 1000000);
+//    ui->summSpinBox->setRange(-1000000, 1000000);
 
     connect(ui->from_account, SIGNAL(currentIndexChanged(int)), SLOT(check_Ok()));
     connect(ui->to_Account, SIGNAL(currentIndexChanged(int)), SLOT(check_Ok()));
-    connect(ui->summSpinBox, SIGNAL(valueChanged(double)), SLOT(check_Ok()));
+    connect(ui->summSpinBox, SIGNAL(textChanged(QString)), SLOT(check_Ok()));
     connect(ui->summSpinBox, SIGNAL(valueChanged(double)), SLOT(check_balance(double)));
     connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));

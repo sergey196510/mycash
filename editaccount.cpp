@@ -13,9 +13,12 @@ EditAccount::EditAccount(QWidget *parent) :
     connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
 
-    ui->balanceSpinBox->setSuffix(default_locale->toCurrencyString(0));
-    ui->balanceSpinBox->setRange(-1000000, 1000000);
+//    ui->balanceSpinBox->setSuffix(default_locale->toCurrencyString(0));
+//    ui->balanceSpinBox->setRange(-1000000, 1000000);
+    ui->balanceSpinBox->setValue(0);
 
+    ui->okButton->setIcon(QPixmap(":icons/accept.png"));
+    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     ui->okButton->setEnabled(false);
 }
 

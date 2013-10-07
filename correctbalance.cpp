@@ -7,6 +7,8 @@ CorrectBalance::CorrectBalance(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->okButton->setIcon(QPixmap(":icons/accept.png"));
+    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     ui->okButton->setEnabled(false);
 
 //    ui->doubleSpinBox->setRange(-1000000, 1000000);
@@ -24,7 +26,7 @@ CorrectBalance::~CorrectBalance()
 
 void CorrectBalance::check_ok()
 {
-    if (ui->summEdit->text().toDouble() == 0 || ui->comboBox->value() == 0)
+    if (ui->summEdit == 0 || ui->comboBox->value() == 0)
         ui->okButton->setEnabled(false);
     else
         ui->okButton->setEnabled(true);
@@ -37,7 +39,7 @@ void CorrectBalance::setAccount(int value)
 
 void CorrectBalance::setBalance(double value)
 {
-    ui->summEdit->setText(default_locale->toCurrencyString(value));
+    ui->summEdit->setValue(value);
 }
 
 double CorrectBalance::balance()

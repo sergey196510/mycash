@@ -75,7 +75,7 @@ cmake_minimum_required(VERSION 2.8)
   
   # by default only QtCore and QtGui modules are enabled
   # other modules must be enabled like this:
-  SET( QT_USE_QT3SUPPORT TRUE )   
+  # SET( QT_USE_QT3SUPPORT TRUE )
   SET( QT_USE_QTSQL TRUE )
   
   # this command finds Qt4 libraries and sets all required variables

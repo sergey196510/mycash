@@ -5,8 +5,8 @@ MyCalendarWidget::MyCalendarWidget(QWidget *d) :
     QCalendarWidget(d)
 {
     default_locale->weekdays();
-    default_locale->firstDayOfWeek();
-//    this->setFirstDayOfWeek(Qt::Monday);
+//    default_locale->firstDayOfWeek();
+    setFirstDayOfWeek(Qt::Monday);
 }
 
 MyDateEdit::MyDateEdit(QWidget *d = 0) :
@@ -14,7 +14,6 @@ MyDateEdit::MyDateEdit(QWidget *d = 0) :
 {
     cw = new MyCalendarWidget;
 
-//	cw->setFirstDayOfWeek(Qt::Monday);
 	setCalendarPopup(true);
         setCalendarWidget(cw);
 
