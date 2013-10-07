@@ -14,12 +14,14 @@ EditOperation::EditOperation(QWidget *parent) :
     ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     ui->okButton->setEnabled(false);
 
+    ui->warning->setVisible(false);
+
 //    ui->summSpinBox->setRange(-1000000, 1000000);
 
     connect(ui->from_account, SIGNAL(currentIndexChanged(int)), SLOT(check_Ok()));
     connect(ui->to_Account, SIGNAL(currentIndexChanged(int)), SLOT(check_Ok()));
     connect(ui->summSpinBox, SIGNAL(textChanged(QString)), SLOT(check_Ok()));
-    connect(ui->summSpinBox, SIGNAL(valueChanged(double)), SLOT(check_balance(double)));
+    connect(ui->summSpinBox, SIGNAL(textChanged(QString)), SLOT(check_balance(QString)));
     connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
 }
@@ -38,7 +40,7 @@ void EditOperation::check_Ok()
         ui->okButton->setEnabled(false);
 }
 
-void EditOperation::check_balance(double value)
+void EditOperation::check_balance(QString value)
 {
     double balance;
 
@@ -46,8 +48,13 @@ void EditOperation::check_balance(double value)
         return;
 
     balance = db->get_account_balance(ui->from_account->value());
-    if (value > balance)
-        qDebug() << value << balance << "Balance is small";
+    if (value.toDouble() > balance)
+        ui->warning->setVisible(true);
+    else
+        ui->warning->setVisible(false);
+
+    qDebug() << value.toDouble() << balance;
+//        qDebug() << value << balance << "Balance is small";
 }
 
 void EditOperation::data(operation_data &d)

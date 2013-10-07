@@ -33,7 +33,7 @@ private:
 
 private slots:
     void check_Ok();
-    void check_balance(double);
+    void check_balance(QString);
 };
 
 #endif // EDITOPERATION_H
