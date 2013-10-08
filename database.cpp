@@ -29,6 +29,18 @@ double Database::get_account_balance(int id)
     return query.value(0).toDouble();
 }
 
+QString Database::get_account_scod(int id)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT c.scod FROM account a, currency c WHERE a.id = :id AND a.ccod = c.id");
+    query.bindValue(":id", id);
+    if (!query.exec() || !query.next())
+        return 0;
+
+    return query.value(0).toString();
+}
+
 int Database::get_account_type(int id)
 {
     QSqlQuery query;

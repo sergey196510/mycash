@@ -4,7 +4,7 @@ CurrencyComboBox::CurrencyComboBox(QWidget *parent) :
     QComboBox(parent)
 {
     load();
-    this->setEditable(true);
+    this->setEditable(false);
 }
 
 void CurrencyComboBox::load()

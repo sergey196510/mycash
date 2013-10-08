@@ -4,7 +4,7 @@ AccountTypeComboBox::AccountTypeComboBox(QWidget *parent) :
     QComboBox(parent)
 {
     load();
-    this->setEditable(true);
+    this->setEditable(false);
 }
 
 void AccountTypeComboBox::load()

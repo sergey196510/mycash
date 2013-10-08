@@ -173,8 +173,16 @@ void ListOperations::transfer_operation()
 
 void ListOperations::change_current_account(int idx)
 {
-//    ui->account_ostatok->setText(tr("%1").arg(db->get_account_balance(ui->accountcomboBox->value()), 0, 'f', 2));
-    ui->account_ostatok->setText(default_locale->toCurrencyString(db->get_account_balance(ui->accountcomboBox->value())));
+    QLocale *lc;
+
+    if (db->get_account_scod(ui->accountcomboBox->value()) == "USD") {
+        ui->account_ostatok->setText("USD");
+        lc = new QLocale(QLocale::English);
+    }
+    else
+        lc = default_locale;
+    ui->account_ostatok->setText(lc->toCurrencyString(db->get_account_balance(ui->accountcomboBox->value())));
+
     current_account = ui->accountcomboBox->value();
 }
 

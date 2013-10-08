@@ -74,7 +74,8 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
     connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
 
-    ui->act_summ->setNum(db.get_account_summ(1));
+//    ui->act_summ->setNum(db.get_account_summ(1));
+    ui->act_summ->setText(default_locale->toCurrencyString(db.get_account_summ(1)));
 }
 
 ListAccounts::~ListAccounts()
@@ -145,4 +146,5 @@ void ListAccounts::check_type()
 
     query = "SELECT a.id,a.name,t.name,a.balance,a.desct FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
     model->setQuery(query);
+    ui->treeView->resizeColumnToContents(1);
 }

@@ -44,6 +44,8 @@ void MyCash::setconnects()
     ui->action_Quit->setIcon(QPixmap(":icons/stop_32.png"));
     ui->action_Settings->setIcon(QPixmap(":icons/options.gif"));
     ui->action_ListAccounts->setIcon(QPixmap(":icons/money.ico"));
+    ui->action_ListAgents->setIcon(QPixmap(":icons/user.png"));
+    ui->action_ListOperations->setIcon(QPixmap(":icons/payment.ico"));
 
     connect(this,                    SIGNAL(call_mark()), SLOT(mark_Object()));
     connect(ui->action_Create,       SIGNAL(triggered()), SLOT(create()));
@@ -66,6 +68,7 @@ void MyCash::setconnects()
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addAction(ui->action_ListAccounts);
     ui->mainToolBar->addAction(ui->action_ListOperations);
+    ui->mainToolBar->addAction(ui->action_ListAgents);
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addAction(ui->action_Settings);
     ui->mainToolBar->addAction(ui->action_Quit);

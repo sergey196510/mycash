@@ -5,5 +5,7 @@
         <file>icons/options.gif</file>
         <file>icons/block_32.png</file>
         <file>icons/money.ico</file>
+        <file>icons/user.png</file>
+        <file>icons/payment.ico</file>
     </qresource>
 </RCC>
