@@ -13,6 +13,7 @@ cmake_minimum_required(VERSION 2.8)
     accountcombobox.cpp
     agentcombobox.cpp
     accounttypecombobox.cpp
+    currencycombobox.cpp
     currencyedit.cpp
     database.cpp
     editaccount.cpp
@@ -35,6 +36,7 @@ cmake_minimum_required(VERSION 2.8)
     accountcombobox.h
     agentcombobox.h
     accounttypecombobox.h
+    currencycombobox.h
     currencyedit.h
     database.h
     editaccount.h

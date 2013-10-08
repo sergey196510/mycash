@@ -3,6 +3,7 @@
 
 #include <QtGui>
 #include <QWidget>
+#include <QtSql>
 
 namespace Ui {
 class ListCurrency;
@@ -18,10 +19,15 @@ public:
 
 private:
     Ui::ListCurrency *ui;
+    QSqlQueryModel *model;
+    QString query;
 
 private slots:
     void check_new_button(QString);
     void check_symbol(QString);
+    void new_currency();
+    void set_default();
+    void check_select();
 };
 
 #endif // LISTCURRENCY_H

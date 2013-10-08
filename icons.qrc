@@ -4,5 +4,6 @@
         <file>icons/accept.png</file>
         <file>icons/options.gif</file>
         <file>icons/block_32.png</file>
+        <file>icons/money.ico</file>
     </qresource>
 </RCC>

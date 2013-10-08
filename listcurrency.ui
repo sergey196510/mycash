@@ -55,7 +55,7 @@
            <widget class="QLineEdit" name="symbolEdit"/>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="kursEdit"/>
+           <widget class="QDoubleSpinBox" name="kursEdit"/>
           </item>
          </layout>
         </item>
@@ -79,6 +79,13 @@
            <widget class="QToolButton" name="delButton">
             <property name="text">
              <string>Delete</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="defaultButton">
+            <property name="text">
+             <string>Default</string>
             </property>
            </widget>
           </item>

@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     english = new QLocale(QLocale::Ukrainian);
 
     qDebug() << default_locale->currencySymbol(default_locale->CurrencyDisplayName);
+    qDebug() << default_locale->currencySymbol(default_locale->CurrencyIsoCode);
 
 
     MyCash w;

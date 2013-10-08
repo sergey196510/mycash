@@ -31,6 +31,7 @@ public:
 private slots:
     void new_account();
     void correct_balance();
+    void check_type();
     
 private:
     Ui::ListAccounts *ui;

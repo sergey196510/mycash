@@ -53,7 +53,7 @@ void EditOperation::check_balance(QString value)
     else
         ui->warning->setVisible(false);
 
-    qDebug() << value.toDouble() << balance;
+//    qDebug() << value << default_locale->toDouble(value) << balance;
 //        qDebug() << value << balance << "Balance is small";
 }
 

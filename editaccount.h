@@ -6,6 +6,7 @@
 struct Account_Data {
     QString name;
     int type;
+    int curr;
     double balance;
     QString descr;
 };
@@ -23,6 +24,7 @@ public:
     ~EditAccount();
     QString name();
     int type();
+    int curr();
     double balance();
     QString descr();
     Account_Data data();

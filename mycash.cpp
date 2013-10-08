@@ -43,6 +43,7 @@ void MyCash::setconnects()
 {
     ui->action_Quit->setIcon(QPixmap(":icons/stop_32.png"));
     ui->action_Settings->setIcon(QPixmap(":icons/options.gif"));
+    ui->action_ListAccounts->setIcon(QPixmap(":icons/money.ico"));
 
     connect(this,                    SIGNAL(call_mark()), SLOT(mark_Object()));
     connect(ui->action_Create,       SIGNAL(triggered()), SLOT(create()));
@@ -62,6 +63,7 @@ void MyCash::setconnects()
     ui->mainToolBar->addAction(ui->action_Create);
     ui->mainToolBar->addAction(ui->action_Open);
     ui->mainToolBar->addAction(ui->action_Close);
+    ui->mainToolBar->addSeparator();
     ui->mainToolBar->addAction(ui->action_ListAccounts);
     ui->mainToolBar->addAction(ui->action_ListOperations);
     ui->mainToolBar->addSeparator();
@@ -87,6 +89,7 @@ void MyCash::readsettings()
     restoreGeometry(settings.value("geometry").toByteArray());
     dbname = settings.value("dbname", "").toString();
     current_account = settings.value("current_account", "").toInt();
+    current_currency = settings.value("current_currency", "").toInt();
 //    fnt = settings.value("operations_font");
 }
 
@@ -96,6 +99,7 @@ void MyCash::writesettings()
     settings.setValue("geometry", saveGeometry());
     settings.setValue("dbname", dbname);
     settings.setValue("current_account", current_account);
+    settings.setValue("current_currency", current_currency);
     settings.setValue("operations_font", fnt);
 }
 

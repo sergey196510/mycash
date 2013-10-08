@@ -17,7 +17,7 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole:
         if (index.column() == 3) {
 //            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
-            return default_locale->toCurrencyString(value.toDouble());
+            return default_locale->toString(value.toDouble());
 //            return english->toCurrencyString(value.toDouble());
         }
         else
@@ -35,9 +35,13 @@ ListAccounts::ListAccounts(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListAccounts)
 {
+    int type;
+
     ui->setupUi(this);
 
-    query = "SELECT a.id,a.name,t.name,a.balance,a.desct FROM account a, account_type t WHERE a.type = t.id ORDER BY type,a.name";
+    type = ui->typeComboBox->value();
+
+    query = "SELECT a.id,a.name,t.name,a.balance,a.desct FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
 
     model = new ListAccountsModel;
     model->setQuery(query);
@@ -68,6 +72,8 @@ ListAccounts::ListAccounts(QWidget *parent) :
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
 
+    connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
+
     ui->act_summ->setNum(db.get_account_summ(1));
 }
 
@@ -84,6 +90,7 @@ void ListAccounts::new_account()
     if (ea.exec() == QDialog::Accepted) {
         QString name = ea.name();
         int type = ea.type();
+        int ccod = ea.curr();
         double balance = ea.balance();
         QString descr = ea.descr();
         QSqlQuery q;
@@ -92,9 +99,10 @@ void ListAccounts::new_account()
             return;
         }
 
-        q.prepare("INSERT INTO account(name, type, balance, desct) VALUES(:name, :type, :balance, :descr)");
+        q.prepare("INSERT INTO account(name, type, ccod, balance, desct) VALUES(:name, :type, :ccod, :balance, :descr)");
         q.bindValue(":name", name);
         q.bindValue(":type", type);
+        q.bindValue(":ccod", ccod);
         q.bindValue(":balance", balance);
         q.bindValue(":descr", descr);
         q.exec();
@@ -129,4 +137,12 @@ void ListAccounts::correct_balance()
 
         model->setQuery(query);
     }
+}
+
+void ListAccounts::check_type()
+{
+    int type = ui->typeComboBox->value();
+
+    query = "SELECT a.id,a.name,t.name,a.balance,a.desct FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
+    model->setQuery(query);
 }

@@ -37,6 +37,11 @@ int EditAccount::type()
     return ui->typeBox->value();
 }
 
+int EditAccount::curr()
+{
+    return ui->currencyBox->value();
+}
+
 double EditAccount::balance()
 {
     return ui->balanceSpinBox->value();
@@ -53,6 +58,7 @@ Account_Data EditAccount::data()
 
     d.name = ui->nameEdit->text();
     d.type = ui->typeBox->value();
+    d.curr = ui->currencyBox->value();
     d.balance = ui->balanceSpinBox->value();
     d.descr = ui->descrEdit->text();
 
