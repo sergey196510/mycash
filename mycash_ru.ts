@@ -214,7 +214,7 @@
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Изменить</translation>
+        <translation>Изменить</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -222,7 +222,7 @@
     </message>
     <message>
         <source>Operation cancellation</source>
-        <translation type="unfinished"></translation>
+        <translation>Операция прервана</translation>
     </message>
     <message>
         <source>Nothing selected</source>
@@ -272,11 +272,11 @@
     </message>
     <message>
         <source>Current account:</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий счет</translation>
     </message>
     <message>
         <source>Ostatok:</source>
-        <translation type="unfinished"></translation>
+        <translation>Остаток</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -284,11 +284,11 @@
     </message>
     <message>
         <source>Select account:</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите счет</translation>
     </message>
     <message>
         <source>Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>-</source>
@@ -296,39 +296,39 @@
     </message>
     <message>
         <source>From Account</source>
-        <translation type="unfinished"></translation>
+        <translation>Со счета</translation>
     </message>
     <message>
         <source>To Account</source>
-        <translation type="unfinished"></translation>
+        <translation>На счет</translation>
     </message>
     <message>
         <source>Summ</source>
-        <translation type="unfinished"></translation>
+        <translation>Сумма</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Примечание</translation>
     </message>
     <message>
         <source>Debet</source>
-        <translation type="unfinished"></translation>
+        <translation>Зачисление</translation>
     </message>
     <message>
         <source>Credit</source>
-        <translation type="unfinished"></translation>
+        <translation>Списание</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевод</translation>
     </message>
     <message>
         <source>Select font</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите шрифт</translation>
     </message>
 </context>
 <context>
@@ -346,71 +346,71 @@
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Файл</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Справка</translation>
     </message>
     <message>
         <source>&amp;Objects</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Объекты</translation>
     </message>
     <message>
         <source>Reports</source>
-        <translation type="unfinished"></translation>
+        <translation>Отчеты</translation>
     </message>
     <message>
         <source>&amp;Create</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Создать</translation>
     </message>
     <message>
         <source>&amp;Open</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Открыть</translation>
     </message>
     <message>
         <source>C&amp;lose</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Закрыть</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Выход</translation>
     </message>
     <message>
         <source>About &amp;program</source>
-        <translation type="unfinished"></translation>
+        <translation>О &amp;программе</translation>
     </message>
     <message>
         <source>About &amp;QT</source>
-        <translation type="unfinished"></translation>
+        <translation>О &amp;QT</translation>
     </message>
     <message>
         <source>&amp;Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Настройки</translation>
     </message>
     <message>
         <source>&amp;Accounts</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Счета</translation>
     </message>
     <message>
         <source>&amp;Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Операции</translation>
     </message>
     <message>
         <source>Agents</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Агенты</translation>
     </message>
     <message>
         <source>&amp;Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Валюты</translation>
     </message>
     <message>
         <source>Report 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Отчет &amp;1</translation>
     </message>
     <message>
         <source>Report 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Отчет &amp;2</translation>
     </message>
     <message>
         <source>MyCash ver </source>
@@ -425,15 +425,15 @@
     </message>
     <message>
         <source>Database file</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Файл базы данных</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter database file name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Введите имя файла базы данных&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press to select database file name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нажмите для выбора файла базы данных&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>...</source>
@@ -445,7 +445,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>Choose File</source>

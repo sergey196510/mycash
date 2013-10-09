@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <QWidget>
 #include <QtSql>
+#include "global.h"
 
 namespace Ui {
 class ListCurrency;

@@ -72,8 +72,7 @@ void ListCurrency::set_default()
         return;
     }
 
-    id = list.at(0).data((Qt::DisplayRole)).toInt();
-
+    current_currency = list.at(0).data((Qt::DisplayRole)).toInt();
 }
 
 void ListCurrency::check_select()

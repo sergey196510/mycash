@@ -25,6 +25,7 @@ public:
     QString name();
     int type();
     int curr();
+    void set_curr(int);
     double balance();
     QString descr();
     Account_Data data();

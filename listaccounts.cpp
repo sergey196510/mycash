@@ -88,6 +88,8 @@ void ListAccounts::new_account()
 {
     EditAccount ea(this);
 
+    ea.set_curr(current_currency);
+
     if (ea.exec() == QDialog::Accepted) {
         QString name = ea.name();
         int type = ea.type();

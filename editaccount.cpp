@@ -42,6 +42,11 @@ int EditAccount::curr()
     return ui->currencyBox->value();
 }
 
+void EditAccount::set_curr(int id)
+{
+    ui->currencyBox->setValue(id);
+}
+
 double EditAccount::balance()
 {
     return ui->balanceSpinBox->value();
