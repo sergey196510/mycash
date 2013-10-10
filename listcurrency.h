@@ -10,6 +10,16 @@ namespace Ui {
 class ListCurrency;
 }
 
+class ListCurrencyModel : public QSqlQueryModel
+{
+    Q_OBJECT
+
+public:
+    explicit ListCurrencyModel(QObject *parent = 0);
+    ~ListCurrencyModel();
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+};
+
 class ListCurrency : public QWidget
 {
     Q_OBJECT
@@ -20,7 +30,7 @@ public:
 
 private:
     Ui::ListCurrency *ui;
-    QSqlQueryModel *model;
+    ListCurrencyModel *model;
     QString query;
 
 private slots:

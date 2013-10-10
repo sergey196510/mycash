@@ -1,6 +1,38 @@
 #include "listcurrency.h"
 #include "ui_listcurrency.h"
 
+ListCurrencyModel::ListCurrencyModel(QObject *parent) :
+    QSqlQueryModel(parent)
+{
+}
+
+ListCurrencyModel::~ListCurrencyModel()
+{
+}
+
+QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
+{
+    QVariant value = QSqlQueryModel::data(index, role);
+
+    switch (role) {
+        case Qt::DisplayRole:
+            return value;
+
+        case Qt::TextAlignmentRole:
+            if (index.column() == 4)
+                return int(Qt::AlignRight | Qt::AlignVCenter);
+
+    case Qt::TextColorRole:
+//        qDebug() << record(index.row()).value(0).toInt();
+        if (record(index.row()).value(0).toInt() == current_currency) {
+            return QVariant(QColor(Qt::red));
+        }
+        return value;
+    }
+
+    return value;
+}
+
 ListCurrency::ListCurrency(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListCurrency)
@@ -9,7 +41,7 @@ ListCurrency::ListCurrency(QWidget *parent) :
 
     query = "SELECT id, name, icod, scod, kurs FROM currency ORDER BY name";
 
-    model = new QSqlQueryModel;
+    model = new ListCurrencyModel;
     model->setQuery(query);
 
     ui->tableView->setModel(model);
@@ -73,6 +105,7 @@ void ListCurrency::set_default()
     }
 
     current_currency = list.at(0).data((Qt::DisplayRole)).toInt();
+    model->setQuery(query);
 }
 
 void ListCurrency::check_select()
