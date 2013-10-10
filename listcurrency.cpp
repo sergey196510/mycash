@@ -46,6 +46,13 @@ ListCurrency::ListCurrency(QWidget *parent) :
 
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(0);
+    ui->tableView->resizeRowsToContents();
+    ui->tableView->resizeColumnsToContents();
+    ui->tableView->setAlternatingRowColors(true);
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableView->setShowGrid(false);
 
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);
@@ -76,7 +83,6 @@ void ListCurrency::check_symbol(QString str)
     QLocale locale;
 
     locale = str;
-
 }
 
 void ListCurrency::new_currency()
@@ -90,6 +96,8 @@ void ListCurrency::new_currency()
     q.exec();
 
     model->setQuery(query);
+    ui->tableView->resizeRowsToContents();
+    ui->tableView->resizeColumnsToContents();
 }
 
 void ListCurrency::set_default()
@@ -106,6 +114,8 @@ void ListCurrency::set_default()
 
     current_currency = list.at(0).data((Qt::DisplayRole)).toInt();
     model->setQuery(query);
+    ui->tableView->resizeRowsToContents();
+    ui->tableView->resizeColumnsToContents();
 }
 
 void ListCurrency::check_select()
