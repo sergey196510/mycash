@@ -26,6 +26,12 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
         case Qt::TextAlignmentRole:
             if (index.column() == 3)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
+
+    case Qt::TextColorRole:
+        if (record(index.row()).value(5).toInt() == 1) {
+            return QVariant(QColor(Qt::gray));
+        }
+        return value;
     }
 
     return value;
@@ -41,7 +47,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
     type = ui->typeComboBox->value();
 
-    query = "SELECT a.id,a.name,t.name,a.balance,a.desct FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
+    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
 
     model = new ListAccountsModel;
     model->setQuery(query);
@@ -55,6 +61,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
+    ui->treeView->hideColumn(5);
     ui->treeView->resizeColumnToContents(1);
 
     QAction *nacct = new QAction(tr("New account"), this);
@@ -96,18 +103,20 @@ void ListAccounts::new_account()
         int ccod = ea.curr();
         double balance = ea.balance();
         QString descr = ea.descr();
+        bool hidden = ea.hidden();
         QSqlQuery q;
 
         if (name.length() == 0) {
             return;
         }
 
-        q.prepare("INSERT INTO account(name, type, ccod, balance, desct) VALUES(:name, :type, :ccod, :balance, :descr)");
+        q.prepare("INSERT INTO account(name, type, ccod, balance, desct, hidden) VALUES(:name, :type, :ccod, :balance, :descr, :hidden)");
         q.bindValue(":name", name);
         q.bindValue(":type", type);
         q.bindValue(":ccod", ccod);
         q.bindValue(":balance", balance);
         q.bindValue(":descr", descr);
+        q.bindValue(":hidden", hidden);
         q.exec();
 
         model->setQuery(query);
@@ -146,7 +155,7 @@ void ListAccounts::check_type()
 {
     int type = ui->typeComboBox->value();
 
-    query = "SELECT a.id,a.name,t.name,a.balance,a.desct FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
+    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
     model->setQuery(query);
     ui->treeView->resizeColumnToContents(1);
 }

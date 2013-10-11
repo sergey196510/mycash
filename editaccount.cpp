@@ -89,3 +89,8 @@ bool EditAccount::nameFind(QString name)
 
     return false;
 }
+
+bool EditAccount::hidden()
+{
+    return ui->hiddenBox->isEnabled();
+}

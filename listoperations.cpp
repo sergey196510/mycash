@@ -179,6 +179,10 @@ void ListOperations::change_current_account(int idx)
         ui->account_ostatok->setText("USD");
         lc = new QLocale(QLocale::English);
     }
+    else if (db->get_account_scod(ui->accountcomboBox->value()) == "EUR") {
+        ui->account_ostatok->setText("EUR");
+        lc = new QLocale(QLocale::German);
+    }
     else
         lc = default_locale;
     ui->account_ostatok->setText(lc->toCurrencyString(db->get_account_balance(ui->accountcomboBox->value())));

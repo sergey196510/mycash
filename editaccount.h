@@ -27,6 +27,7 @@ public:
     int curr();
     void set_curr(int);
     double balance();
+    bool hidden();
     QString descr();
     Account_Data data();
     

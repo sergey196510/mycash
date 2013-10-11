@@ -9,7 +9,7 @@ double Database::get_account_summ(int type)
 {
     QSqlQuery query;
 
-    query.prepare("SELECT SUM(balance) FROM account WHERE type = :type");
+    query.prepare("SELECT SUM(balance) FROM account WHERE type = :type AND hidden = 0");
     query.bindValue(":type", type);
     if (!query.exec() || !query.next())
         return 0;
@@ -27,6 +27,18 @@ double Database::get_account_balance(int id)
         return 0;
 
     return query.value(0).toDouble();
+}
+
+int Database::get_account_ccod(int id)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT ccod FROM account WHERE id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec() || !query.next())
+        return 0;
+
+    return query.value(0).toInt();
 }
 
 QString Database::get_account_scod(int id)

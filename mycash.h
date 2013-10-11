@@ -38,6 +38,7 @@ private slots:
     void list_currency();
     void list_operations();
     void list_agents();
+    void report1();
 
 };
 

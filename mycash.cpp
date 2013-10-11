@@ -59,6 +59,8 @@ void MyCash::setconnects()
     connect(ui->action_ListAgents, SIGNAL(triggered()), SLOT(list_agents()));
     connect(ui->action_ListCurrencies, SIGNAL(triggered()), SLOT(list_currency()));
 
+    connect(ui->actionReport_1, SIGNAL(triggered()), SLOT(report1()));
+
     connect(ui->actionAbout_program, SIGNAL(triggered()), SLOT(aboutProgram()));
     connect(ui->actionAbout_QT,      SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
@@ -197,4 +199,16 @@ void MyCash::settings()
 void MyCash::aboutProgram()
 {
     QMessageBox::about(this, tr("MyCash"), tr("MyCash ver ") + version);
+}
+
+void MyCash::report1()
+{
+    QDate localdate = QDate::currentDate();
+    int month, day, year;
+
+    month = localdate.month();
+    day = localdate.day();
+    year = localdate.year();
+
+    qDebug() << year << month << day;
 }
