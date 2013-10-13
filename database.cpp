@@ -9,7 +9,7 @@ double Database::get_account_summ(int type)
 {
     QSqlQuery query;
 
-    query.prepare("SELECT SUM(balance) FROM account WHERE type = :type AND hidden = 0");
+    query.prepare("SELECT SUM(balance) FROM account WHERE type = :type AND hidden = 'false'");
     query.bindValue(":type", type);
     if (!query.exec() || !query.next())
         return 0;

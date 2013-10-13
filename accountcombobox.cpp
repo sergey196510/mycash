@@ -20,10 +20,10 @@ void AccountComboBox::load(int type)
     addItem(tr("Account not present"), 0);
 
     if (type == 0) {
-    q.prepare("SELECT id,name FROM account WHERE hidden = 0 ORDER BY name");
+        q.prepare("SELECT id,name FROM account WHERE hidden = 'false' ORDER BY name");
     }
     else {
-    q.prepare("SELECT id,name FROM account WHERE type = :type AND hidden = 0 ORDER BY name");
+        q.prepare("SELECT id,name FROM account WHERE type = :type AND hidden = 'false' ORDER BY name");
 	q.bindValue(":type", type);
     }
     q.exec();

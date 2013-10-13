@@ -28,7 +28,7 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
     case Qt::TextColorRole:
-        if (record(index.row()).value(5).toInt() == 1) {
+        if (record(index.row()).value(5).toBool() == true) {
             return QVariant(QColor(Qt::gray));
         }
         return value;
