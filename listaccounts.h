@@ -11,7 +11,7 @@ namespace Ui {
 class ListAccounts;
 }
 
-class ListAccountsModel : public QSqlQueryModel
+class ListAccountsModel : public QStandardItemModel
 {
     Q_OBJECT
 
@@ -29,6 +29,7 @@ public:
     ~ListAccounts();
 
 private slots:
+    void fill_model();
     void new_account();
     void correct_balance();
     void check_type();

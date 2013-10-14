@@ -104,7 +104,12 @@ bool Database::new_account_oper(const int a_id, const int o_id, const double del
     int flag = (type == 1 || type == 4) ? 1 : -1;
     double summ = delta * flag;
 
-    q.prepare("INSERT INTO account_oper()");
+    q.prepare("INSERT INTO account_oper(a_id, o_id, summ) VALUES(:a_id, :o_id, :summ)");
+    q.bindValue(":a_id", a_id);
+    q.bindValue(":o_id", o_id);
+    q.bindValue(":summ", summ);
+    if (!q.exec())
+        return false;
 
     return true;
 }
@@ -136,7 +141,7 @@ bool Database::change_account_balance(const int id, const double delta)
     query.bindValue(":summ", summ);
     if (!query.exec()) {
 	query.exec("ROLLBACK TRANSACTION");
-	return false;
+        return false;
     }
 
     query.exec("COMMIT TRANSACTION");
