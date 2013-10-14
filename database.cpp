@@ -77,7 +77,7 @@ QString Database::get_account_name(int id)
     return query.value(0).toString();
 }
 
-bool Database::new_operation(const int from, const int to, const int agent, const double summ, const QString date, const QString descr)
+int Database::new_operation(const int from, const int to, const int agent, const double summ, const QString date, const QString descr)
 {
     QSqlQuery query;
 
@@ -89,9 +89,24 @@ bool Database::new_operation(const int from, const int to, const int agent, cons
     query.bindValue(":dt", date);
     query.bindValue(":descr", descr);
     if (!query.exec())
-        return false;
-    else
-        return true;
+        return 0;
+
+    query.prepare("SELECT MAX(id) FROM operation");
+    if (!query.exec() || !query.next())
+	return -1;
+    return query.value(0).toInt();
+}
+
+bool Database::new_account_oper(const int a_id, const int o_id, const double delta)
+{
+    QSqlQuery q;
+    int type = get_account_type(a_id);
+    int flag = (type == 1 || type == 4) ? 1 : -1;
+    double summ = delta * flag;
+
+    q.prepare("INSERT INTO account_oper()");
+
+    return true;
 }
 
 bool Database::change_account_balance(const int id, const double delta)
@@ -102,13 +117,7 @@ bool Database::change_account_balance(const int id, const double delta)
 
     query.exec("BEGIN TRANSACTION");
 
-    query.prepare("SELECT type FROM account WHERE id = :id");
-    query.bindValue(":id", id);
-    if (!query.exec() || !query.next()) {
-	query.exec("ROLLBACK TRANSACTION");
-        return false;
-    }
-    type = query.value(0).toInt();
+    type = get_account_type(id);
 
     if (type == 1 || type == 4)
         flag = 1;
@@ -137,10 +146,19 @@ bool Database::change_account_balance(const int id, const double delta)
 bool Database::save_operation(const int from, const int to, const int agent, const double summ, const QString date, const QString descr)
 {
     QSqlQuery q;
+    int oper_id;
 
     q.exec("BEGIN TRANSACTION");
 
-    if (new_operation(from, to, agent, summ, date, descr) == false) {
+    if ((oper_id = new_operation(from, to, agent, summ, date, descr)) == 0) {
+	q.exec("ROLLBACK TRANSACTION");
+        return false;
+    }
+    if (new_account_oper(from, oper_id, -summ) == false) {
+	q.exec("ROLLBACK TRANSACTION");
+        return false;
+    }
+    if (new_account_oper(to, oper_id, summ) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
