@@ -15,7 +15,7 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
         case Qt::DisplayRole:
-        if (index.column() == 3) {
+        if (index.column() == 1) {
 //            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
             return default_locale->toString(value.toDouble());
 //            return english->toCurrencyString(value.toDouble());
@@ -24,7 +24,7 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
             return value;
 
         case Qt::TextAlignmentRole:
-            if (index.column() == 3)
+            if (index.column() == 1)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
 //    case Qt::TextColorRole:
@@ -49,7 +49,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
     query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
 
-    model = new ListAccountsModel;
+//    model = new ListAccountsModel;
     fill_model();
 //    model->setQuery(query);
 
@@ -97,6 +97,8 @@ void ListAccounts::fill_model()
     QSqlQuery query;
     QModelIndex index;
     int row = 0;
+    int type;
+    double summ;
 
     model = new ListAccountsModel;
     model->insertColumns(0,5);
@@ -108,18 +110,31 @@ void ListAccounts::fill_model()
     }
 
     while (query.next()) {
-        model->insertRow(row);
-        model->setData(model->index(row,0), query.value(0).toInt());
-        model->setData(model->index(row,1), query.value(1).toString());
-        index = model->index(row, 0);
-        int i = 0;
-        while (i < 5) {
+	type = query.value(0).toInt();
+    model->insertRow(row);
+    model->setData(model->index(row,5), type);
+    model->setData(model->index(row,0), query.value(1).toString());
+    index = model->index(row, 0);
+    int i = 0;
+	summ = 0;
+	QSqlQuery q;
+    q.prepare("SELECT id,name,balance,desct,ccod,hidden FROM account WHERE type = :type ORDER BY name");
+	q.bindValue(":type", type);
+	if (!q.exec())
+	    continue;
+        while (q.next()) {
+            summ += q.value(2).toDouble();
             model->insertRow(i, index);
             if (i == 0)
                 model->insertColumns(0,5,index);
-            model->setData(model->index(i,1,index), "test");
+            model->setData(model->index(i,0,index), q.value(1).toString());
+            model->setData(model->index(i,1,index), q.value(2).toDouble());
+            model->setData(model->index(i,2,index), q.value(3).toString());
+            model->setData(model->index(i,3,index), q.value(4).toInt());
+            model->setData(model->index(i,4,index), q.value(5).toBool());
             i += 1;
         }
+        model->setData(model->index(row,1), summ);
         row += 1;
     }
 }

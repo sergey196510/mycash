@@ -2,6 +2,7 @@
 #define MYCASH_H
 
 #include <QMainWindow>
+#include "currencycombobox.h"
 
 namespace Ui {
 class MyCash;
@@ -22,6 +23,7 @@ private:
     bool opened;
     QString dbname;
     Ui::MyCash *ui;
+    CurrencyComboBox *curr;
     void readsettings();
     void writesettings();
     void setconnects();

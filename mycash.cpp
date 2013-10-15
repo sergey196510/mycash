@@ -19,10 +19,14 @@ MyCash::MyCash(QWidget *parent) :
     opened = false;
 
     readsettings();
-    setconnects();
 
     if (!dbname.isEmpty())
-	opendb(dbname);
+        opendb(dbname);
+
+    curr = new CurrencyComboBox;
+    curr->setValue(current_currency);
+    curr->setToolTip(tr("Select current currency"));
+    setconnects();
 
 //    QDockWidget *pdock = new QDockWidget("MyDock", this);
 //    QLabel * plbl = new QLabel("Label in Dock", pdock);
@@ -36,6 +40,7 @@ MyCash::MyCash(QWidget *parent) :
 MyCash::~MyCash()
 {
     writesettings();
+    delete curr;
     delete ui;
 }
 
@@ -74,6 +79,8 @@ void MyCash::setconnects()
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addAction(ui->action_Settings);
     ui->mainToolBar->addAction(ui->action_Quit);
+
+    ui->mainToolBar->addWidget(curr);
 
     setWindowTitle("MyCash version: " + version);
 }
