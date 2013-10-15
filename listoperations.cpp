@@ -62,6 +62,8 @@ ListOperations::ListOperations(QWidget *parent) :
 
     ui->setupUi(this);
 
+    d.agent = 0;
+
     db = new Database;
 
     ui->accountcomboBox->load(1);
