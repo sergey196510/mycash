@@ -37,6 +37,8 @@ private slots:
     void check_new_button(QString);
     void check_symbol(QString);
     void new_currency();
+    void update_currency();
+    void delete_currency();
     void set_default();
     void check_select();
 };

@@ -6,7 +6,7 @@
 class currencyEdit : public QLineEdit
 {
 public:
-    currencyEdit(QDialog *parent = 0);
+    currencyEdit(QWidget *parent = 0);
     double value();
     void setValue(double);
 };

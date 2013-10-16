@@ -44,7 +44,9 @@ void CorrectBalance::setBalance(double value)
 
 double CorrectBalance::balance()
 {
-    return ui->summEdit->text().toDouble();
+//    return ui->summEdit->text().toDouble();
+//    return default_locale->toDouble(ui->summEdit->text());
+    return ui->summEdit->value();
 }
 
 int CorrectBalance::account()

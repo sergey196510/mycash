@@ -16,6 +16,10 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
         case Qt::DisplayRole:
+        if (index.column() == 4) {
+            return default_locale->toString(value.toDouble());
+        }
+        else
             return value;
 
         case Qt::TextAlignmentRole:
@@ -64,6 +68,8 @@ ListCurrency::ListCurrency(QWidget *parent) :
     connect(ui->symbolEdit, SIGNAL(textChanged(QString)), SLOT(check_symbol(QString)));
 
     connect(ui->newButton, SIGNAL(released()), SLOT(new_currency()));
+    connect(ui->editButton, SIGNAL(released()), SLOT(update_currency()));
+    connect(ui->delButton, SIGNAL(released()), SLOT(delete_currency()));
     connect(ui->defaultButton, SIGNAL(released()), SLOT(set_default()));
 }
 
@@ -100,6 +106,40 @@ void ListCurrency::new_currency()
     ui->tableView->resizeColumnsToContents();
 }
 
+void ListCurrency::update_currency()
+{
+    QModelIndexList list;
+    QSqlQuery q;
+    int id;
+
+    list = ui->tableView->selectionModel()->selectedIndexes();
+    if (list.count() == 0) {
+        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
+        return;
+    }
+
+    id = list.at(0).data((Qt::DisplayRole)).toInt();
+
+    q.prepare("UPDATE currency SET name = :name, scod = :scod, kurs = :kurs WHERE id = :id");
+    q.bindValue(":name", ui->nameEdit->text());
+    q.bindValue(":scod", ui->symbolEdit->text());
+    q.bindValue(":kurs", ui->kursEdit->value());
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        qDebug() << "Update error";
+        return;
+    }
+
+    model->setQuery(query);
+    ui->tableView->resizeRowsToContents();
+    ui->tableView->resizeColumnsToContents();
+}
+
+void ListCurrency::delete_currency()
+{
+
+}
+
 void ListCurrency::set_default()
 {
     QModelIndexList list;
@@ -120,5 +160,29 @@ void ListCurrency::set_default()
 
 void ListCurrency::check_select()
 {
+    QModelIndexList list;
+    QSqlQuery q;
+    int id;
+
+    list = ui->tableView->selectionModel()->selectedIndexes();
+    if (list.count() == 0) {
+        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
+        return;
+    }
+
+    id = list.at(0).data((Qt::DisplayRole)).toInt();
+
+    q.prepare("SELECT name, scod, kurs FROM currency WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec() || !q.next()) {
+        qDebug() << "Select error";
+        return;
+    }
+    ui->nameEdit->setText(q.value(0).toString());
+    ui->symbolEdit->setText(q.value(1).toString());
+    ui->kursEdit->setValue(q.value(2).toDouble());
+
+    ui->editButton->setEnabled(true);
+    ui->delButton->setEnabled(true);
     ui->defaultButton->setEnabled(true);
 }

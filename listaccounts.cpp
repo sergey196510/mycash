@@ -101,7 +101,11 @@ void ListAccounts::fill_model()
     double summ;
 
     model = new ListAccountsModel;
-    model->insertColumns(0,5);
+    model->insertColumns(0,6);
+
+    model->setHeaderData(0, Qt::Horizontal, tr("Name"));
+    model->setHeaderData(1, Qt::Horizontal, tr("Balance"));
+    model->setHeaderData(2, Qt::Horizontal, tr("Description"));
 
     query.prepare("SELECT id,name FROM account_type ORDER BY name");
     if (!query.exec()) {
@@ -112,7 +116,7 @@ void ListAccounts::fill_model()
     while (query.next()) {
 	type = query.value(0).toInt();
     model->insertRow(row);
-    model->setData(model->index(row,5), type);
+//    model->setData(model->index(row,5), type);
     model->setData(model->index(row,0), query.value(1).toString());
     index = model->index(row, 0);
     int i = 0;
@@ -126,12 +130,13 @@ void ListAccounts::fill_model()
             summ += q.value(2).toDouble();
             model->insertRow(i, index);
             if (i == 0)
-                model->insertColumns(0,5,index);
+                model->insertColumns(0,6,index);
             model->setData(model->index(i,0,index), q.value(1).toString());
             model->setData(model->index(i,1,index), q.value(2).toDouble());
             model->setData(model->index(i,2,index), q.value(3).toString());
             model->setData(model->index(i,3,index), q.value(4).toInt());
             model->setData(model->index(i,4,index), q.value(5).toBool());
+            model->setData(model->index(i,5,index), q.value(0).toInt());
             i += 1;
         }
         model->setData(model->index(row,1), summ);
@@ -184,8 +189,9 @@ void ListAccounts::correct_balance()
         return;
     }
 
-    id = list.at(0).data((Qt::DisplayRole)).toInt();
+    id = list.at(5).data((Qt::DisplayRole)).toInt();
 
+//    cb.setAccount(id);
     cb.setBalance(db.get_account_balance(id));
     if (cb.exec() == QDialog::Accepted) {
         double current_balance = db.get_account_balance(id);
@@ -194,7 +200,7 @@ void ListAccounts::correct_balance()
         if (new_balance < current_balance)
             db.save_operation(id, cb.account(), 0, current_balance-new_balance, cb.date(), tr("Correct"));
         else
-            db.save_operation(cb.account(), 0, id, new_balance-current_balance, cb.date(), tr("Correct"));
+            db.save_operation(cb.account(), id, 0, new_balance-current_balance, cb.date(), tr("Correct"));
 
 //        model->setQuery(query);
         fill_model();

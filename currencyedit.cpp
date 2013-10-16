@@ -1,7 +1,7 @@
 #include "currencyedit.h"
 #include "global.h"
 
-currencyEdit::currencyEdit(QDialog *parent) :
+currencyEdit::currencyEdit(QWidget *parent) :
     QLineEdit(parent)
 {
 }
