@@ -32,6 +32,7 @@ private:
     Ui::ListCurrency *ui;
     ListCurrencyModel *model;
     QString query;
+    int get_selected_id();
 
 private slots:
     void check_new_button(QString);

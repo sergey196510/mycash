@@ -7,7 +7,7 @@ ListAgents::ListAgents(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    query = "SELECT id,name,city FROM agent ORDER BY name";
+    query = "SELECT id,name,city,address FROM agent ORDER BY name";
 
     model = new QSqlQueryModel;
     model->setQuery(query);
@@ -29,6 +29,7 @@ ListAgents::ListAgents(QWidget *parent) :
     connect(ui->tableView, SIGNAL(clicked(QModelIndex)), SLOT(check_select_line()));
     connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(check_new_button(QString)));
     connect(ui->newButton, SIGNAL(released()), SLOT(save_new_record()));
+    connect(ui->editButton, SIGNAL(released()), SLOT(update_record()));
     connect(ui->delButton, SIGNAL(released()), SLOT(del_record()));
 }
 
@@ -43,19 +44,26 @@ void ListAgents::check_new_button(QString str)
     ui->newButton->setEnabled(str.length());
 }
 
-void ListAgents::check_select_line()
+int ListAgents::get_selected_id()
 {
     QModelIndexList list;
-    QSqlQuery q;
     int id;
 
     list = ui->tableView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
-        return;
+        return 0;
     }
 
-    id = list.at(0).data((Qt::DisplayRole)).toInt();
+    return list.at(0).data((Qt::DisplayRole)).toInt();
+}
+
+void ListAgents::check_select_line()
+{
+    QSqlQuery q;
+    int id;
+
+    id = get_selected_id();
 
     q.prepare("SELECT name,city,address,phone,contact FROM agent WHERE id = :id");
     q.bindValue(":id", id);
@@ -88,28 +96,55 @@ void ListAgents::save_new_record()
     q.bindValue(":address", address);
     q.bindValue(":phone", phone);
     q.bindValue(":contact", contact);
+    if (!q.exec()) {
+        qDebug() << "Insert error";
+        return;
+    }
+
+    model->setQuery(query);
+}
+
+void ListAgents::update_record()
+{
+    QSqlQuery q;
+    int id = get_selected_id();
+
+    q.prepare("UPDATE agent SET name = :name, city = :city, address = :address, phone = :phone, contact = :contact WHERE id = :id");
+    q.bindValue(":name", ui->nameEdit->text());
+    q.bindValue(":city", ui->cityEdit->text());
+    q.bindValue(":address", ui->addrEdit->text());
+    q.bindValue(":phone", ui->phoneEdit->text());
+    q.bindValue(":contact", ui->contactEdit->text());
+    q.bindValue(":id", id);
     q.exec();
+    if (!q.exec()) {
+        qDebug() << "Update error";
+        return;
+    }
 
     model->setQuery(query);
 }
 
 void ListAgents::del_record()
 {
-    QModelIndexList list;
     QSqlQuery q;
     int id;
 
-    list = ui->tableView->selectionModel()->selectedIndexes();
-    if (list.count() == 0) {
-        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
-        return;
-    }
-
-    id = list.at(0).data((Qt::DisplayRole)).toInt();
+    id = get_selected_id();
 
     q.prepare("DELETE FROM agent WHERE id = :id");
     q.bindValue(":id", id);
-    q.exec();
+    if (!q.exec()) {
+        qDebug() << "Delete error";
+        return;
+    }
+
+    q.prepare("UPDATE operation SET agent = 0 WHERE agent = :agent");
+    q.bindValue(":agent", id);
+    if (!q.exec()) {
+        qDebug() << "Update error";
+        return;
+    }
 
     model->setQuery(query);
 }

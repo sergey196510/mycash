@@ -21,11 +21,13 @@ private:
     Ui::ListAgents *ui;
     QString query;
     QSqlQueryModel *model;
+    int get_selected_id();
 
 private slots:
     void check_new_button(QString);
     void check_select_line();
     void save_new_record();
+    void update_record();
     void del_record();
 };
 

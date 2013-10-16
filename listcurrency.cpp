@@ -106,19 +106,25 @@ void ListCurrency::new_currency()
     ui->tableView->resizeColumnsToContents();
 }
 
-void ListCurrency::update_currency()
+int ListCurrency::get_selected_id()
 {
     QModelIndexList list;
-    QSqlQuery q;
-    int id;
 
     list = ui->tableView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
-        return;
+        return 0;
     }
 
-    id = list.at(0).data((Qt::DisplayRole)).toInt();
+    return list.at(0).data((Qt::DisplayRole)).toInt();
+}
+
+void ListCurrency::update_currency()
+{
+    QSqlQuery q;
+    int id;
+
+    id = get_selected_id();
 
     q.prepare("UPDATE currency SET name = :name, scod = :scod, kurs = :kurs WHERE id = :id");
     q.bindValue(":name", ui->nameEdit->text());
@@ -137,22 +143,27 @@ void ListCurrency::update_currency()
 
 void ListCurrency::delete_currency()
 {
+    QSqlQuery q;
+    int ccod = get_selected_id();
 
+    q.prepare("SELECT id FROM account WHERE ccod = :ccod");
+    q.bindValue(":ccod", ccod);
+    if (q.exec() && q.next()) {
+        qDebug() << "Exist accounts whith this currencies";
+        return;
+    }
+
+    q.prepare("DELETE FROM currency WHERE id = :id");
+    q.bindValue(":id", ccod);
+    q.exec();
 }
 
 void ListCurrency::set_default()
 {
-    QModelIndexList list;
     QSqlQuery q;
-    int id;
 
-    list = ui->tableView->selectionModel()->selectedIndexes();
-    if (list.count() == 0) {
-        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
-        return;
-    }
+    current_currency = get_selected_id();
 
-    current_currency = list.at(0).data((Qt::DisplayRole)).toInt();
     model->setQuery(query);
     ui->tableView->resizeRowsToContents();
     ui->tableView->resizeColumnsToContents();
@@ -160,17 +171,10 @@ void ListCurrency::set_default()
 
 void ListCurrency::check_select()
 {
-    QModelIndexList list;
     QSqlQuery q;
     int id;
 
-    list = ui->tableView->selectionModel()->selectedIndexes();
-    if (list.count() == 0) {
-        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
-        return;
-    }
-
-    id = list.at(0).data((Qt::DisplayRole)).toInt();
+    id = get_selected_id();
 
     q.prepare("SELECT name, scod, kurs FROM currency WHERE id = :id");
     q.bindValue(":id", id);

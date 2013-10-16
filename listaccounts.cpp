@@ -31,6 +31,7 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
 //        if (record(index.row()).value(5).toBool() == true) {
 //            return QVariant(QColor(Qt::gray));
 //        }
+
         return value;
     }
 
