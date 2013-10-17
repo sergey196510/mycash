@@ -4,10 +4,23 @@
 #include <QtGui>
 #include <QWidget>
 #include <QtSql>
+#include "database.h"
 
 namespace Ui {
 class ListAgents;
 }
+
+class ListAgentsModel : public QSqlQueryModel
+{
+    Q_OBJECT
+
+private:
+    QStringList header_data;
+
+public:
+    explicit ListAgentsModel(QObject *parent = 0);
+    QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+};
 
 class ListAgents : public QWidget
 {
@@ -20,7 +33,9 @@ public:
 private:
     Ui::ListAgents *ui;
     QString query;
-    QSqlQueryModel *model;
+    QStringList header_data;
+    ListAgentsModel *model;
+    Database db;
     int get_selected_id();
 
 private slots:

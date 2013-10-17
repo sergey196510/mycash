@@ -4,6 +4,7 @@
 ListCurrencyModel::ListCurrencyModel(QObject *parent) :
     QSqlQueryModel(parent)
 {
+    header_data << tr("") << tr("Name") << tr("Icod") << tr("Scod") << tr("Kurs");
 }
 
 ListCurrencyModel::~ListCurrencyModel()
@@ -35,6 +36,17 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
     }
 
     return value;
+}
+
+QVariant ListCurrencyModel::headerData(int section,Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        return header_data.at(section);
+    }
+    else
+        return QString("%1").arg(section+1);
 }
 
 ListCurrency::ListCurrency(QWidget *parent) :
@@ -149,8 +161,13 @@ void ListCurrency::delete_currency()
     q.prepare("SELECT id FROM account WHERE ccod = :ccod");
     q.bindValue(":ccod", ccod);
     if (q.exec() && q.next()) {
-        qDebug() << "Exist accounts whith this currencies";
-        return;
+        int r = QMessageBox::warning(this, tr("Currency"),
+                                     tr("Exist accounts whith this currencies\n"
+                                        "You really want to delete this?"),
+                                     QMessageBox::Yes | QMessageBox::No);
+
+        if (r == QMessageBox::No)
+            return;
     }
 
     q.prepare("DELETE FROM currency WHERE id = :id");

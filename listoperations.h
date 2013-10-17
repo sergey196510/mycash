@@ -18,9 +18,11 @@ public:
     explicit ListOperationsModel(QObject *parent = 0);
     ~ListOperationsModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 
 private:
     Database *db;
+    QStringList header_data;
 };
 
 class ListOperations : public QWidget

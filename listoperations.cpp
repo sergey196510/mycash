@@ -6,6 +6,7 @@ ListOperationsModel::ListOperationsModel(QObject *parent) :
     QSqlQueryModel(parent)
 {
     db = new Database;
+    header_data << tr("From Account") << tr("To Account") << tr("Summ") << tr("Date") << tr("Description");
 }
 
 ListOperationsModel::~ListOperationsModel()
@@ -22,15 +23,11 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole:
         if (index.column() == 0) {
             return db->get_account_name(value.toInt());
-//            return value;
         }
         else if (index.column() == 1) {
             return db->get_account_name(value.toInt());
-//            return value;
         }
         if (index.column() == 2) {
-//            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
-//            return locale->toString(value.toDouble());
             return default_locale->toString(value.toDouble());
         }
         else if (index.column() == 3) {
@@ -52,6 +49,17 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
     }
 
     return value;
+}
+
+QVariant ListOperationsModel::headerData(int section,Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        return header_data.at(section);
+    }
+    else
+        return QString("%1").arg(section+1);
 }
 
 ListOperations::ListOperations(QWidget *parent) :
@@ -77,11 +85,6 @@ ListOperations::ListOperations(QWidget *parent) :
 
     model = new ListOperationsModel;
     model->setQuery(query);
-    model->setHeaderData(0, Qt::Horizontal, tr("From Account"));
-    model->setHeaderData(1, Qt::Horizontal, tr("To Account"));
-    model->setHeaderData(2, Qt::Horizontal, tr("Summ"));
-    model->setHeaderData(3, Qt::Horizontal, tr("Date"));
-    model->setHeaderData(4, Qt::Horizontal, tr("Description"));
 
     QAction *debt = new QAction(tr("Debet"), this);
     QAction *cred = new QAction(tr("Credit"), this);
@@ -126,9 +129,6 @@ void ListOperations::edit_operation(int oper)
 {
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
-
-//        qDebug() << d.from << d.to << d.agent << d.summ << d.date << d.descr;
-//        return;
 
         db->save_operation(d.from, d.to, d.agent, d.summ, d.date, d.descr);
         model->setQuery(query);

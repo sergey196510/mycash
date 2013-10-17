@@ -77,6 +77,30 @@ QString Database::get_account_name(int id)
     return query.value(0).toString();
 }
 
+QString Database::get_agent_name(int id)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT name FROM agent WHERE id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec() || !query.next())
+        return 0;
+
+    return query.value(0).toString();
+}
+
+QString Database::get_currency_scod(int id)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT scod FROM currency WHERE id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec() || !query.next())
+        return 0;
+
+    return query.value(0).toString();
+}
+
 int Database::new_operation(const int from, const int to, const int agent, const double summ, const QString date, const QString descr)
 {
     QSqlQuery query;

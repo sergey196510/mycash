@@ -14,10 +14,14 @@ class ListCurrencyModel : public QSqlQueryModel
 {
     Q_OBJECT
 
+private:
+    QStringList header_data;
+
 public:
     explicit ListCurrencyModel(QObject *parent = 0);
     ~ListCurrencyModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 };
 
 class ListCurrency : public QWidget

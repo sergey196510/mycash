@@ -6,7 +6,55 @@
 ListAccountsModel::ListAccountsModel(QObject *parent) :
     QStandardItemModel(parent)
 {
+    QSqlQuery query;
+    db = new Database;
+    int type;
+    int row = 0;
+    double summ;
+    QModelIndex idx;
+    header_data << tr("Name") << tr("Balance") << "" << tr("Description") << "" << "" << "";
 
+    query.prepare("SELECT id,name FROM account_type ORDER BY name");
+    if (!query.exec()) {
+        qDebug() << "Error select";
+        return;
+    }
+
+    insertColumns(0,6);
+    while (query.next()) {
+    type = query.value(0).toInt();
+    insertRow(row);
+    idx = index(row, 0);
+    setData(idx, query.value(1).toString());
+    int i = 0;
+    summ = 0;
+    QSqlQuery q;
+    q.prepare("SELECT id,name,balance,desct,ccod,hidden FROM account WHERE type = :type ORDER BY name");
+    q.bindValue(":type", type);
+    if (!q.exec())
+        continue;
+        while (q.next()) {
+            if (q.value(5) == false)
+                summ += q.value(2).toDouble();
+            insertRow(i, idx);
+            if (i == 0)
+                insertColumns(0,6,idx);
+            setData(index(i,0,idx), q.value(1).toString());
+            setData(index(i,1,idx), q.value(2).toDouble());
+            setData(index(i,2,idx), q.value(4).toInt());
+            setData(index(i,3,idx), q.value(3).toString());
+            setData(index(i,4,idx), q.value(5).toBool());
+            setData(index(i,5,idx), q.value(0).toInt());
+            i += 1;
+        }
+        setData(index(row,1), summ);
+        row += 1;
+    }
+}
+
+ListAccountsModel::~ListAccountsModel()
+{
+    delete db;
 }
 
 QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
@@ -16,10 +64,11 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 1) {
-//            return tr("%1").arg(value.toDouble(), 0, 'f', 2);
             return default_locale->toString(value.toDouble());
-//            return english->toCurrencyString(value.toDouble());
         }
+    else if (index.column() == 2 && value.toInt() > 0) {
+        return db->get_currency_scod(value.toInt());
+    }
         else
             return value;
 
@@ -28,7 +77,7 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
 //    case Qt::TextColorRole:
-//        if (record(index.row()).value(5).toBool() == true) {
+//        if (index.row().value(5).toBool() == true) {
 //            return QVariant(QColor(Qt::gray));
 //        }
 
@@ -36,6 +85,17 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
     }
 
     return value;
+}
+
+QVariant ListAccountsModel::headerData(int section,Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        return header_data.at(section);
+    }
+    else
+        return QString("%1").arg(section+1);
 }
 
 ListAccounts::ListAccounts(QWidget *parent) :
@@ -48,23 +108,14 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
     type = ui->typeComboBox->value();
 
-    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
+//    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
 
-//    model = new ListAccountsModel;
-    fill_model();
-//    model->setQuery(query);
-
-//    model->setHeaderData(1, Qt::Horizontal, tr("Name"));
-//    model->setHeaderData(2, Qt::Horizontal, tr("Type"));
-//    model->setHeaderData(3, Qt::Horizontal, tr("Balance"));
-//    model->setHeaderData(4, Qt::Horizontal, tr("Description"));
-
-//    model->select();
+//    fill_model();
+    model = new ListAccountsModel;
 
     ui->treeView->setModel(model);
-//    ui->treeView->hideColumn(0);
-//    ui->treeView->hideColumn(5);
-    ui->treeView->resizeColumnToContents(1);
+    ui->treeView->expandAll();
+    ui->treeView->resizeColumnToContents(0);
 
     QAction *nacct = new QAction(tr("New account"), this);
     QAction *cacct = new QAction(tr("Correct balance"), this);
@@ -74,16 +125,15 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui->treeView->addAction(cacct);
     ui->treeView->addAction(dacct);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
-//    ui->treeView->horizontalHeader()->setStretchLastSection(true);
 
     ui->treeView->setAlternatingRowColors(true);
 
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
+    connect(dacct, SIGNAL(triggered()), SLOT(del_account()));
 
     connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
 
-//    ui->act_summ->setNum(db.get_account_summ(1));
     ui->act_summ->setText(default_locale->toCurrencyString(db.get_account_summ(1)));
 }
 
@@ -93,56 +143,12 @@ ListAccounts::~ListAccounts()
     delete model;
 }
 
-void ListAccounts::fill_model()
+void ListAccounts::reload_model()
 {
-    QSqlQuery query;
-    QModelIndex index;
-    int row = 0;
-    int type;
-    double summ;
-
+    delete model;
     model = new ListAccountsModel;
-    model->insertColumns(0,6);
-
-    model->setHeaderData(0, Qt::Horizontal, tr("Name"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Balance"));
-    model->setHeaderData(2, Qt::Horizontal, tr("Description"));
-
-    query.prepare("SELECT id,name FROM account_type ORDER BY name");
-    if (!query.exec()) {
-        qDebug() << "Error select";
-        return;
-    }
-
-    while (query.next()) {
-	type = query.value(0).toInt();
-    model->insertRow(row);
-//    model->setData(model->index(row,5), type);
-    model->setData(model->index(row,0), query.value(1).toString());
-    index = model->index(row, 0);
-    int i = 0;
-	summ = 0;
-	QSqlQuery q;
-    q.prepare("SELECT id,name,balance,desct,ccod,hidden FROM account WHERE type = :type ORDER BY name");
-	q.bindValue(":type", type);
-	if (!q.exec())
-	    continue;
-        while (q.next()) {
-            summ += q.value(2).toDouble();
-            model->insertRow(i, index);
-            if (i == 0)
-                model->insertColumns(0,6,index);
-            model->setData(model->index(i,0,index), q.value(1).toString());
-            model->setData(model->index(i,1,index), q.value(2).toDouble());
-            model->setData(model->index(i,2,index), q.value(3).toString());
-            model->setData(model->index(i,3,index), q.value(4).toInt());
-            model->setData(model->index(i,4,index), q.value(5).toBool());
-            model->setData(model->index(i,5,index), q.value(0).toInt());
-            i += 1;
-        }
-        model->setData(model->index(row,1), summ);
-        row += 1;
-    }
+    ui->treeView->setModel(model);
+    ui->treeView->expandAll();
 }
 
 void ListAccounts::new_account()
@@ -173,26 +179,30 @@ void ListAccounts::new_account()
         q.bindValue(":hidden", hidden);
         q.exec();
 
-//        model->setQuery(query);
-        fill_model();
+        reload_model();
     }
+}
+
+int ListAccounts::get_selected_id()
+{
+    QModelIndexList list;
+
+    list = ui->treeView->selectionModel()->selectedIndexes();
+    if (list.count() == 0) {
+        QMessageBox::critical(this, "Operation cancellation", "Nothing selected");
+        return 0;
+    }
+
+     return list.at(5).data((Qt::DisplayRole)).toInt();
 }
 
 void ListAccounts::correct_balance()
 {
     CorrectBalance cb(this);
-    QModelIndexList list;
     int id;
 
-    list = ui->treeView->selectionModel()->selectedIndexes();
-    if (list.count() == 0) {
-        QMessageBox::critical(this, "Operation cancellation", "Nothing selected");
-        return;
-    }
+    id = get_selected_id();
 
-    id = list.at(5).data((Qt::DisplayRole)).toInt();
-
-//    cb.setAccount(id);
     cb.setBalance(db.get_account_balance(id));
     if (cb.exec() == QDialog::Accepted) {
         double current_balance = db.get_account_balance(id);
@@ -203,17 +213,29 @@ void ListAccounts::correct_balance()
         else
             db.save_operation(cb.account(), id, 0, new_balance-current_balance, cb.date(), tr("Correct"));
 
-//        model->setQuery(query);
-        fill_model();
+        reload_model();
     }
+}
+
+void ListAccounts::del_account()
+{
+    int id = get_selected_id();
+
+    int r = QMessageBox::warning(this, tr("Account"),
+                                 tr("You want to delete account?"),
+                                 QMessageBox::Yes | QMessageBox::No);
+
+    if (r == QMessageBox::No)
+        return;
+
+    reload_model();
 }
 
 void ListAccounts::check_type()
 {
     int type = ui->typeComboBox->value();
 
-    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
-//    model->setQuery(query);
-    fill_model();
-    ui->treeView->resizeColumnToContents(1);
+//    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
+//    fill_model();
+    ui->treeView->resizeColumnToContents(0);
 }

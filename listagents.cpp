@@ -1,6 +1,23 @@
 #include "listagents.h"
 #include "ui_listagents.h"
 
+ListAgentsModel::ListAgentsModel(QObject *parent) :
+    QSqlQueryModel(parent)
+{
+    header_data << tr("") << tr("Name") << tr("City") << tr("Address");
+}
+
+QVariant ListAgentsModel::headerData(int section,Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        return header_data.at(section);
+    }
+    else
+        return QString("%1").arg(section+1);
+}
+
 ListAgents::ListAgents(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListAgents)
@@ -9,7 +26,7 @@ ListAgents::ListAgents(QWidget *parent) :
 
     query = "SELECT id,name,city,address FROM agent ORDER BY name";
 
-    model = new QSqlQueryModel;
+    model = new ListAgentsModel;
     model->setQuery(query);
 
     ui->tableView->setModel(model);
@@ -131,6 +148,14 @@ void ListAgents::del_record()
     int id;
 
     id = get_selected_id();
+    QString name = db.get_agent_name(id);
+
+    int r = QMessageBox::warning(this, tr("Agent"),
+                                 tr("You want delete agent %1?").arg(name),
+                                 QMessageBox::Yes | QMessageBox::No);
+
+    if (r == QMessageBox::No)
+        return;
 
     q.prepare("DELETE FROM agent WHERE id = :id");
     q.bindValue(":id", id);

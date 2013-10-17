@@ -15,29 +15,38 @@ class ListAccountsModel : public QStandardItemModel
 {
     Q_OBJECT
 
+private:
+    Database *db;
+    QStringList header_data;
+
 public:
     explicit ListAccountsModel(QObject *parent = 0);
+    ~ListAccountsModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 };
 
 class ListAccounts : public QWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit ListAccounts(QWidget *parent = 0);
     ~ListAccounts();
 
 private slots:
-    void fill_model();
+//    void fill_model();
+    void reload_model();
     void new_account();
     void correct_balance();
+    void del_account();
     void check_type();
-    
+    int get_selected_id();
+
 private:
     Ui::ListAccounts *ui;
     ListAccountsModel *model;
-    QString query;
+//    QString query;
     Database db;
 };
 
