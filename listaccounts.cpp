@@ -12,7 +12,7 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
     int row = 0;
     double summ;
     QModelIndex idx;
-    header_data << tr("Name") << tr("Balance") << "" << tr("Description") << "" << "" << "";
+    header_data << tr("Name") << tr("Balance") << tr("Currency") << tr("Description") << "" << "" << "";
 
     query.prepare("SELECT id,name FROM account_type ORDER BY name");
     if (!query.exec()) {
@@ -61,14 +61,19 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
 {
     QVariant value = QStandardItemModel::data(index, role);
 
+    if (!index.isValid())
+        return QVariant();
+
+//    qDebug() << index;
+
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 1) {
             return default_locale->toString(value.toDouble());
         }
-    else if (index.column() == 2 && value.toInt() > 0) {
-        return db->get_currency_scod(value.toInt());
-    }
+        else if (index.column() == 2) {
+            return db->get_currency_scod(value.toInt());
+        }
         else
             return value;
 
@@ -76,10 +81,14 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
             if (index.column() == 1)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
-//    case Qt::TextColorRole:
-//        if (index.row().value(5).toBool() == true) {
-//            return QVariant(QColor(Qt::gray));
-//        }
+    case Qt::TextColorRole:
+//        int row = index.row();
+//        QModelIndex idx = this->index(row, 4, index);
+        qDebug() << index.column() << value.toString();
+        if (index.column() == 4 && value.toBool() == true) {
+//        if (index.data(Qt::DisplayRole).toBool()) {
+            return QVariant(QColor(Qt::gray));
+        }
 
         return value;
     }
@@ -114,6 +123,8 @@ ListAccounts::ListAccounts(QWidget *parent) :
     model = new ListAccountsModel;
 
     ui->treeView->setModel(model);
+//    ui->treeView->hideColumn(4);
+    ui->treeView->hideColumn(5);
     ui->treeView->expandAll();
     ui->treeView->resizeColumnToContents(0);
 
@@ -193,7 +204,7 @@ int ListAccounts::get_selected_id()
         return 0;
     }
 
-     return list.at(5).data((Qt::DisplayRole)).toInt();
+     return list.at(5).data(Qt::DisplayRole).toInt();
 }
 
 void ListAccounts::correct_balance()

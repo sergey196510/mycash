@@ -30,7 +30,7 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
     case Qt::TextColorRole:
 //        qDebug() << record(index.row()).value(0).toInt();
         if (record(index.row()).value(0).toInt() == current_currency) {
-            return QVariant(QColor(Qt::red));
+            return QVariant(QColor(Qt::blue));
         }
         return value;
     }
