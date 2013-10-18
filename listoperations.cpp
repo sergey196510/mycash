@@ -7,6 +7,7 @@ ListOperationsModel::ListOperationsModel(QObject *parent) :
 {
     db = new Database;
     header_data << tr("From Account") << tr("To Account") << tr("Summ") << tr("Date") << tr("Description");
+    list = db->get_accounts_list();
 }
 
 ListOperationsModel::~ListOperationsModel()
@@ -21,13 +22,14 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
         case Qt::DisplayRole:
-        if (index.column() == 0) {
-            return db->get_account_name(value.toInt());
+        if (index.column() == 0 || index.column() == 1) {
+//            return db->get_account_name(value.toInt());
+            return list[value.toInt()];
         }
-        else if (index.column() == 1) {
-            return db->get_account_name(value.toInt());
-        }
-        if (index.column() == 2) {
+//        else if (index.column() == 1) {
+//            return db->get_account_name(value.toInt());
+//        }
+        else if (index.column() == 2) {
             return default_locale->toString(value.toDouble());
         }
         else if (index.column() == 3) {
@@ -176,6 +178,8 @@ void ListOperations::transfer_operation()
 void ListOperations::change_current_account(int idx)
 {
     QLocale *lc;
+    QFont font;
+    font.setBold(true);
 
     if (db->get_account_scod(ui->accountcomboBox->value()) == "USD") {
         ui->account_ostatok->setText("USD");
@@ -188,6 +192,7 @@ void ListOperations::change_current_account(int idx)
     else
         lc = default_locale;
     ui->account_ostatok->setText(lc->toCurrencyString(db->get_account_balance(ui->accountcomboBox->value())));
+    ui->account_ostatok->setFont(font);
 
     current_account = ui->accountcomboBox->value();
 }

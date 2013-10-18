@@ -23,6 +23,7 @@ cmake_minimum_required(VERSION 2.8)
     listagents.cpp
     listcurrency.cpp
     listoperations.cpp
+    listplanoper.cpp
     main.cpp
     mycash.cpp
     mydateedit.cpp
@@ -46,6 +47,7 @@ cmake_minimum_required(VERSION 2.8)
     listagents.h
     listcurrency.h
     listoperations.h
+    listplanoper.h
     mycash.h
     mydateedit.h
     opendatabase.h
@@ -61,6 +63,7 @@ cmake_minimum_required(VERSION 2.8)
     listagents.ui
     listcurrency.ui
     listoperations.ui
+    listplanoper.ui
     mycash.ui
     opendatabase.ui
     createdatabase.ui

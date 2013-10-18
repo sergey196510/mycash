@@ -23,6 +23,7 @@ public:
 private:
     Database *db;
     QStringList header_data;
+    QMap<int,QString> list;
 };
 
 class ListOperations : public QWidget

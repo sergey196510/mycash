@@ -12,7 +12,9 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
     int row = 0;
     double summ;
     QModelIndex idx;
-    header_data << tr("Name") << tr("Balance") << tr("Currency") << tr("Description") << "" << "" << "";
+    header_data << tr("Name") << tr("Balance") << tr("Currency") << "Hidden" << tr("Description") << "" << "";
+
+    list = db->get_scod_list();
 
     query.prepare("SELECT id,name FROM account_type ORDER BY name");
     if (!query.exec()) {
@@ -26,6 +28,9 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
     insertRow(row);
     idx = index(row, 0);
     setData(idx, query.value(1).toString());
+    QFont font;
+    font.setBold(true);
+    setData(idx, font, Qt::FontRole);
     int i = 0;
     summ = 0;
     QSqlQuery q;
@@ -42,12 +47,13 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
             setData(index(i,0,idx), q.value(1).toString());
             setData(index(i,1,idx), q.value(2).toDouble());
             setData(index(i,2,idx), q.value(4).toInt());
-            setData(index(i,3,idx), q.value(3).toString());
-            setData(index(i,4,idx), q.value(5).toBool());
+            setData(index(i,4,idx), q.value(3).toString());
+            setData(index(i,3,idx), q.value(5).toBool());
             setData(index(i,5,idx), q.value(0).toInt());
             i += 1;
         }
         setData(index(row,1), summ);
+        setData(index(row,1), font, Qt::FontRole);
         row += 1;
     }
 }
@@ -72,7 +78,11 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
             return default_locale->toString(value.toDouble());
         }
         else if (index.column() == 2) {
-            return db->get_currency_scod(value.toInt());
+//            return db->get_currency_scod(value.toInt());
+            return list[value.toInt()];
+        }
+        else if (index.column() == 3) {
+            return (value.toBool() == false) ? "" : tr("H");
         }
         else
             return value;
@@ -82,11 +92,8 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
     case Qt::TextColorRole:
-//        int row = index.row();
-//        QModelIndex idx = this->index(row, 4, index);
-        qDebug() << index.column() << value.toString();
-        if (index.column() == 4 && value.toBool() == true) {
-//        if (index.data(Qt::DisplayRole).toBool()) {
+//        qDebug() << index.data(Qt::DisplayRole) << value.toString();
+        if (index.data(Qt::DisplayRole).toString() == "true") {
             return QVariant(QColor(Qt::gray));
         }
 
@@ -112,6 +119,8 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui(new Ui::ListAccounts)
 {
     int type;
+    QFont font;
+    font.setBold(true);
 
     ui->setupUi(this);
 
@@ -146,6 +155,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
     connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
 
     ui->act_summ->setText(default_locale->toCurrencyString(db.get_account_summ(1)));
+    ui->act_summ->setFont(font);
 }
 
 ListAccounts::~ListAccounts()

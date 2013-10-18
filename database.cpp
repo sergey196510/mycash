@@ -77,6 +77,21 @@ QString Database::get_account_name(int id)
     return query.value(0).toString();
 }
 
+QMap<int,QString> Database::get_accounts_list()
+{
+    QMap<int,QString> list;
+    QSqlQuery q;
+
+    q.prepare("SELECT id,name FROM account");
+    if (!q.exec())
+        return list;
+    while (q.next()) {
+        list[q.value(0).toInt()] = q.value(1).toString();
+    }
+
+    return list;
+}
+
 QString Database::get_agent_name(int id)
 {
     QSqlQuery query;
@@ -99,6 +114,21 @@ QString Database::get_currency_scod(int id)
         return 0;
 
     return query.value(0).toString();
+}
+
+QMap<int,QString> Database::get_scod_list()
+{
+    QMap<int,QString> list;
+    QSqlQuery q;
+
+    q.prepare("SELECT id,scod FROM currency");
+    if (!q.exec())
+        return list;
+    while (q.next()) {
+        list[q.value(0).toInt()] = q.value(1).toString();
+    }
+
+    return list;
 }
 
 int Database::new_operation(const int from, const int to, const int agent, const double summ, const QString date, const QString descr)

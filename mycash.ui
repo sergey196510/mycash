@@ -50,6 +50,7 @@
     <addaction name="action_ListOperations"/>
     <addaction name="action_ListAgents"/>
     <addaction name="action_ListCurrencies"/>
+    <addaction name="action_Plan_Operations"/>
    </widget>
    <widget class="QMenu" name="menuReports">
     <property name="title">
@@ -135,6 +136,11 @@
   <action name="actionReport_2">
    <property name="text">
     <string>Report 2</string>
+   </property>
+  </action>
+  <action name="action_Plan_Operations">
+   <property name="text">
+    <string>&amp;Plan Operations</string>
    </property>
   </action>
  </widget>

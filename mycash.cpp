@@ -8,6 +8,7 @@
 #include "listcurrency.h"
 #include "listoperations.h"
 #include "listagents.h"
+#include "listplanoper.h"
 #include "global.h"
 
 MyCash::MyCash(QWidget *parent) :
@@ -63,6 +64,7 @@ void MyCash::setconnects()
     connect(ui->action_ListOperations, SIGNAL(triggered()), SLOT(list_operations()));
     connect(ui->action_ListAgents, SIGNAL(triggered()), SLOT(list_agents()));
     connect(ui->action_ListCurrencies, SIGNAL(triggered()), SLOT(list_currency()));
+    connect(ui->action_Plan_Operations, SIGNAL(triggered()), SLOT(list_plan_oper()));
 
     connect(ui->actionReport_1, SIGNAL(triggered()), SLOT(report1()));
 
@@ -196,6 +198,13 @@ void MyCash::list_agents()
     ListAgents *la = new ListAgents;
 
     setCentralWidget(la);
+}
+
+void MyCash::list_plan_oper()
+{
+    ListPlanOper *po = new ListPlanOper;
+
+    setCentralWidget(po);
 }
 
 void MyCash::settings()

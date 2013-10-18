@@ -18,6 +18,7 @@ class ListAccountsModel : public QStandardItemModel
 private:
     Database *db;
     QStringList header_data;
+    QMap<int,QString> list;
 
 public:
     explicit ListAccountsModel(QObject *parent = 0);
