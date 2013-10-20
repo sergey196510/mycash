@@ -219,12 +219,36 @@ void MyCash::aboutProgram()
 
 void MyCash::report1()
 {
+    QTextEdit *te = new QTextEdit;
+    QSqlQuery q;
     QDate localdate = QDate::currentDate();
     int month, day, year;
+
+    te->setReadOnly(true);
+    setCentralWidget(te);
 
     month = localdate.month();
     day = localdate.day();
     year = localdate.year();
 
-    qDebug() << year << month << day;
+    te->append("Dohodi v tek mesyatce:\n");
+    q.prepare("SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= 1/:month/:year AND a.type = 3 AND o.acc_from = a.id");
+    q.bindValue(":month", month);
+    q.bindValue(":year", year);
+    if (!q.exec())
+        return;
+    while (q.next()) {
+        te->append(q.value(0).toString() + ": " + default_locale->toString(q.value(1).toDouble()) + "\n");
+    }
+
+    te->append("-----------------------------------------------\n");
+
+    q.prepare("SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= 1/:month/:year AND a.type = 4 AND o.acc_to = a.id");
+    q.bindValue(":month", month);
+    q.bindValue(":year", year);
+    if (!q.exec())
+        return;
+    while (q.next()) {
+        te->append(q.value(0).toString() + ": " + default_locale->toString(q.value(1).toDouble()) + "\n");
+    }
 }

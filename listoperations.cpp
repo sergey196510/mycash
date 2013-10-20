@@ -129,11 +129,14 @@ ListOperations::~ListOperations()
 
 void ListOperations::edit_operation(int oper)
 {
+    QModelIndex idx = ui->tableView->currentIndex();
+
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
 
         db->save_operation(d.from, d.to, d.agent, d.summ, d.date, d.descr);
         model->setQuery(query);
+        ui->tableView->setCurrentIndex(idx);
         emit call_reload_table();
         change_current_account(0);
         if (oper == 1)
