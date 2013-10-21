@@ -19,6 +19,7 @@ cmake_minimum_required(VERSION 2.8)
     editaccount.cpp
     editoperation.cpp
     global.cpp
+    graphwidget.cpp
     listaccounts.cpp
     listagents.cpp
     listcurrency.cpp
@@ -43,6 +44,7 @@ cmake_minimum_required(VERSION 2.8)
     editaccount.h
     editoperation.h
     global.h
+    graphwidget.h
     listaccounts.h
     listagents.h
     listcurrency.h

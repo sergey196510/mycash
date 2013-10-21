@@ -223,6 +223,7 @@ void MyCash::report1()
     QSqlQuery q;
     QDate localdate = QDate::currentDate();
     int month, day, year;
+    double summ;
 
     te->setReadOnly(true);
     setCentralWidget(te);
@@ -231,24 +232,34 @@ void MyCash::report1()
     day = localdate.day();
     year = localdate.year();
 
-    te->append("Dohodi v tek mesyatce:\n");
-    q.prepare("SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= 1/:month/:year AND a.type = 3 AND o.acc_from = a.id");
-    q.bindValue(":month", month);
-    q.bindValue(":year", year);
-    if (!q.exec())
+    te->append("Dohodi:");
+    QString str = "SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= '%1-%2-01' AND a.type = 3 AND o.acc_from = a.id GROUP BY a.name";
+    QString query = str.arg(year).arg(month);
+    qDebug() << query;
+    if (!q.exec(query)) {
+	qDebug() << "Error select:" << q.lastError().text();
         return;
-    while (q.next()) {
-        te->append(q.value(0).toString() + ": " + default_locale->toString(q.value(1).toDouble()) + "\n");
     }
+    summ = 0;
+    while (q.next()) {
+        te->append(q.value(0).toString() + ": " + default_locale->toString(q.value(1).toDouble()));
+        summ += q.value(1).toDouble();
+    }
+    te->append("Itogo: " + QString("%1").arg(default_locale->toString(summ)));
 
-    te->append("-----------------------------------------------\n");
+    te->append("-----------------------------------------------");
+    te->append("Rashodi:");
 
-    q.prepare("SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= 1/:month/:year AND a.type = 4 AND o.acc_to = a.id");
-    q.bindValue(":month", month);
-    q.bindValue(":year", year);
-    if (!q.exec())
+    str = "SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= '%1-%2-01' AND a.type = 4 AND o.acc_to = a.id GROUP BY a.name";
+    query = str.arg(year).arg(month);
+    if (!q.exec(query)) {
+	qDebug() << "Error select:" << q.lastError().text();
         return;
-    while (q.next()) {
-        te->append(q.value(0).toString() + ": " + default_locale->toString(q.value(1).toDouble()) + "\n");
     }
+    summ = 0;
+    while (q.next()) {
+        te->append(q.value(0).toString() + ": " + default_locale->toString(q.value(1).toDouble()));
+        summ += q.value(1).toDouble();
+    }
+    te->append("Itogo: " + QString("%1").arg(default_locale->toString(summ)));
 }
