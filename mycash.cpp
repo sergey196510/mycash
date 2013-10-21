@@ -235,9 +235,8 @@ void MyCash::report1()
     te->append("Dohodi:");
     QString str = "SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= '%1-%2-01' AND a.type = 3 AND o.acc_from = a.id GROUP BY a.name";
     QString query = str.arg(year).arg(month);
-    qDebug() << query;
     if (!q.exec(query)) {
-	qDebug() << "Error select:" << q.lastError().text();
+        qDebug() << "Error select:" << q.lastError().text();
         return;
     }
     summ = 0;
@@ -253,7 +252,7 @@ void MyCash::report1()
     str = "SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= '%1-%2-01' AND a.type = 4 AND o.acc_to = a.id GROUP BY a.name";
     query = str.arg(year).arg(month);
     if (!q.exec(query)) {
-	qDebug() << "Error select:" << q.lastError().text();
+        qDebug() << "Error select:" << q.lastError().text();
         return;
     }
     summ = 0;
@@ -262,4 +261,13 @@ void MyCash::report1()
         summ += q.value(1).toDouble();
     }
     te->append("Itogo: " + QString("%1").arg(default_locale->toString(summ)));
+
+    te->append("-----------------------------------------------");
+
+    query = "SELECT sum(balance) FROM account WHERE type = 1 AND hidden = 'false'";
+    if (!q.exec(query) || !q.next()) {
+        qDebug() << "Error select:" << q.lastError().text();
+        return;
+    }
+    te->append("Ostatok: " + QString("%1").arg(default_locale->toString(q.value(0).toDouble())));
 }

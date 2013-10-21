@@ -18,6 +18,7 @@ cmake_minimum_required(VERSION 2.8)
     database.cpp
     editaccount.cpp
     editoperation.cpp
+    editplanoper.cpp
     global.cpp
     graphwidget.cpp
     listaccounts.cpp
@@ -43,6 +44,7 @@ cmake_minimum_required(VERSION 2.8)
     database.h
     editaccount.h
     editoperation.h
+    editplanoper.h
     global.h
     graphwidget.h
     listaccounts.h
@@ -61,6 +63,7 @@ cmake_minimum_required(VERSION 2.8)
   SET( mycash_UIS
     editaccount.ui
     editoperation.ui
+    editplanoper.ui
     listaccounts.ui
     listagents.ui
     listcurrency.ui

@@ -1,5 +1,6 @@
 #include "listplanoper.h"
 #include "ui_listplanoper.h"
+#include "editplanoper.h"
 
 ListPlanOperModel::ListPlanOperModel(QObject *parent) :
     QSqlQueryModel(parent)
@@ -31,6 +32,12 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
 
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(0);
+
+    QAction *tran = new QAction(tr("Transfer"), this);
+    ui->tableView->addAction(tran);
+    ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
 }
 
 ListPlanOper::~ListPlanOper()
@@ -40,5 +47,7 @@ ListPlanOper::~ListPlanOper()
 
 void ListPlanOper::new_oper()
 {
+    editPlanOper *po = new editPlanOper(this);
 
+    po->exec();
 }
