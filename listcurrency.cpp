@@ -60,22 +60,22 @@ ListCurrency::ListCurrency(QWidget *parent) :
     model = new ListCurrencyModel;
     model->setQuery(query);
 
-    ui->tableView->setModel(model);
-    ui->tableView->hideColumn(0);
-    ui->tableView->resizeRowsToContents();
-    ui->tableView->resizeColumnsToContents();
-    ui->tableView->setAlternatingRowColors(true);
-    ui->tableView->horizontalHeader()->setStretchLastSection(true);
-    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableView->setShowGrid(false);
+    ui->treeView->setModel(model);
+    ui->treeView->hideColumn(0);
+//    ui->treeView->resizeRowsToContents();
+//    ui->treeView->resizeColumnsToContents();
+    ui->treeView->setAlternatingRowColors(true);
+//    ui->treeView->horizontalHeader()->setStretchLastSection(true);
+    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
+//    ui->treeView->setShowGrid(false);
 
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);
     ui->delButton->setEnabled(false);
     ui->defaultButton->setEnabled(false);
 
-    connect(ui->tableView, SIGNAL(clicked(QModelIndex)), SLOT(check_select()));
+    connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(check_select()));
     connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(check_new_button(QString)));
     connect(ui->symbolEdit, SIGNAL(textChanged(QString)), SLOT(check_symbol(QString)));
 
@@ -114,15 +114,15 @@ void ListCurrency::new_currency()
     q.exec();
 
     model->setQuery(query);
-    ui->tableView->resizeRowsToContents();
-    ui->tableView->resizeColumnsToContents();
+//    ui->treeView->resizeRowsToContents();
+//    ui->treeView->resizeColumnsToContents();
 }
 
 int ListCurrency::get_selected_id()
 {
     QModelIndexList list;
 
-    list = ui->tableView->selectionModel()->selectedIndexes();
+    list = ui->treeView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return 0;
@@ -149,8 +149,8 @@ void ListCurrency::update_currency()
     }
 
     model->setQuery(query);
-    ui->tableView->resizeRowsToContents();
-    ui->tableView->resizeColumnsToContents();
+//    ui->treeView->resizeRowsToContents();
+//    ui->treeView->resizeColumnsToContents();
 }
 
 void ListCurrency::delete_currency()
@@ -182,8 +182,8 @@ void ListCurrency::set_default()
     current_currency = get_selected_id();
 
     model->setQuery(query);
-    ui->tableView->resizeRowsToContents();
-    ui->tableView->resizeColumnsToContents();
+//    ui->tableView->resizeRowsToContents();
+//    ui->tableView->resizeColumnsToContents();
 }
 
 void ListCurrency::check_select()

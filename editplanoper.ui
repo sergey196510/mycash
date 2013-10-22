@@ -57,9 +57,6 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
-      <widget class="QLineEdit" name="currencyEdit"/>
-     </item>
      <item row="3" column="1">
       <widget class="AccountComboBox" name="fromBox"/>
      </item>
@@ -95,6 +92,9 @@
      </item>
      <item row="4" column="1">
       <widget class="AgentComboBox" name="agentBox"/>
+     </item>
+     <item row="6" column="1">
+      <widget class="currencyEdit" name="curr_Edit"/>
      </item>
     </layout>
    </item>
@@ -148,7 +148,12 @@
   <customwidget>
    <class>AccountComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">accountcombobox.h</header>
+   <header>accountcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>currencyEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">currencyedit.h</header>
   </customwidget>
   <customwidget>
    <class>AgentComboBox</class>

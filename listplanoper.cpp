@@ -38,6 +38,13 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
                 return int(Qt::AlignRight | Qt::AlignVCenter);
             if (index.column() == 6)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
+
+        case Qt::TextColorRole:
+            if (record(index.row()).value(0).toInt() == current_currency) {
+                return QVariant(QColor(Qt::red));
+            }
+            else
+                return value;
     }
 
     return value;
@@ -66,16 +73,21 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     model = new ListPlanOperModel;
     model->setQuery(query);
 
-    ui->tableView->setModel(model);
-    ui->tableView->hideColumn(0);
-    ui->tableView->resizeColumnsToContents();
-    ui->tableView->resizeRowsToContents();
+    ui->treeView->setModel(model);
+    ui->treeView->hideColumn(0);
+//    ui->treeView->resizeColumnsToContents();
+//    ui->treeView->resizeRowsToContents();
+    ui->treeView->setAlternatingRowColors(true);
+//    ui->treeView->horizontalHeader()->setStretchLastSection(true);
+    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
+//    ui->treeView->setShowGrid(false);
 
     QAction *tran = new QAction(tr("New plan operation"), this);
     QAction *delo = new QAction(tr("Delete selected operation"), this);
-    ui->tableView->addAction(tran);
-    ui->tableView->addAction(delo);
-    ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
+    ui->treeView->addAction(tran);
+    ui->treeView->addAction(delo);
+    ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
     connect(delo, SIGNAL(triggered()), SLOT(del_oper()));
@@ -94,6 +106,10 @@ void ListPlanOper::new_oper()
     if (po->exec() == QDialog::Accepted) {
         PlanOper_data data = po->Value();
         db->new_plan_oper(data);
+
+        model->setQuery(query);
+//        ui->treeView->resizeColumnsToContents();
+//        ui->treeView->resizeRowsToContents();
     }
 
     delete po;
@@ -103,19 +119,31 @@ int ListPlanOper::get_selected_id()
 {
     QModelIndexList list;
 
-    list = ui->tableView->selectionModel()->selectedIndexes();
+    list = ui->treeView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
         QMessageBox::critical(this, "Operation cancellation", "Nothing selected");
         return 0;
     }
 
-     return list.at(5).data(Qt::DisplayRole).toInt();
+     return list.at(0).data(Qt::DisplayRole).toInt();
 }
 
 void ListPlanOper::del_oper()
 {
+    QSqlQuery q;
     int id = get_selected_id();
 
     if (id == 0)
         return;
+
+    q.prepare("DELETE FROM plan_oper WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        qDebug() << "Error DELETE:" << q.lastError().text();
+        return;
+    }
+
+    model->setQuery(query);
+//    ui->treeView->resizeColumnsToContents();
+//    ui->treeView->resizeRowsToContents();
 }

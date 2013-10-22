@@ -93,20 +93,20 @@ ListOperations::ListOperations(QWidget *parent) :
     QAction *tran = new QAction(tr("Transfer"), this);
     QAction *font = new QAction(tr("Select font"), this);
 
-    ui->tableView->setModel(model);
-    ui->tableView->resizeRowsToContents();
-    ui->tableView->resizeColumnsToContents();
-    ui->tableView->setAlternatingRowColors(true);
-    ui->tableView->horizontalHeader()->setStretchLastSection(true);
-    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableView->setShowGrid(false);
+    ui->treeView->setModel(model);
+//    ui->treeView->resizeRowsToContents();
+//    ui->treeView->resizeColumnsToContents();
+    ui->treeView->setAlternatingRowColors(true);
+//    ui->treeView->horizontalHeader()->setStretchLastSection(true);
+    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
+//    ui->treeView->setShowGrid(false);
 
-    ui->tableView->addAction(debt);
-    ui->tableView->addAction(cred);
-    ui->tableView->addAction(tran);
-    ui->tableView->addAction(font);
-    ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
+    ui->treeView->addAction(debt);
+    ui->treeView->addAction(cred);
+    ui->treeView->addAction(tran);
+    ui->treeView->addAction(font);
+    ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     change_current_account(0);
 
@@ -129,14 +129,14 @@ ListOperations::~ListOperations()
 
 void ListOperations::edit_operation(int oper)
 {
-    QModelIndex idx = ui->tableView->currentIndex();
+    QModelIndex idx = ui->treeView->currentIndex();
 
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
 
         db->save_operation(d);
         model->setQuery(query);
-        ui->tableView->setCurrentIndex(idx);
+        ui->treeView->setCurrentIndex(idx);
         emit call_reload_table();
         change_current_account(0);
         if (oper == 1)
@@ -228,14 +228,14 @@ void ListOperations::select_font()
 
     fnt = QFontDialog::getFont(&bOk);
     if (bOk) {
-        ui->tableView->setFont(fnt);
+        ui->treeView->setFont(fnt);
         emit call_reload_table();
     }
 }
 
 void ListOperations::reload_table()
 {
-    ui->tableView->resizeRowsToContents();
-    ui->tableView->resizeColumnsToContents();
-    ui->tableView->horizontalHeader()->setStretchLastSection(true);
+//    ui->treeView->resizeRowsToContents();
+//    ui->treeView->resizeColumnsToContents();
+//    ui->treeView->horizontalHeader()->setStretchLastSection(true);
 }

@@ -1,9 +1,16 @@
 #include "currencyedit.h"
 #include "global.h"
 
+currencyValidator::currencyValidator(QObject *parent) :
+    QValidator(parent)
+{
+}
+
 currencyEdit::currencyEdit(QWidget *parent) :
     QLineEdit(parent)
 {
+    currencyValidator *val = new currencyValidator(this);
+    setValidator(val);
 }
 
 double currencyEdit::value()

@@ -23,7 +23,7 @@ editPlanOper::editPlanOper(QWidget *parent) :
     connect(ui->dayBox,       SIGNAL(currentIndexChanged(int)), SLOT(check_ok()));
     connect(ui->fromBox,      SIGNAL(currentIndexChanged(int)), SLOT(check_ok()));
     connect(ui->toBox,        SIGNAL(currentIndexChanged(int)), SLOT(check_ok()));
-    connect(ui->currencyEdit, SIGNAL(textChanged(QString)),     SLOT(check_ok()));
+    connect(ui->curr_Edit, SIGNAL(textChanged(QString)),     SLOT(check_ok()));
     connect(ui->okButton,     SIGNAL(released()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
 }
@@ -42,7 +42,7 @@ PlanOper_data editPlanOper::Value()
     po.year = ui->yearBox->value();
     po.from = ui->fromBox->value();
     po.to = ui->toBox->value();
-    po.summ = ui->currencyEdit->text().toDouble();
+    po.summ = ui->curr_Edit->value();
     po.descr = ui->descrEdit->text();
 
     return po;
@@ -53,7 +53,7 @@ void editPlanOper::check_ok()
     if (ui->dayBox->currentText().toInt() > 0 &&
             ui->fromBox->value() > 0 &&
             ui->toBox->value() > 0 &&
-            ui->currencyEdit->text().toDouble() > 0)
+            ui->curr_Edit->value() > 0)
         ui->okButton->setEnabled(true);
     else
         ui->okButton->setEnabled(false);

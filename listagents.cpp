@@ -29,21 +29,21 @@ ListAgents::ListAgents(QWidget *parent) :
     model = new ListAgentsModel;
     model->setQuery(query);
 
-    ui->tableView->setModel(model);
-    ui->tableView->hideColumn(0);
-    ui->tableView->resizeRowsToContents();
-    ui->tableView->resizeColumnsToContents();
-    ui->tableView->setAlternatingRowColors(true);
-    ui->tableView->horizontalHeader()->setStretchLastSection(true);
-    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableView->setShowGrid(false);
+    ui->treeView->setModel(model);
+    ui->treeView->hideColumn(0);
+//    ui->treeView->resizeRowsToContents();
+//    ui->treeView->resizeColumnsToContents();
+    ui->treeView->setAlternatingRowColors(true);
+//    ui->treeView->horizontalHeader()->setStretchLastSection(true);
+    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
+//    ui->treeView->setShowGrid(false);
 
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);
     ui->delButton->setEnabled(false);
 
-    connect(ui->tableView, SIGNAL(clicked(QModelIndex)), SLOT(check_select_line()));
+    connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(check_select_line()));
     connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(check_new_button(QString)));
     connect(ui->newButton, SIGNAL(released()), SLOT(save_new_record()));
     connect(ui->editButton, SIGNAL(released()), SLOT(update_record()));
@@ -66,7 +66,7 @@ int ListAgents::get_selected_id()
     QModelIndexList list;
     int id;
 
-    list = ui->tableView->selectionModel()->selectedIndexes();
+    list = ui->treeView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return 0;
