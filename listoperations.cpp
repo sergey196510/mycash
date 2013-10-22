@@ -134,7 +134,7 @@ void ListOperations::edit_operation(int oper)
     if (eo.exec() == QDialog::Accepted) {
         eo.data(d);
 
-        db->save_operation(d.from, d.to, d.agent, d.summ, d.date, d.descr);
+        db->save_operation(d);
         model->setQuery(query);
         ui->tableView->setCurrentIndex(idx);
         emit call_reload_table();
@@ -183,18 +183,21 @@ void ListOperations::change_current_account(int idx)
     QLocale *lc;
     QFont font;
     font.setBold(true);
+    int id = ui->accountcomboBox->value();
+    Account_Data data = db->get_account_data(id);
+    QString scod = db->get_account_scod(id);
 
-    if (db->get_account_scod(ui->accountcomboBox->value()) == "USD") {
-        ui->account_ostatok->setText("USD");
+    if (scod == "USD") {
+        ui->account_ostatok->setText(scod);
         lc = new QLocale(QLocale::English);
     }
-    else if (db->get_account_scod(ui->accountcomboBox->value()) == "EUR") {
-        ui->account_ostatok->setText("EUR");
+    else if (scod == "EUR") {
+        ui->account_ostatok->setText(scod);
         lc = new QLocale(QLocale::German);
     }
     else
         lc = default_locale;
-    ui->account_ostatok->setText(lc->toCurrencyString(db->get_account_balance(ui->accountcomboBox->value())));
+    ui->account_ostatok->setText(lc->toCurrencyString(data.balance));
     ui->account_ostatok->setFont(font);
 
     current_account = ui->accountcomboBox->value();

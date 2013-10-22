@@ -2,6 +2,7 @@
 #define EDITPLANOPER_H
 
 #include <QDialog>
+#include "global.h"
 
 namespace Ui {
 class editPlanOper;
@@ -14,9 +15,13 @@ class editPlanOper : public QDialog
 public:
     explicit editPlanOper(QWidget *parent = 0);
     ~editPlanOper();
+    PlanOper_data Value();
 
 private:
     Ui::editPlanOper *ui;
+
+private slots:
+    void check_ok();
 };
 
 #endif // EDITPLANOPER_H

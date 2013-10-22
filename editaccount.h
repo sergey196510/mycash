@@ -2,14 +2,7 @@
 #define EDITACCOUNT_H
 
 #include <QDialog>
-
-struct Account_Data {
-    QString name;
-    int type;
-    int curr;
-    double balance;
-    QString descr;
-};
+#include "global.h"
 
 namespace Ui {
 class EditAccount;

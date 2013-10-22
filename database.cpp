@@ -17,6 +17,7 @@ double Database::get_account_summ(int type)
     return query.value(0).toDouble();
 }
 
+/*
 double Database::get_account_balance(int id)
 {
     QSqlQuery query;
@@ -40,6 +41,7 @@ int Database::get_account_ccod(int id)
 
     return query.value(0).toInt();
 }
+*/
 
 QString Database::get_account_scod(int id)
 {
@@ -53,6 +55,7 @@ QString Database::get_account_scod(int id)
     return query.value(0).toString();
 }
 
+/*
 int Database::get_account_type(int id)
 {
     QSqlQuery query;
@@ -76,6 +79,7 @@ QString Database::get_account_name(int id)
 
     return query.value(0).toString();
 }
+*/
 
 QMap<int,QString> Database::get_accounts_list()
 {
@@ -90,6 +94,28 @@ QMap<int,QString> Database::get_accounts_list()
     }
 
     return list;
+}
+
+Account_Data Database::get_account_data(int id)
+{
+    Account_Data data;
+    QSqlQuery q;
+
+    q.prepare("SELECT name,type,balance,desct,ccod,hidden FROM account WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec() || !q.next()) {
+        qDebug() << "SELECT Error:" << q.lastError().text();
+        return data;
+    }
+
+    data.name = q.value(0).toString();
+    data.type = q.value(1).toInt();
+    data.balance = q.value(2).toDouble();
+    data.descr = q.value(3).toString();
+    data.curr = q.value(4).toInt();
+    data.hidden = q.value(5).toInt();
+
+    return data;
 }
 
 QString Database::get_agent_name(int id)
@@ -131,17 +157,17 @@ QMap<int,QString> Database::get_scod_list()
     return list;
 }
 
-int Database::new_operation(const int from, const int to, const int agent, const double summ, const QString date, const QString descr)
+int Database::new_operation(operation_data &data)
 {
     QSqlQuery query;
 
     query.prepare("INSERT INTO operation(acc_from, acc_to, agent, summ, dt, descr) VALUES(:from, :to, :agent, :summ, :dt, :descr)");
-    query.bindValue(":from", from);
-    query.bindValue(":to", to);
-    query.bindValue(":agent", agent);
-    query.bindValue(":summ", summ);
-    query.bindValue(":dt", date);
-    query.bindValue(":descr", descr);
+    query.bindValue(":from", data.from);
+    query.bindValue(":to", data.to);
+    query.bindValue(":agent", data.agent);
+    query.bindValue(":summ", data.summ);
+    query.bindValue(":dt", data.date);
+    query.bindValue(":descr", data.descr);
     if (!query.exec())
         return 0;
 
@@ -154,8 +180,8 @@ int Database::new_operation(const int from, const int to, const int agent, const
 bool Database::new_account_oper(const int a_id, const int o_id, const double delta)
 {
     QSqlQuery q;
-    int type = get_account_type(a_id);
-    int flag = (type == 1 || type == 4) ? 1 : -1;
+    Account_Data data = get_account_data(a_id);
+    int flag = (data.type == 1 || data.type == 4) ? 1 : -1;
     double summ = delta * flag;
 
     q.prepare("INSERT INTO account_oper(a_id, o_id, summ) VALUES(:a_id, :o_id, :summ)");
@@ -172,16 +198,17 @@ bool Database::change_account_balance(const int id, const double delta)
 {
     QSqlQuery query;
     double summ;
+    Account_Data data;
     int type, flag;
 
     query.exec("BEGIN TRANSACTION");
 
-    type = get_account_type(id);
+    data = get_account_data(id);
 
-    if (type == 1 || type == 4)
+    if (data.type == 1 || data.type == 4)
         flag = 1;
-    else if (type < 1 || type > 4) {
-	qDebug() << "type is unknown: " << type;
+    else if (data.type < 1 || data.type > 4) {
+    qDebug() << "type is unknown: " << data.type;
 	query.exec("ROLLBACK TRANSACTION");
         return false;
     }
@@ -202,34 +229,54 @@ bool Database::change_account_balance(const int id, const double delta)
     return true;
 }
 
-bool Database::save_operation(const int from, const int to, const int agent, const double summ, const QString date, const QString descr)
+bool Database::save_operation(operation_data &data)
 {
     QSqlQuery q;
     int oper_id;
 
     q.exec("BEGIN TRANSACTION");
 
-    if ((oper_id = new_operation(from, to, agent, summ, date, descr)) == 0) {
+    if ((oper_id = new_operation(data)) == 0) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (new_account_oper(from, oper_id, -summ) == false) {
+    if (new_account_oper(data.from, oper_id, -data.summ) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (new_account_oper(to, oper_id, summ) == false) {
+    if (new_account_oper(data.to, oper_id, data.summ) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (change_account_balance(from, -summ) == false) {
+    if (change_account_balance(data.from, -data.summ) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (change_account_balance(to, summ) == false) {
+    if (change_account_balance(data.to, data.summ) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
 
     q.exec("COMMIT TRANSACTION");
+    return true;
+}
+
+bool Database::new_plan_oper(PlanOper_data &data)
+{
+    QSqlQuery q;
+
+    q.prepare("INSERT INTO plan_oper(day, month, year, acc_from, acc_to, summ, descr) VALUES(:day, :month, :year, :from, :to, :summ, :descr)");
+    q.bindValue(":day", data.day);
+    q.bindValue(":month", data.month);
+    q.bindValue(":year", data.year);
+    q.bindValue(":from", data.from);
+    q.bindValue(":to", data.to);
+    q.bindValue(":summ", data.summ);
+    q.bindValue(":descr", data.descr);
+    if (!q.exec()) {
+        qDebug() << "Error Insert:" << q.lastError().text();
+        return false;
+    }
+
     return true;
 }

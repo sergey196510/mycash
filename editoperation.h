@@ -3,15 +3,7 @@
 
 #include <QDialog>
 #include "database.h"
-
-struct operation_data {
-    int from;
-    int to;
-    int agent;
-    double summ;
-    QString date;
-    QString descr;
-};
+#include "global.h"
 
 namespace Ui {
 class EditOperation;

@@ -179,25 +179,26 @@ void ListAccounts::new_account()
     ea.set_curr(current_currency);
 
     if (ea.exec() == QDialog::Accepted) {
-        QString name = ea.name();
-        int type = ea.type();
-        int ccod = ea.curr();
-        double balance = ea.balance();
-        QString descr = ea.descr();
-        bool hidden = ea.hidden();
+        Account_Data data = ea.data();
+//        QString name = ea.name();
+//        int type = ea.type();
+//        int ccod = ea.curr();
+//        double balance = ea.balance();
+//        QString descr = ea.descr();
+//        bool hidden = ea.hidden();
         QSqlQuery q;
 
-        if (name.length() == 0) {
+        if (data.name.length() == 0) {
             return;
         }
 
         q.prepare("INSERT INTO account(name, type, ccod, balance, desct, hidden) VALUES(:name, :type, :ccod, :balance, :descr, :hidden)");
-        q.bindValue(":name", name);
-        q.bindValue(":type", type);
-        q.bindValue(":ccod", ccod);
-        q.bindValue(":balance", balance);
-        q.bindValue(":descr", descr);
-        q.bindValue(":hidden", hidden);
+        q.bindValue(":name", data.name);
+        q.bindValue(":type", data.type);
+        q.bindValue(":ccod", data.curr);
+        q.bindValue(":balance", data.balance);
+        q.bindValue(":descr", data.descr);
+        q.bindValue(":hidden", data.hidden);
         q.exec();
 
         reload_model();
@@ -220,19 +221,30 @@ int ListAccounts::get_selected_id()
 void ListAccounts::correct_balance()
 {
     CorrectBalance cb(this);
-    int id;
+    int id = get_selected_id();
+    Account_Data data = db.get_account_data(id);
 
-    id = get_selected_id();
-
-    cb.setBalance(db.get_account_balance(id));
+    cb.setBalance(data.balance);
     if (cb.exec() == QDialog::Accepted) {
-        double current_balance = db.get_account_balance(id);
+        double current_balance = data.balance;
         double new_balance = cb.balance();
 
-        if (new_balance < current_balance)
-            db.save_operation(id, cb.account(), 0, current_balance-new_balance, cb.date(), tr("Correct"));
-        else
-            db.save_operation(cb.account(), id, 0, new_balance-current_balance, cb.date(), tr("Correct"));
+        operation_data od;
+        od.date = cb.date();
+        od.agent = 0;
+        od.descr = tr("correct");
+        if (new_balance < current_balance) {
+            od.from = id;
+            od.to = cb.account();
+            od.summ = current_balance-new_balance;
+            db.save_operation(od);
+        }
+        else {
+            od.to = id;
+            od.from = cb.account();
+            od.summ = new_balance-current_balance;
+            db.save_operation(od);
+        }
 
         reload_model();
     }

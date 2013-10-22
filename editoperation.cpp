@@ -43,12 +43,13 @@ void EditOperation::check_Ok()
 void EditOperation::check_balance(QString value)
 {
     double balance;
+    Account_Data data = db->get_account_data(ui->from_account->value());
 
-    if (db->get_account_type(ui->from_account->value()) != 1)
+    if (data.type != 1)
         return;
 
-    balance = db->get_account_balance(ui->from_account->value());
-    if (value.toDouble() > balance)
+//    balance = db->get_account_balance(ui->from_account->value());
+    if (value.toDouble() > data.balance)
         ui->warning->setVisible(true);
     else
         ui->warning->setVisible(false);
@@ -73,4 +74,5 @@ void EditOperation::setdata(operation_data &d)
     ui->to_Account->setValue(d.to);
     ui->agent_comboBox->setValue(d.agent);
     ui->summSpinBox->setValue(d.summ);
+    ui->descrEdit->setText(d.descr);
 }

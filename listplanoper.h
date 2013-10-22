@@ -4,6 +4,8 @@
 #include <QtGui>
 #include <QWidget>
 #include <QtSql>
+#include "database.h"
+#include "global.h"
 
 namespace Ui {
 class ListPlanOper;
@@ -15,11 +17,13 @@ class ListPlanOperModel : public QSqlQueryModel
 
 public:
     explicit ListPlanOperModel(QObject *parent = 0);
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 
 private:
     QStringList header_data;
-
+    QMap<int,QString> list;
+    Database *db;
 };
 
 class ListPlanOper : public QWidget
@@ -34,9 +38,12 @@ private:
     Ui::ListPlanOper *ui;
     ListPlanOperModel *model;
     QString query;
+    Database *db;
 
 private slots:
     void new_oper();
+    int get_selected_id();
+    void del_oper();
 };
 
 #endif // LISTPLANOPER_H

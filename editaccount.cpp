@@ -1,7 +1,6 @@
 #include "QtSql"
 #include "editaccount.h"
 #include "ui_editaccount.h"
-#include "global.h"
 
 EditAccount::EditAccount(QWidget *parent) :
     QDialog(parent),
