@@ -4,18 +4,35 @@ graphWidget::graphWidget(QWidget *parent) :
     QWidget(parent)
 {
     QSqlQuery q;
+    QDate current = QDate::currentDate();
+    QDate first(1, current.month(), current.year());
+    QMap<QString,double>::iterator i;
 
-    q.prepare("SELECT acc_to, summ FROM operation");
+    summ = 0;
 
-    list["First"] = 20;
-    list["Two"] = 30;
-    list["Three"] = 50;
+//    list["First"] = 20;
+//    list["Two"] = 30;
+//    list["Three"] = 50;
+
+    QString str = "SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= '%1-%2-01' AND a.type = 4 AND o.acc_to = a.id GROUP BY a.name";
+    QString query = str.arg(current.year()).arg(current.month());
+    if (!q.exec(query)) {
+        return;
+    }
+    while (q.next()) {
+        list2[q.value(0).toString()] = q.value(1).toDouble();
+        summ += q.value(1).toDouble();
+    }
+    for (i = list2.begin(); i != list2.end(); i++) {
+        list[i.key()] = i.value()*100/summ;
+    }
+
     count = list.size();
 }
 
 void graphWidget::paintEvent(QPaintEvent *pe)
 {
-    int x = 0, y = 0;
+    double x = 0, y = 0;
     QMap<QString,double>::iterator i;
     QList<QString> cols = QColor::colorNames();
 
@@ -35,9 +52,10 @@ void graphWidget::paintEvent(QPaintEvent *pe)
         x += y;
         y = 360*(i.value())/100;
         painter.setBrush(QBrush(cols.at(l), Qt::DiagCrossPattern));
+        painter.setPen(QPen(cols.at(l)));
         painter.drawPie(QRect(10,10,220,220), x*16, y*16);
-        painter.drawText(250,k,i.key()+": "+QString("%1").arg(i.value())+" "+cols.at(l));
-        l++;
+        painter.drawText(250,k,i.key()+": "+QString("%1").arg(list2[i.key()]));
+        l+=5;
         k += 15;
     }
 //    x += y;

@@ -206,6 +206,18 @@ bool Database::del_account_oper(int id)
     return true;
 }
 
+bool Database::del_operation(int id)
+{
+    QSqlQuery q;
+
+    q.prepare("DELETE FROM operation WHERE o_id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec())
+        return false;
+
+    return true;
+}
+
 bool Database::change_account_balance(const int id, const double delta)
 {
     QSqlQuery query;
@@ -278,7 +290,7 @@ operation_data Database::get_operation(int id)
     QSqlQuery q;
     operation_data data;
 
-    q.prepare("SELECT acc_from,acc_to,agent,summ,dt,descr FROM operation WHERE id = :id");
+    q.prepare("SELECT acc_from,acc_to,agent,summ,dt,descr,plan_id FROM operation WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec() || !q.next()) {
         return data;
@@ -290,6 +302,7 @@ operation_data Database::get_operation(int id)
     data.summ = q.value(3).toDouble();
     data.date = q.value(4).toString();
     data.descr = q.value(5).toString();
+    data.plan_id = q.value(6).toInt();
 
     return data;
 }

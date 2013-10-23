@@ -18,6 +18,7 @@ public:
     QMap<int,QString> get_accounts_list();
     QMap<int,QString> get_scod_list();
     int     new_operation(operation_data &);
+    bool    del_operation(int);
     bool    new_account_oper(const int, const int, const double);
     bool    del_account_oper(int);
     bool    change_account_balance(const int, const double);

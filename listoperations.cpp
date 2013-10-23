@@ -35,10 +35,10 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 4) {
 //            return value.toDate().toString("dddd dd MMMM yyyy");
             QDate dt = value.toDate();
-            if (dt.daysTo(curr) < 7)
+//            if (dt.daysTo(curr) < 7)
                 return value.toDate().toString(Qt::SystemLocaleLongDate);
-            else
-                return value.toDate().toString(Qt::SystemLocaleDate);
+//            else
+//                return value.toDate().toString(Qt::SystemLocaleDate);
         }
         else
             return value;
@@ -95,6 +95,7 @@ ListOperations::ListOperations(QWidget *parent) :
     QAction *font = new QAction(tr("Select font"), this);
 
     ui->treeView->setModel(model);
+    ui->treeView->hideColumn(0);
 //    ui->treeView->resizeRowsToContents();
 //    ui->treeView->resizeColumnsToContents();
     ui->treeView->setAlternatingRowColors(true);
@@ -102,6 +103,8 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
 //    ui->treeView->setShowGrid(false);
+    for (int i = 1; i < 5; i++)
+        ui->treeView->resizeColumnToContents(i);
 
     ui->treeView->addAction(debt);
     ui->treeView->addAction(cred);
@@ -216,10 +219,10 @@ void ListOperations::select_list_operations()
     ldate = ui->ldate->value();
 
     if (id > 0) {
-        query = "SELECT acc_from, acc_to, summ, dt, descr FROM operation WHERE (acc_from = " + QString("%1").arg(id) + " OR acc_to = " + QString("%1").arg(id) + ") AND dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
+        query = "SELECT id, acc_from, acc_to, summ, dt, descr FROM operation WHERE (acc_from = " + QString("%1").arg(id) + " OR acc_to = " + QString("%1").arg(id) + ") AND dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
     }
     else
-        query = "SELECT acc_from, acc_to, summ, dt, descr FROM operation WHERE dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
+        query = "SELECT id, acc_from, acc_to, summ, dt, descr FROM operation WHERE dt >= '" + fdate + "' AND dt <= '" + ldate + "' ORDER BY dt";
 
     model->setQuery(query);
     emit call_reload_table();
@@ -279,6 +282,10 @@ void ListOperations::del_operation()
         return;
     }
     if (db->del_account_oper(id) == false) {
+        q.exec("ROLLBACK TRANSACTION");
+        return;
+    }
+    if (db->del_operation(id) == false) {
         q.exec("ROLLBACK TRANSACTION");
         return;
     }

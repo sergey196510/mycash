@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QtSql>
 #include "database.h"
+#include "mydateedit.h"
 
 class graphWidget : public QWidget
 {
@@ -12,8 +13,9 @@ public:
     graphWidget(QWidget *parent = 0);
 
 private:
-    QMap<QString,double> list;
+    QMap<QString,double> list, list2;
     int count;
+    double summ;
     int image_width, image_height;
 
 protected:

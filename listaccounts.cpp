@@ -147,6 +147,8 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     ui->treeView->setAlternatingRowColors(true);
+    for (int i = 1; i < 5; i++)
+        ui->treeView->resizeColumnToContents(i);
 
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));

@@ -31,10 +31,11 @@ struct operation_data {
     int to;
     int agent;
     double summ;
+    int plan_id;
     QString date;
     QString descr;
     operation_data() {
-        from = to = agent = 0;
+        from = to = agent = plan_id = 0;
         summ = 0;
         date = "";
         descr = "";
