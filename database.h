@@ -19,9 +19,11 @@ public:
     QMap<int,QString> get_scod_list();
     int     new_operation(operation_data &);
     bool    new_account_oper(const int, const int, const double);
+    bool    del_account_oper(int);
     bool    change_account_balance(const int, const double);
     bool    save_operation(operation_data &);
     bool    new_plan_oper(PlanOper_data &data);
+    operation_data get_operation(int);
 };
 
 #endif // DATABASE_H

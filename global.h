@@ -18,6 +18,12 @@ struct Account_Data {
     double balance;
     int hidden;
     QString descr;
+    Account_Data() {
+        name = "";
+        type = curr = hidden = 0;
+        balance = 0;
+        descr = "";
+    }
 };
 
 struct operation_data {
@@ -27,6 +33,12 @@ struct operation_data {
     double summ;
     QString date;
     QString descr;
+    operation_data() {
+        from = to = agent = 0;
+        summ = 0;
+        date = "";
+        descr = "";
+    }
 };
 
 struct PlanOper_data {
@@ -37,6 +49,11 @@ struct PlanOper_data {
     int to;
     double summ;
     QString descr;
+    PlanOper_data() {
+        day = month = year = from = to = 0;
+        summ = 0;
+        descr = "";
+    }
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include "listoperations.h"
 #include "listagents.h"
 #include "listplanoper.h"
+#include "graphwidget.h"
 #include "global.h"
 
 MyCash::MyCash(QWidget *parent) :
@@ -67,6 +68,7 @@ void MyCash::setconnects()
     connect(ui->action_Plan_Operations, SIGNAL(triggered()), SLOT(list_plan_oper()));
 
     connect(ui->actionReport_1, SIGNAL(triggered()), SLOT(report1()));
+    connect(ui->actionReport_2, SIGNAL(triggered()), SLOT(report2()));
 
     connect(ui->actionAbout_program, SIGNAL(triggered()), SLOT(aboutProgram()));
     connect(ui->actionAbout_QT,      SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -270,4 +272,11 @@ void MyCash::report1()
         return;
     }
     te->append("Ostatok: " + QString("%1").arg(default_locale->toString(q.value(0).toDouble())));
+}
+
+void MyCash::report2()
+{
+    graphWidget *gw = new graphWidget;
+
+    setCentralWidget(gw);
 }

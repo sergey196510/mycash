@@ -42,6 +42,7 @@ private slots:
     void list_agents();
     void list_plan_oper();
     void report1();
+    void report2();
 
 };
 

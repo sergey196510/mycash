@@ -54,6 +54,8 @@ private slots:
     void change_current_account(int);
     void select_font();
     void reload_table();
+    void del_operation();
+    int get_selected_id();
 };
 
 #endif // LISTOPERATIONS_H
