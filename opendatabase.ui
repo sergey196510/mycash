@@ -71,7 +71,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="okButton">
+      <widget class="OkPushButton" name="okButton">
        <property name="text">
         <string>Ok</string>
        </property>
@@ -88,6 +88,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>OkPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/okpushbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

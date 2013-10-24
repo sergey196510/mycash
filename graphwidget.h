@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QtSql>
 #include "database.h"
-#include "mydateedit.h"
+#include "widgets/mydateedit.h"
 
 class graphWidget : public QWidget
 {

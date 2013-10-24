@@ -127,7 +127,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="okButton">
+      <widget class="OkPushButton" name="okButton">
        <property name="text">
         <string>Ok</string>
        </property>
@@ -146,19 +146,24 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AccountComboBox</class>
-   <extends>QComboBox</extends>
-   <header>accountcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>currencyEdit</class>
    <extends>QLineEdit</extends>
-   <header location="global">currencyedit.h</header>
+   <header location="global">widgets/currencyedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>OkPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/okpushbutton.h</header>
   </customwidget>
   <customwidget>
    <class>AgentComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">agentcombobox.h</header>
+   <header location="global">widgets/agentcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">widgets/accountcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

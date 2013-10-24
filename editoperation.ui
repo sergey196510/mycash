@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>507</width>
-    <height>227</height>
+    <height>247</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,7 +101,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="okButton">
+      <widget class="OkPushButton" name="okButton">
        <property name="text">
         <string>Ok</string>
        </property>
@@ -120,24 +120,29 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AccountComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">accountcombobox.h</header>
+   <class>currencyEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">widgets/currencyedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>OkPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/okpushbutton.h</header>
   </customwidget>
   <customwidget>
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>
-   <header location="global">mydateedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>currencyEdit</class>
-   <extends>QLineEdit</extends>
-   <header location="global">currencyedit.h</header>
+   <header location="global">widgets/mydateedit.h</header>
   </customwidget>
   <customwidget>
    <class>AgentComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">agentcombobox.h</header>
+   <header location="global">widgets/agentcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">widgets/accountcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

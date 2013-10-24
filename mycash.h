@@ -2,7 +2,7 @@
 #define MYCASH_H
 
 #include <QMainWindow>
-#include "currencycombobox.h"
+#include "widgets/currencycombobox.h"
 
 namespace Ui {
 class MyCash;
@@ -36,6 +36,7 @@ private slots:
     void settings();
     void aboutProgram();
     void mark_Object();
+    void list_home();
     void list_accounts();
     void list_currency();
     void list_operations();

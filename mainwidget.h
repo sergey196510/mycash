@@ -2,6 +2,8 @@
 #define MAINWIDGET_H
 
 #include <QWidget>
+#include "global.h"
+#include "database.h"
 
 namespace Ui {
 class MainWidget;
@@ -17,6 +19,7 @@ public:
 
 private:
     Ui::MainWidget *ui;
+    Database *db;
 };
 
 #endif // MAINWIDGET_H

@@ -81,7 +81,7 @@
   <customwidget>
    <class>AccountTypeComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">accounttypecombobox.h</header>
+   <header location="global">widgets/accounttypecombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

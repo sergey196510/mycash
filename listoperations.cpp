@@ -35,10 +35,10 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 4) {
 //            return value.toDate().toString("dddd dd MMMM yyyy");
             QDate dt = value.toDate();
-//            if (dt.daysTo(curr) < 7)
+            if (dt.daysTo(curr) < 7)
                 return value.toDate().toString(Qt::SystemLocaleLongDate);
-//            else
-//                return value.toDate().toString(Qt::SystemLocaleDate);
+            else
+                return value.toDate().toString(Qt::SystemLocaleDate);
         }
         else
             return value;
@@ -96,15 +96,15 @@ ListOperations::ListOperations(QWidget *parent) :
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
-//    ui->treeView->resizeRowsToContents();
-//    ui->treeView->resizeColumnsToContents();
     ui->treeView->setAlternatingRowColors(true);
-//    ui->treeView->horizontalHeader()->setStretchLastSection(true);
     ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
-//    ui->treeView->setShowGrid(false);
-    for (int i = 1; i < 5; i++)
-        ui->treeView->resizeColumnToContents(i);
+    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(4, QHeaderView::ResizeToContents);
+//    for (int i = 1; i < 5; i++)
+//        ui->treeView->resizeColumnToContents(i);
 
     ui->treeView->addAction(debt);
     ui->treeView->addAction(cred);

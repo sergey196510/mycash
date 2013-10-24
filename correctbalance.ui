@@ -99,19 +99,19 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AccountComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">accountcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>
-   <header location="global">mydateedit.h</header>
+   <header location="global">widgets/mydateedit.h</header>
   </customwidget>
   <customwidget>
    <class>currencyEdit</class>
    <extends>QLineEdit</extends>
-   <header location="global">currencyedit.h</header>
+   <header location="global">widgets/currencyedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">widgets/accountcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

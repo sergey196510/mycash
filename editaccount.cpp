@@ -16,7 +16,6 @@ EditAccount::EditAccount(QWidget *parent) :
 //    ui->balanceSpinBox->setRange(-1000000, 1000000);
     ui->balanceSpinBox->setValue(0);
 
-    ui->okButton->setIcon(QPixmap(":icons/accept.png"));
     ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     ui->okButton->setEnabled(false);
 }

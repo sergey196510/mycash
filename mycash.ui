@@ -46,6 +46,7 @@
     <property name="title">
      <string>&amp;Objects</string>
     </property>
+    <addaction name="action_Home"/>
     <addaction name="action_ListAccounts"/>
     <addaction name="action_ListOperations"/>
     <addaction name="action_ListAgents"/>
@@ -141,6 +142,11 @@
   <action name="action_Plan_Operations">
    <property name="text">
     <string>&amp;Plan Operations</string>
+   </property>
+  </action>
+  <action name="action_Home">
+   <property name="text">
+    <string>&amp;Home</string>
    </property>
   </action>
  </widget>

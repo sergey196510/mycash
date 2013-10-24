@@ -3,35 +3,31 @@
 #include "editplanoper.h"
 
 ListPlanOperModel::ListPlanOperModel(QObject *parent) :
-    QAbstractItemModel(parent)
+    QSqlQueryModel(parent)
 {
     db = new Database;
     header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Description");
     list = db->get_accounts_list();
-
-    insertColumns(0,8);
-    this->insertRow(0);
-    setData(index(0,7), "test");
 }
 
 QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
 {
     QDate curr = QDate::currentDate();
-//    QVariant value = QAbstractItemModel::data(index, role);
+    QVariant value = QSqlQueryModel::data(index, role);
 
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 2 || index.column() == 3) {
-            return (QVariant().toInt() == 0) ? "" : QVariant();
+            return (value.toInt() == 0) ? "" : value;
         }
         if (index.column() == 4 || index.column() == 5) {
-            return list[QVariant().toInt()];
+            return list[value.toInt()];
         }
         else if (index.column() == 6) {
-            return default_locale->toString(QVariant().toDouble());
+            return default_locale->toString(value.toDouble());
         }
         else
-            return QVariant();
+            return value;
 
         case Qt::TextAlignmentRole:
             if (index.column() == 1)
@@ -51,7 +47,7 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
 //                return value;
     }
 
-    return QVariant();
+    return value;
 }
 
 QVariant ListPlanOperModel::headerData(int section,Qt::Orientation orientation, int role) const
@@ -65,46 +61,6 @@ QVariant ListPlanOperModel::headerData(int section,Qt::Orientation orientation, 
         return QString("%1").arg(section+1);
 }
 
-Node *ListPlanOperModel::nodeFromIndex(const QModelIndex &index) const
-{
-    if (index.isValid()) {
-        return static_cast<Node*>(index.internalPointer());
-    }
-    else {
-        return rootNode;
-    }
-}
-
-QModelIndex ListPlanOperModel::index(int row, int column, const QModelIndex &parent) const
-{
-    return QModelIndex();
-}
-
-QModelIndex ListPlanOperModel::parent(const QModelIndex &child) const
-{
-    Node *node = nodeFromIndex(child);
-    if (!node)
-        return QModelIndex();
-    Node *parentNode = node->parent;
-    if (!parentNode)
-        return QModelIndex();
-    Node *grandparentNode = parentNode->parent;
-    if (!grandparentNode)
-        return QModelIndex();
-    int row = grandparentNode->children.indexOf(parentNode);
-    return createIndex(row, 0, parentNode);
-}
-
-int ListPlanOperModel::rowCount(const QModelIndex &parent) const
-{
-
-}
-
-int ListPlanOperModel::columnCount(const QModelIndex &parent) const
-{
-    return 8;
-}
-
 ListPlanOper::ListPlanOper(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListPlanOper)
@@ -115,7 +71,7 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     db = new Database;
 
     model = new ListPlanOperModel;
-//    model->setQuery(query);
+    model->setQuery(query);
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
@@ -153,7 +109,7 @@ void ListPlanOper::new_oper()
         PlanOper_data data = po->Value();
         db->new_plan_oper(data);
 
-//        model->setQuery(query);
+        model->setQuery(query);
 //        ui->treeView->resizeColumnsToContents();
 //        ui->treeView->resizeRowsToContents();
     }
@@ -189,7 +145,7 @@ void ListPlanOper::del_oper()
         return;
     }
 
-//    model->setQuery(query);
+    model->setQuery(query);
 //    ui->treeView->resizeColumnsToContents();
 //    ui->treeView->resizeRowsToContents();
 }

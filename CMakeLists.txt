@@ -10,11 +10,12 @@ cmake_minimum_required(VERSION 2.8)
   # here we define mycash_SRCS variable that contains a list of all .cpp files
   # note that we don't need \ at the end of line
   SET( mycash_SRCS
-    accountcombobox.cpp
-    agentcombobox.cpp
-    accounttypecombobox.cpp
-    currencycombobox.cpp
-    currencyedit.cpp
+    widgets/accountcombobox.cpp
+    widgets/agentcombobox.cpp
+    widgets/accounttypecombobox.cpp
+    widgets/currencycombobox.cpp
+    widgets/currencyedit.cpp
+    widgets/okpushbutton.cpp
     database.cpp
     editaccount.cpp
     editoperation.cpp
@@ -27,8 +28,9 @@ cmake_minimum_required(VERSION 2.8)
     listoperations.cpp
     listplanoper.cpp
     main.cpp
+    mainwidget.cpp
     mycash.cpp
-    mydateedit.cpp
+    widgets/mydateedit.cpp
     opendatabase.cpp
     createdatabase.cpp
     correctbalance.cpp
@@ -36,11 +38,12 @@ cmake_minimum_required(VERSION 2.8)
   
   # another list, this time it includes all header files that should be treated with moc
   SET( mycash_MOC_HDRS
-    accountcombobox.h
-    agentcombobox.h
-    accounttypecombobox.h
-    currencycombobox.h
-    currencyedit.h
+    widgets/accountcombobox.h
+    widgets/agentcombobox.h
+    widgets/accounttypecombobox.h
+    widgets/currencycombobox.h
+    widgets/currencyedit.h
+    widgets/okpushbutton.h
     database.h
     editaccount.h
     editoperation.h
@@ -52,8 +55,9 @@ cmake_minimum_required(VERSION 2.8)
     listcurrency.h
     listoperations.h
     listplanoper.h
+    mainwidget.h
     mycash.h
-    mydateedit.h
+    widgets/mydateedit.h
     opendatabase.h
     createdatabase.h
     correctbalance.h
@@ -69,6 +73,7 @@ cmake_minimum_required(VERSION 2.8)
     listcurrency.ui
     listoperations.ui
     listplanoper.ui
+    mainwidget.ui
     mycash.ui
     opendatabase.ui
     createdatabase.ui

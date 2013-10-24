@@ -30,7 +30,6 @@ editPlanOper::editPlanOper(QWidget *parent) :
     ui->dayBox->addItems(days);
     ui->monthBox->addItems(months);
 
-    ui->okButton->setIcon(QPixmap(":icons/accept.png"));
     ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     ui->okButton->setEnabled(false);
 

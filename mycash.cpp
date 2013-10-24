@@ -9,6 +9,7 @@
 #include "listoperations.h"
 #include "listagents.h"
 #include "listplanoper.h"
+#include "mainwidget.h"
 #include "graphwidget.h"
 #include "global.h"
 
@@ -36,6 +37,8 @@ MyCash::MyCash(QWidget *parent) :
 //    pdock->setWidget(plbl);
 //    addDockWidget(Qt::LeftDockWidgetArea, pdock);
 
+    list_home();
+
     emit call_mark();
 }
 
@@ -50,6 +53,7 @@ void MyCash::setconnects()
 {
     ui->action_Quit->setIcon(QPixmap(":icons/stop_32.png"));
     ui->action_Settings->setIcon(QPixmap(":icons/options.gif"));
+    ui->action_Home->setIcon(QPixmap(":icons/home.png"));
     ui->action_ListAccounts->setIcon(QPixmap(":icons/money.ico"));
     ui->action_ListAgents->setIcon(QPixmap(":icons/user.png"));
     ui->action_ListOperations->setIcon(QPixmap(":icons/payment.ico"));
@@ -61,6 +65,7 @@ void MyCash::setconnects()
     connect(ui->action_Settings,     SIGNAL(triggered()), SLOT(settings()));
     connect(ui->action_Quit,         SIGNAL(triggered()), SLOT(close()));
 
+    connect(ui->action_Home, SIGNAL(triggered()), SLOT(list_home()));
     connect(ui->action_ListAccounts, SIGNAL(triggered()), SLOT(list_accounts()));
     connect(ui->action_ListOperations, SIGNAL(triggered()), SLOT(list_operations()));
     connect(ui->action_ListAgents, SIGNAL(triggered()), SLOT(list_agents()));
@@ -77,6 +82,7 @@ void MyCash::setconnects()
     ui->mainToolBar->addAction(ui->action_Open);
     ui->mainToolBar->addAction(ui->action_Close);
     ui->mainToolBar->addSeparator();
+    ui->mainToolBar->addAction(ui->action_Home);
     ui->mainToolBar->addAction(ui->action_ListAccounts);
     ui->mainToolBar->addAction(ui->action_ListOperations);
     ui->mainToolBar->addAction(ui->action_ListAgents);
@@ -170,6 +176,13 @@ void MyCash::opendb(QString dbname)
 	opened = true;
 
     emit call_mark();
+}
+
+void MyCash::list_home()
+{
+    MainWidget *mw = new MainWidget;
+
+    setCentralWidget(mw);
 }
 
 void MyCash::list_accounts()
