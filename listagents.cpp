@@ -38,6 +38,8 @@ ListAgents::ListAgents(QWidget *parent) :
     ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
 //    ui->treeView->setShowGrid(false);
+    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
 
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);

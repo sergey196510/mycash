@@ -17,6 +17,38 @@ double Database::get_account_summ(int type)
     return query.value(0).toDouble();
 }
 
+double Database::get_operation_summ(int type)
+{
+    QSqlQuery q;
+    QDate current = QDate::currentDate();
+    int month = current.month();
+    int year = current.year();
+    double summ = 0;
+
+    QString query = QString("SELECT id,dt FROM operation WHERE dt >= '%1-%2-01'").arg(year).arg(month);
+//    qDebug() << query;
+    if (!q.exec(query)) {
+        qDebug() << q.lastError().text();
+        return 0;
+    }
+    while (q.next()) {
+//        qDebug() << q.value(1).toString();
+        QSqlQuery q2;
+        q2.prepare("SELECT ao.a_id,ao.summ FROM account a, account_oper ao WHERE ao.o_id = :id AND a.id = ao.a_id AND a.type = :type");
+        q2.bindValue(":id", q.value(0).toInt());
+        q2.bindValue(":type", type);
+        if (!q2.exec()) {
+            qDebug() << q2.lastError().text();
+        }
+        while (q2.next()) {
+//            qDebug() << q2.value(0).toInt() << q2.value(1).toDouble();
+            summ += q2.value(1).toDouble();
+        }
+    }
+
+    return summ;
+}
+
 /*
 double Database::get_account_balance(int id)
 {
@@ -181,7 +213,7 @@ bool Database::new_account_oper(const int a_id, const int o_id, const double del
 {
     QSqlQuery q;
     Account_Data data = get_account_data(a_id);
-    int flag = (data.type == 1 || data.type == 4) ? 1 : -1;
+    int flag = (data.type == active || data.type == credit) ? 1 : -1;
     double summ = delta * flag;
 
     q.prepare("INSERT INTO account_oper(a_id, o_id, summ) VALUES(:a_id, :o_id, :summ)");
@@ -229,7 +261,7 @@ bool Database::change_account_balance(const int id, const double delta)
 
     data = get_account_data(id);
 
-    if (data.type == 1 || data.type == 4)
+    if (data.type == active || data.type == credit)
         flag = 1;
     else if (data.type < 1 || data.type > 4) {
     qDebug() << "type is unknown: " << data.type;
@@ -325,4 +357,32 @@ bool Database::new_plan_oper(PlanOper_data &data)
     }
 
     return true;
+}
+
+QList<PlanOper_data> Database::get_plan_oper_list()
+{
+    QList<PlanOper_data> list;
+    PlanOper_data data;
+    QSqlQuery q;
+
+    q.prepare("SELECT id, day, month, year, acc_from, acc_to, summ, descr FROM plan_oper ORDER BY day");
+    if (!q.exec()) {
+        qDebug() << "Select Insert:" << q.lastError().text();
+        return list;
+    }
+    while (q.next()) {
+//        data = new PlanOper_data;
+        data.id = q.value(0).toInt();
+        data.day = q.value(1).toInt();
+        data.month = q.value(2).toInt();
+        data.year = q.value(3).toInt();
+        data.from = q.value(4).toInt();
+        data.to = q.value(5).toInt();
+        data.summ = q.value(6).toDouble();
+        data.descr = q.value(7).toString();
+
+        list.append(data);
+    }
+
+    return list;
 }

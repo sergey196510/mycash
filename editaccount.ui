@@ -66,7 +66,7 @@
      <item row="2" column="1">
       <widget class="CurrencyComboBox" name="currencyBox"/>
      </item>
-     <item row="5" column="0">
+     <item row="5" column="1">
       <widget class="QCheckBox" name="hiddenBox">
        <property name="text">
         <string>Hidden</string>
@@ -123,6 +123,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>OkPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/okpushbutton.h</header>
+  </customwidget>
+  <customwidget>
    <class>currencyEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">widgets/currencyedit.h</header>
@@ -136,11 +141,6 @@
    <class>AccountTypeComboBox</class>
    <extends>QComboBox</extends>
    <header location="global">widgets/accounttypecombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>OkPushButton</class>
-   <extends>QPushButton</extends>
-   <header location="global">widgets/okpushbutton.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

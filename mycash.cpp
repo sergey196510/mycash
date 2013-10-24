@@ -129,7 +129,9 @@ void MyCash::create()
 {
     CreateDatabase *db = new CreateDatabase(this);
 
-    db->exec();
+    if (db->exec() == QDialog::Accepted) {
+        ;
+    }
 
     delete db;
 }

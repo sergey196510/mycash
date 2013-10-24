@@ -43,6 +43,7 @@ struct operation_data {
 };
 
 struct PlanOper_data {
+    int id;
     int day;
     int month;
     int year;
@@ -51,7 +52,7 @@ struct PlanOper_data {
     double summ;
     QString descr;
     PlanOper_data() {
-        day = month = year = from = to = 0;
+        id = day = month = year = from = to = 0;
         summ = 0;
         descr = "";
     }

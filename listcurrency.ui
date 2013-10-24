@@ -20,68 +20,77 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="1">
-        <widget class="QLabel" name="label">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>GroupBox</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Name:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="nameEdit"/>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Kurs:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="currencyEdit" name="kursEdit"/>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLineEdit" name="symbolEdit"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Symbol:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QToolButton" name="newButton">
          <property name="text">
-          <string>Name:</string>
+          <string>New</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
-        <widget class="QLineEdit" name="nameEdit"/>
-       </item>
-       <item row="1" column="2">
-        <widget class="QLineEdit" name="symbolEdit"/>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_2">
+       <item>
+        <widget class="QToolButton" name="editButton">
          <property name="text">
-          <string>Symbol:</string>
+          <string>Edit</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="label_3">
+       <item>
+        <widget class="QToolButton" name="delButton">
          <property name="text">
-          <string>Kurs:</string>
+          <string>Delete</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="2">
-        <widget class="currencyEdit" name="kursEdit"/>
-       </item>
-       <item row="3" column="2">
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QToolButton" name="newButton">
-           <property name="text">
-            <string>New</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="editButton">
-           <property name="text">
-            <string>Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="delButton">
-           <property name="text">
-            <string>Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="defaultButton">
-           <property name="text">
-            <string>Default</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+       <item>
+        <widget class="QToolButton" name="defaultButton">
+         <property name="text">
+          <string>Default</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

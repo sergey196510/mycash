@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>421</width>
-    <height>90</height>
+    <height>102</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="okButton">
+      <widget class="OkPushButton" name="okButton">
        <property name="text">
         <string>Ok</string>
        </property>
@@ -74,6 +74,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>OkPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/okpushbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

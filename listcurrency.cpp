@@ -55,6 +55,8 @@ ListCurrency::ListCurrency(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->groupBox->setTitle(tr("Currency"));
+
     query = "SELECT id, name, icod, scod, kurs FROM currency ORDER BY name";
 
     model = new ListCurrencyModel;
@@ -69,6 +71,9 @@ ListCurrency::ListCurrency(QWidget *parent) :
     ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
 //    ui->treeView->setShowGrid(false);
+    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
 
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);

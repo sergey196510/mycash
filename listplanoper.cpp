@@ -88,8 +88,12 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->treeView->addAction(tran);
     ui->treeView->addAction(delo);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
-    for (int i = 1; i < 7; i++)
-        ui->treeView->resizeColumnToContents(i);
+    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(4, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(5, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(6, QHeaderView::ResizeToContents);
 
     connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
     connect(delo, SIGNAL(triggered()), SLOT(del_oper()));

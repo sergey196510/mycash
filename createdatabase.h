@@ -17,6 +17,9 @@ public:
     
 private:
     Ui::CreateDatabase *ui;
+
+private slots:
+    void check_ok(QString);
 };
 
 #endif // CREATEDATABASE_H

@@ -124,7 +124,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
     ui->setupUi(this);
 
-    type = ui->typeComboBox->value();
+//    type = ui->typeComboBox->value();
 
 //    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
 
@@ -154,7 +154,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
     connect(dacct, SIGNAL(triggered()), SLOT(del_account()));
 
-    connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
+//    connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
 
     ui->act_summ->setText(default_locale->toCurrencyString(db.get_account_summ(1)));
     ui->act_summ->setFont(font);
@@ -268,7 +268,7 @@ void ListAccounts::del_account()
 
 void ListAccounts::check_type()
 {
-    int type = ui->typeComboBox->value();
+//    int type = ui->typeComboBox->value();
 
 //    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
 //    fill_model();
