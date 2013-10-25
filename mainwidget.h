@@ -25,6 +25,9 @@ private:
     QList<PlanOper_data> list;
     QMap<int,QString> accounts;
     QStringList header_data;
+
+private slots:
+    bool get_operations(int);
 };
 
 class MainWidget : public QWidget

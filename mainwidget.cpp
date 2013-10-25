@@ -19,6 +19,12 @@ enum Status {
     expired = 4
 };
 
+bool MainWidgetModel::get_operations(int plan)
+{
+    QSqlQuery q;
+    QDate curr = QDate::currentDate();
+}
+
 MainWidgetModel::MainWidgetModel(QObject *parent) :
     QStandardItemModel(parent)
 {
@@ -36,9 +42,11 @@ MainWidgetModel::MainWidgetModel(QObject *parent) :
     insertColumns(0,9);
     for (i = list.begin(); i != list.end(); i++) {
         data = *i;
-        if (data.month == 0 && data.year == 0) {
+        else if (data.month == 0 && data.year == 0) {
             int diff = data.day - curr.day();
-            if (diff < 3 && diff >= 0)
+            if (get_operations(data.id) == true)
+                stat = committed;
+            else if (diff < 3 && diff >= 0)
                 stat = minimum;
             else if (diff < 0)
                 stat = expired;
