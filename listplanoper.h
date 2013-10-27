@@ -6,6 +6,7 @@
 #include <QtSql>
 #include "database.h"
 #include "global.h"
+#include "editoperation.h"
 
 namespace Ui {
 class ListPlanOper;
@@ -39,11 +40,14 @@ private:
     ListPlanOperModel *model;
     QString query;
     Database *db;
+    QAction *tran, *comm, *delo;
 
 private slots:
     void new_oper();
     int get_selected_id();
+    void commit_oper();
     void del_oper();
+    void check_selected();
 };
 
 #endif // LISTPLANOPER_H

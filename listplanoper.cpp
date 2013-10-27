@@ -83,11 +83,17 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
 //    ui->treeView->setShowGrid(false);
 
-    QAction *tran = new QAction(tr("New plan operation"), this);
-    QAction *delo = new QAction(tr("Delete selected operation"), this);
+    tran = new QAction(tr("New plan operation"), this);
+    comm = new QAction(tr("Commit this operation"), this);
+    delo = new QAction(tr("Delete selected operation"), this);
+    comm->setEnabled(false);
+    delo->setEnabled(false);
+
     ui->treeView->addAction(tran);
+    ui->treeView->addAction(comm);
     ui->treeView->addAction(delo);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
+
     ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
@@ -96,7 +102,9 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->treeView->header()->setResizeMode(6, QHeaderView::ResizeToContents);
 
     connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
+    connect(comm, SIGNAL(triggered()), SLOT(commit_oper()));
     connect(delo, SIGNAL(triggered()), SLOT(del_oper()));
+    connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(check_selected()));
 }
 
 ListPlanOper::~ListPlanOper()
@@ -134,6 +142,27 @@ int ListPlanOper::get_selected_id()
      return list.at(0).data(Qt::DisplayRole).toInt();
 }
 
+void ListPlanOper::commit_oper()
+{
+    PlanOper_data pod;
+    operation_data od;
+    EditOperation *eo = new EditOperation;
+    int id = get_selected_id();
+
+    if (id == 0)
+        return;
+
+    pod = db->get_plan_oper_data(id);
+    od.from = pod.from;
+    od.to = pod.to;
+    od.summ = pod.summ;
+    od.descr = pod.descr;
+    od.plan_id = id;
+
+    eo->setdata(od);
+    eo->exec();
+}
+
 void ListPlanOper::del_oper()
 {
     QSqlQuery q;
@@ -152,4 +181,11 @@ void ListPlanOper::del_oper()
     model->setQuery(query);
 //    ui->treeView->resizeColumnsToContents();
 //    ui->treeView->resizeRowsToContents();
+}
+
+void ListPlanOper::check_selected()
+{
+    int id = get_selected_id();
+    comm->setEnabled(id);
+    delo->setEnabled(id);
 }

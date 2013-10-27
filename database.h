@@ -33,6 +33,7 @@ public:
     bool    save_operation(operation_data &);
     bool    new_plan_oper(PlanOper_data &data);
     operation_data get_operation(int);
+    PlanOper_data get_plan_oper_data(int);
 };
 
 #endif // DATABASE_H

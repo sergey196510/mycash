@@ -367,7 +367,7 @@ QList<PlanOper_data> Database::get_plan_oper_list()
 
     q.prepare("SELECT id, day, month, year, acc_from, acc_to, summ, descr FROM plan_oper ORDER BY day");
     if (!q.exec()) {
-        qDebug() << "Select Insert:" << q.lastError().text();
+        qDebug() << "Select Error:" << q.lastError().text();
         return list;
     }
     while (q.next()) {
@@ -385,4 +385,27 @@ QList<PlanOper_data> Database::get_plan_oper_list()
     }
 
     return list;
+}
+
+PlanOper_data Database::get_plan_oper_data(int id)
+{
+    PlanOper_data data;
+    QSqlQuery q;
+
+    q.prepare("SELECT id, day, month, year, acc_from, acc_to, summ, descr FROM plan_oper WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec() || !q.next()) {
+        qDebug() << "Select Error:" << q.lastError().text();
+        return data;
+    }
+    data.id = q.value(0).toInt();
+    data.day = q.value(1).toInt();
+    data.month = q.value(2).toInt();
+    data.year = q.value(3).toInt();
+    data.from = q.value(4).toInt();
+    data.to = q.value(5).toInt();
+    data.summ = q.value(6).toDouble();
+    data.descr = q.value(7).toString();
+
+    return data;
 }

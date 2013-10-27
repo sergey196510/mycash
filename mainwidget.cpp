@@ -23,6 +23,18 @@ bool MainWidgetModel::get_operations(int plan)
 {
     QSqlQuery q;
     QDate curr = QDate::currentDate();
+    QString query;
+
+    query = QString("SELECT count(id) FROM operation WHERE dt >= '01-%1-%2' AND plan_id = %3").arg(curr.month()).arg(curr.year()).arg(plan);
+//    qDebug() << query;
+    if (!q.exec(query) || !q.next()) {
+        qDebug() << q.lastError().text();
+        return false;
+    }
+    if (q.value(0).toInt() == 0)
+        return false;
+
+    return true;
 }
 
 MainWidgetModel::MainWidgetModel(QObject *parent) :
@@ -42,10 +54,12 @@ MainWidgetModel::MainWidgetModel(QObject *parent) :
     insertColumns(0,9);
     for (i = list.begin(); i != list.end(); i++) {
         data = *i;
-        else if (data.month == 0 && data.year == 0) {
+        if (data.month == 0 && data.year == 0) {
             int diff = data.day - curr.day();
-            if (get_operations(data.id) == true)
+            if (get_operations(data.id) == true) {
                 stat = committed;
+                continue;
+            }
             else if (diff < 3 && diff >= 0)
                 stat = minimum;
             else if (diff < 0)
@@ -61,7 +75,16 @@ MainWidgetModel::MainWidgetModel(QObject *parent) :
         setData(index(row,from),  accounts[data.from]);
         setData(index(row,to),    accounts[data.to]);
         setData(index(row,summ),  default_locale->toString(data.summ));
-        setData(index(row,status), stat);
+        if (stat == actual)
+            setData(index(row,status), tr("Actual"));
+        else if (stat == committed)
+            setData(index(row,status), tr("Committed"));
+        else if (stat == expired)
+            setData(index(row,status), tr("Expired"));
+        else if (stat == minimum)
+            setData(index(row,status), tr("< 3 days"));
+        else
+            setData(index(row,status), stat);
         setData(index(row,descr), data.descr);
         row++;
     }

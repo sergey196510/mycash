@@ -153,6 +153,9 @@ ListAccounts::ListAccounts(QWidget *parent) :
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
     connect(dacct, SIGNAL(triggered()), SLOT(del_account()));
+    connect(ui->newButton, SIGNAL(released()), SLOT(new_account()));
+    connect(ui->correctButton, SIGNAL(released()), SLOT(correct_balance()));
+    connect(ui->deleteButton, SIGNAL(released()), SLOT(del_account()));
 
 //    connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
 
@@ -226,6 +229,9 @@ void ListAccounts::correct_balance()
     int id = get_selected_id();
     Account_Data data = db.get_account_data(id);
 
+    if (id == 0)
+        return;
+
     cb.setBalance(data.balance);
     if (cb.exec() == QDialog::Accepted) {
         double current_balance = data.balance;
@@ -255,6 +261,9 @@ void ListAccounts::correct_balance()
 void ListAccounts::del_account()
 {
     int id = get_selected_id();
+
+    if (id == 0)
+        return;
 
     int r = QMessageBox::warning(this, tr("Account"),
                                  tr("You want to delete account?"),
