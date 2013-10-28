@@ -16,7 +16,7 @@ struct Account_Data {
     int type;
     int curr;
     double balance;
-    int hidden;
+    bool hidden;
     QString descr;
     Account_Data() {
         name = "";

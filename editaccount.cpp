@@ -64,6 +64,7 @@ Account_Data EditAccount::data()
     d.curr = ui->currencyBox->value();
     d.balance = ui->balanceSpinBox->value();
     d.descr = ui->descrEdit->text();
+    d.hidden = ui->hiddenBox->isChecked();
 
     return d;
 }

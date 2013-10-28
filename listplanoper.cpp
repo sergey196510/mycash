@@ -160,7 +160,14 @@ void ListPlanOper::commit_oper()
     od.plan_id = id;
 
     eo->setdata(od);
-    eo->exec();
+    if (eo->exec() == QDialog::Rejected)
+        return;
+
+    eo->data(od);
+    od.plan_id = id;
+    db->save_operation(od);
+
+    model->setQuery(query);
 }
 
 void ListPlanOper::del_oper()

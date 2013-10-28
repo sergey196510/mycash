@@ -52,9 +52,10 @@ private slots:
     void transfer_operation();
     void select_list_operations();
     void change_current_account(int);
-    void select_font();
+//    void select_font();
     void reload_table();
     void del_operation();
+    void plann_operation();
     int get_selected_id();
 };
 

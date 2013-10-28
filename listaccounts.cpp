@@ -203,7 +203,7 @@ void ListAccounts::new_account()
         q.bindValue(":ccod", data.curr);
         q.bindValue(":balance", data.balance);
         q.bindValue(":descr", data.descr);
-        q.bindValue(":hidden", data.hidden);
+        q.bindValue(":hidden", (data.hidden == false) ? "false" : "true");
         q.exec();
 
         reload_model();
@@ -260,6 +260,7 @@ void ListAccounts::correct_balance()
 
 void ListAccounts::del_account()
 {
+    QSqlQuery q;
     int id = get_selected_id();
 
     if (id == 0)
@@ -271,6 +272,25 @@ void ListAccounts::del_account()
 
     if (r == QMessageBox::No)
         return;
+
+    q.prepare("SELECT count(id) FROM operation WHERE acc_from = :id1 OR acc_to = :id2");
+    q.bindValue(":id1", id);
+    q.bindValue(":id2", id);
+    if (!q.exec() || !q.next()) {
+        qDebug() << q.lastError().text();
+        return;
+    }
+    if (q.value(0).toInt() > 0) {
+        qDebug() << "have operations";
+        return;
+    }
+
+    q.prepare("DELETE from account WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        qDebug() << q.lastError().text();
+        return;
+    }
 
     reload_model();
 }

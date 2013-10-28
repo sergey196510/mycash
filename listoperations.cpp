@@ -91,8 +91,9 @@ ListOperations::ListOperations(QWidget *parent) :
     QAction *debt = new QAction(tr("Debet"), this);
     QAction *cred = new QAction(tr("Credit"), this);
     QAction *tran = new QAction(tr("Transfer"), this);
+    QAction *plan = new QAction(tr("Planning operation"), this);
     QAction *dele = new QAction(tr("Delete current operation"), this);
-    QAction *font = new QAction(tr("Select font"), this);
+//    QAction *font = new QAction(tr("Select font"), this);
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
@@ -109,8 +110,9 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->treeView->addAction(debt);
     ui->treeView->addAction(cred);
     ui->treeView->addAction(tran);
+    ui->treeView->addAction(plan);
     ui->treeView->addAction(dele);
-    ui->treeView->addAction(font);
+//    ui->treeView->addAction(font);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     change_current_account(0);
@@ -118,8 +120,9 @@ ListOperations::ListOperations(QWidget *parent) :
     connect(debt, SIGNAL(triggered()), SLOT(debet_operation()));
     connect(cred, SIGNAL(triggered()), SLOT(credit_operation()));
     connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
+    connect(plan, SIGNAL(triggered()), SLOT(plann_operation()));
     connect(dele, SIGNAL(triggered()), SLOT(del_operation()));
-    connect(font, SIGNAL(triggered()), SLOT(select_font()));
+//    connect(font, SIGNAL(triggered()), SLOT(select_font()));
     connect(ui->accountcomboBox, SIGNAL(currentIndexChanged(int)), SLOT(change_current_account(int)));
     connect(ui->search_comboBox, SIGNAL(currentIndexChanged(int)), SLOT(select_list_operations()));
     connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(select_list_operations()));
@@ -228,6 +231,7 @@ void ListOperations::select_list_operations()
     emit call_reload_table();
 }
 
+/*
 void ListOperations::select_font()
 {
     bool bOk;
@@ -238,6 +242,7 @@ void ListOperations::select_font()
         emit call_reload_table();
     }
 }
+*/
 
 void ListOperations::reload_table()
 {
@@ -293,4 +298,9 @@ void ListOperations::del_operation()
     q.exec("COMMIT");
 
     return;
+}
+
+void ListOperations::plann_operation()
+{
+
 }
