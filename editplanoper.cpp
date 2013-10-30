@@ -61,6 +61,17 @@ PlanOper_data editPlanOper::Value()
     return po;
 }
 
+void editPlanOper::setValue(PlanOper_data &data)
+{
+    ui->dayBox->setCurrentIndex(data.day);
+    ui->monthBox->setCurrentIndex(data.month);
+    ui->yearBox->setValue(data.year);
+    ui->fromBox->setValue(data.from);
+    ui->toBox->setValue(data.to);
+    ui->curr_Edit->setValue(data.summ);
+    ui->descrEdit->setText(data.descr);
+}
+
 void editPlanOper::check_ok()
 {
     if (ui->dayBox->currentText().toInt() > 0 &&

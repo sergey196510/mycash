@@ -38,6 +38,9 @@ public:
     explicit MainWidget(QWidget *parent = 0);
     ~MainWidget();
 
+public slots:
+    void update_summ();
+
 private:
     Ui::MainWidget *ui;
     Database *db;

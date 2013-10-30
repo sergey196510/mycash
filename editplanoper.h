@@ -16,6 +16,7 @@ public:
     explicit editPlanOper(QWidget *parent = 0);
     ~editPlanOper();
     PlanOper_data Value();
+    void setValue(PlanOper_data &);
 
 private:
     Ui::editPlanOper *ui;

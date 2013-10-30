@@ -22,3 +22,8 @@ void CreateDatabase::check_ok(QString str)
 {
     ui->okButton->setEnabled(str.length());
 }
+
+QString CreateDatabase::name()
+{
+    return ui->lineEdit->text();
+}

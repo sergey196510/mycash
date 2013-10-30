@@ -14,6 +14,7 @@ class CreateDatabase : public QDialog
 public:
     explicit CreateDatabase(QWidget *parent = 0);
     ~CreateDatabase();
+    QString name();
     
 private:
     Ui::CreateDatabase *ui;

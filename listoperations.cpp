@@ -302,5 +302,25 @@ void ListOperations::del_operation()
 
 void ListOperations::plann_operation()
 {
+    PlanOper_data po;
+    editPlanOper pd;
+    int id = get_selected_id();
 
+    if (id == 0)
+        return;
+
+    operation_data data = db->get_operation(id);
+    po.day = QDate::currentDate().day();
+    po.month = 0;
+    po.year = 0;
+    po.from = data.from;
+    po.to = data.to;
+    po.summ = data.summ;
+    po.descr = data.descr;
+
+    pd.setValue(po);
+    if (pd.exec() == QDialog::Accepted) {
+        po = pd.Value();
+        db->new_plan_oper(po);
+    }
 }

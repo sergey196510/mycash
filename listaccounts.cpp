@@ -3,6 +3,26 @@
 #include "editaccount.h"
 #include "correctbalance.h"
 
+double ListAccountsModel::get_list(int parent)
+{
+    QSqlQuery q;
+    int id;
+    double summ = 0;
+
+    q.prepare("SELECT id,name FROM account WHERE parent = :parent");
+    q.bindValue(":parent", parent);
+    if (!q.exec()) {
+        qDebug() << q.lastError().text();
+        return 0;
+    }
+    while (q.next()) {
+        id = q.value(0).toInt();
+        summ += get_list(id);
+    }
+
+    return summ;
+}
+
 ListAccountsModel::ListAccountsModel(QObject *parent) :
     QStandardItemModel(parent)
 {
@@ -21,6 +41,8 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
         qDebug() << "Error select";
         return;
     }
+
+    summ = get_list(0);
 
     insertColumns(0,6);
     while (query.next()) {
@@ -147,8 +169,10 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     ui->treeView->setAlternatingRowColors(true);
-    for (int i = 1; i < 5; i++)
-        ui->treeView->resizeColumnToContents(i);
+    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(4, QHeaderView::ResizeToContents);
 
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
@@ -169,12 +193,23 @@ ListAccounts::~ListAccounts()
     delete model;
 }
 
+void ListAccounts::clear_list()
+{
+    ui->act_summ->setText(default_locale->toCurrencyString(0));
+    model->clear();
+}
+
 void ListAccounts::reload_model()
 {
     delete model;
     model = new ListAccountsModel;
     ui->treeView->setModel(model);
     ui->treeView->expandAll();
+    ui->act_summ->setText(default_locale->toCurrencyString(db.get_account_summ(1)));
+    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(4, QHeaderView::ResizeToContents);
 }
 
 void ListAccounts::new_account()

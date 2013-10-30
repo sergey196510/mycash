@@ -24,6 +24,7 @@ public:
     QString get_currency_scod(int);
     QMap<int,QString> get_accounts_list();
     QMap<int,QString> get_scod_list();
+    QMap<QString,double> get_currency_list();
     QList<PlanOper_data> get_plan_oper_list();
     int     new_operation(operation_data &);
     bool    del_operation(int);

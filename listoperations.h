@@ -5,6 +5,7 @@
 #include <QtSql>
 #include "database.h"
 #include "editoperation.h"
+#include "editplanoper.h"
 
 namespace Ui {
 class ListOperations;

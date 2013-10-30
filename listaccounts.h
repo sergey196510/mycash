@@ -23,6 +23,7 @@ private:
 public:
     explicit ListAccountsModel(QObject *parent = 0);
     ~ListAccountsModel();
+    double get_list(int);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 };
@@ -34,6 +35,9 @@ class ListAccounts : public QWidget
 public:
     explicit ListAccounts(QWidget *parent = 0);
     ~ListAccounts();
+
+public slots:
+    void clear_list();
 
 private slots:
 //    void fill_model();

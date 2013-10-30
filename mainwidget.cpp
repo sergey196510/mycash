@@ -157,10 +157,7 @@ MainWidget::MainWidget(QWidget *parent) :
     ui->groupBox->setTitle(tr("Balance status"));
     ui->groupBox_2->setTitle(tr("Prosrochennie operations"));
 
-    ui->active_value->setText(default_locale->toString(db->get_account_summ(active)) + " " + default_locale->currencySymbol(default_locale->CurrencyIsoCode));
-    ui->passive_value->setText(default_locale->toString(db->get_account_summ(passive)) + " " + default_locale->currencySymbol(default_locale->CurrencyIsoCode));
-    ui->debet_value->setText(default_locale->toString(db->get_operation_summ(debet)) + " " + default_locale->currencySymbol(default_locale->CurrencyIsoCode));
-    ui->credit_value->setText(default_locale->toString(db->get_operation_summ(credit)) + " " + default_locale->currencySymbol(default_locale->CurrencyIsoCode));
+    update_summ();
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
@@ -178,4 +175,15 @@ MainWidget::~MainWidget()
     delete model;
     delete db;
     delete ui;
+}
+
+void MainWidget::update_summ()
+{
+    QMap<QString,double> list;
+    QString symbol = default_locale->currencySymbol(default_locale->CurrencyIsoCode);
+
+    ui->active_value->setText(default_locale->toString(db->get_account_summ(active)) + " " + symbol);
+    ui->passive_value->setText(default_locale->toString(db->get_account_summ(passive)) + " " + symbol);
+    ui->debet_value->setText(default_locale->toString(db->get_operation_summ(debet)) + " " + symbol);
+    ui->credit_value->setText(default_locale->toString(db->get_operation_summ(credit)) + " " + symbol);
 }

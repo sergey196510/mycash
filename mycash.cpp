@@ -127,13 +127,33 @@ void MyCash::writesettings()
 
 void MyCash::create()
 {
-    CreateDatabase *db = new CreateDatabase(this);
+    CreateDatabase *dbf = new CreateDatabase(this);
+    QString str;
 
-    if (db->exec() == QDialog::Accepted) {
-        ;
+    if (dbf->exec() != QDialog::Accepted) {
+        delete dbf;
+        return;
     }
 
-    delete db;
+    opendb(dbf->name());
+
+    QSqlQuery q;
+
+    QFile file("mycash.sql");
+    file.open(QIODevice::ReadOnly);
+    QTextStream in(&file);
+
+    while (!in.atEnd()) {
+        str = in.readLine();
+//        qDebug() << str;
+        if (!q.exec(str)) {
+            qDebug() << q.lastError().text();
+            delete dbf;
+            return;
+        }
+    }
+
+    delete dbf;
 }
 
 void MyCash::open()
@@ -191,7 +211,8 @@ void MyCash::list_accounts()
 {
     ListAccounts *la = new ListAccounts;
 
-//    connect(ui->action_NewAccounts, SIGNAL(triggered()), la, SLOT(new_account()));
+    connect(ui->action_Open, SIGNAL(triggered()), la, SLOT(reload_model()));
+    connect(ui->action_Close, SIGNAL(triggered()), la, SLOT(clear_list()));
 
     setCentralWidget(la);
 }

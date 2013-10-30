@@ -189,6 +189,21 @@ QMap<int,QString> Database::get_scod_list()
     return list;
 }
 
+QMap<QString,double> Database::get_currency_list()
+{
+    QMap<QString,double> list;
+    QSqlQuery q;
+
+    q.prepare("SELECT scod,kurs FROM currency");
+    if (!q.exec())
+        return list;
+    while (q.next()) {
+        list[q.value(0).toString()] = q.value(1).toDouble();
+    }
+
+    return list;
+}
+
 int Database::new_operation(operation_data &data)
 {
     QSqlQuery query;
