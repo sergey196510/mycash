@@ -13,6 +13,7 @@ ListCurrencyModel::~ListCurrencyModel()
 
 QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
 {
+    Globals var;
     QVariant value = QSqlQueryModel::data(index, role);
 
     switch (role) {
@@ -29,7 +30,7 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
 
     case Qt::TextColorRole:
 //        qDebug() << record(index.row()).value(0).toInt();
-        if (record(index.row()).value(0).toInt() == current_currency) {
+        if (record(index.row()).value(0).toInt() == var.Currency()) {
             return QVariant(QColor(Qt::blue));
         }
         return value;
@@ -182,9 +183,10 @@ void ListCurrency::delete_currency()
 
 void ListCurrency::set_default()
 {
+    Globals var;
     QSqlQuery q;
 
-    current_currency = get_selected_id();
+    var.setCurrency(get_selected_id());
 
     model->setQuery(query);
 //    ui->tableView->resizeRowsToContents();

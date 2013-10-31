@@ -6,10 +6,17 @@
 
 extern QString version;
 extern int     current_account;
-extern int     current_currency;
+//extern int     current_currency;
 extern QLocale *default_locale;
 extern QLocale *english;
 extern QFont   fnt;
+
+class Globals {
+    static int currency;
+public:
+    int Currency() { return currency; }
+    void setCurrency(int i) { currency = i; }
+};
 
 struct Account_Data {
     QString name;

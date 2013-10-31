@@ -17,6 +17,8 @@ MyCash::MyCash(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyCash)
 {
+    Globals var;
+
     ui->setupUi(this);
 
     opened = false;
@@ -27,7 +29,7 @@ MyCash::MyCash(QWidget *parent) :
         opendb(dbname);
 
     curr = new CurrencyComboBox;
-    curr->setValue(current_currency);
+    curr->setValue(var.Currency());
     curr->setToolTip(tr("Select current currency"));
     setconnects();
 
@@ -107,21 +109,25 @@ void MyCash::mark_Object()
 
 void MyCash::readsettings()
 {
+    Globals var;
+
     QSettings settings("MyCash", "MyCash");
     restoreGeometry(settings.value("geometry").toByteArray());
     dbname = settings.value("dbname", "").toString();
     current_account = settings.value("current_account", "").toInt();
-    current_currency = settings.value("current_currency", "").toInt();
+    var.setCurrency(settings.value("current_currency", "").toInt());
 //    fnt = settings.value("operations_font");
 }
 
 void MyCash::writesettings()
 {
+    Globals var;
+
     QSettings settings("MyCash", "MyCash");
     settings.setValue("geometry", saveGeometry());
     settings.setValue("dbname", dbname);
     settings.setValue("current_account", current_account);
-    settings.setValue("current_currency", current_currency);
+    settings.setValue("current_currency", var.Currency());
     settings.setValue("operations_font", fnt);
 }
 

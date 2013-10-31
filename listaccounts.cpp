@@ -3,22 +3,37 @@
 #include "editaccount.h"
 #include "correctbalance.h"
 
-double ListAccountsModel::get_list(int parent)
+double ListAccountsModel::get_list(int parent, QModelIndex idx)
 {
     QSqlQuery q;
     int id;
+    int i = 0;
+    int row;
     double summ = 0;
 
-    q.prepare("SELECT id,name FROM account WHERE parent = :parent");
+    q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = :parent");
     q.bindValue(":parent", parent);
     if (!q.exec()) {
         qDebug() << q.lastError().text();
         return 0;
     }
     while (q.next()) {
-        id = q.value(0).toInt();
-        summ += get_list(id);
+        summ += get_list(q.value(0).toInt(), idx);
+        if (q.value(5) == false) {
+            summ += q.value(2).toDouble();
+        }
+        insertRow(i, idx);
+        if (i == 0)
+            insertColumns(0,6,idx);
+        setData(index(i,0,idx), q.value(1).toString());
+        setData(index(i,1,idx), q.value(2).toDouble());
+        setData(index(i,2,idx), q.value(4).toInt());
+        setData(index(i,4,idx), q.value(3).toString());
+        setData(index(i,3,idx), q.value(5).toBool());
+        setData(index(i,5,idx), q.value(0).toInt());
+        i++;
     }
+    setData(index(row,1), summ);
 
     return summ;
 }
@@ -30,39 +45,43 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
     db = new Database;
     int type;
     int row = 0;
-    double summ;
+    double summ, summ2;
     QModelIndex idx;
     header_data << tr("Name") << tr("Balance") << tr("Currency") << "Hidden" << tr("Description") << "" << "";
 
     list = db->get_scod_list();
+
+    insertColumns(0,6);
 
     query.prepare("SELECT id,name FROM account_type ORDER BY name");
     if (!query.exec()) {
         qDebug() << "Error select";
         return;
     }
-
-    summ = get_list(0);
-
-    insertColumns(0,6);
     while (query.next()) {
-    type = query.value(0).toInt();
-    insertRow(row);
-    idx = index(row, 0);
-    setData(idx, query.value(1).toString());
-    QFont font;
-    font.setBold(true);
-    setData(idx, font, Qt::FontRole);
-    int i = 0;
-    summ = 0;
-    QSqlQuery q;
-    q.prepare("SELECT id,name,balance,desct,ccod,hidden FROM account WHERE type = :type ORDER BY name");
-    q.bindValue(":type", type);
-    if (!q.exec())
-        continue;
+        type = query.value(0).toInt();
+        insertRow(row);
+        idx = index(row, 0);
+        setData(idx, query.value(1).toString());
+        QFont font;
+        font.setBold(true);
+        setData(idx, font, Qt::FontRole);
+        int i = 0;
+        summ = 0;
+        summ2 = 0;
+        QSqlQuery q;
+        q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE type = :type AND parent = 0 ORDER BY name");
+        q.bindValue(":type", type);
+        if (!q.exec())
+            continue;
         while (q.next()) {
-            if (q.value(5) == false)
+
+            summ2 += get_list(q.value(0).toInt(), index(row,0));
+
+            if (q.value(5) == false) {
                 summ += q.value(2).toDouble();
+                summ2 += q.value(2).toDouble();
+            }
             insertRow(i, idx);
             if (i == 0)
                 insertColumns(0,6,idx);
@@ -148,7 +167,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
 //    type = ui->typeComboBox->value();
 
-//    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
+//    query = "SELECT a.id,a.name,t.name,a.balance,a.descr,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
 
 //    fill_model();
     model = new ListAccountsModel;
@@ -214,9 +233,10 @@ void ListAccounts::reload_model()
 
 void ListAccounts::new_account()
 {
+    Globals var;
     EditAccount ea(this);
 
-    ea.set_curr(current_currency);
+    ea.set_curr(var.Currency());
 
     if (ea.exec() == QDialog::Accepted) {
         Account_Data data = ea.data();
@@ -232,7 +252,7 @@ void ListAccounts::new_account()
             return;
         }
 
-        q.prepare("INSERT INTO account(name, type, ccod, balance, desct, hidden) VALUES(:name, :type, :ccod, :balance, :descr, :hidden)");
+        q.prepare("INSERT INTO account(name, type, ccod, balance, descr, hidden) VALUES(:name, :type, :ccod, :balance, :descr, :hidden)");
         q.bindValue(":name", data.name);
         q.bindValue(":type", data.type);
         q.bindValue(":ccod", data.curr);
@@ -334,7 +354,7 @@ void ListAccounts::check_type()
 {
 //    int type = ui->typeComboBox->value();
 
-//    query = "SELECT a.id,a.name,t.name,a.balance,a.desct,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
+//    query = "SELECT a.id,a.name,t.name,a.balance,a.descr,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
 //    fill_model();
     ui->treeView->resizeColumnToContents(0);
 }

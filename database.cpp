@@ -133,7 +133,7 @@ Account_Data Database::get_account_data(int id)
     Account_Data data;
     QSqlQuery q;
 
-    q.prepare("SELECT name,type,balance,desct,ccod,hidden FROM account WHERE id = :id");
+    q.prepare("SELECT name,type,balance,descr,ccod,hidden FROM account WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec() || !q.next()) {
         qDebug() << "SELECT Error:" << q.lastError().text();
@@ -208,13 +208,14 @@ int Database::new_operation(operation_data &data)
 {
     QSqlQuery query;
 
-    query.prepare("INSERT INTO operation(acc_from, acc_to, agent, summ, dt, descr) VALUES(:from, :to, :agent, :summ, :dt, :descr)");
+    query.prepare("INSERT INTO operation(acc_from, acc_to, agent, summ, dt, descr, plan_id) VALUES(:from, :to, :agent, :summ, :dt, :descr, :plan_id)");
     query.bindValue(":from", data.from);
     query.bindValue(":to", data.to);
     query.bindValue(":agent", data.agent);
     query.bindValue(":summ", data.summ);
     query.bindValue(":dt", data.date);
     query.bindValue(":descr", data.descr);
+    query.bindValue(":plan_id", data.plan_id);
     if (!query.exec())
         return 0;
 
