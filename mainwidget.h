@@ -42,6 +42,7 @@ public slots:
     void update_summ();
 
 private:
+    Globals var;
     Ui::MainWidget *ui;
     Database *db;
     MainWidgetModel *model;

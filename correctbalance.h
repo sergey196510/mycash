@@ -22,6 +22,7 @@ public:
     QString date();
 
 private:
+    Globals var;
     Ui::CorrectBalance *ui;
 
 private slots:

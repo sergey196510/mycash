@@ -16,7 +16,7 @@ EditAccount::EditAccount(QWidget *parent) :
 //    ui->balanceSpinBox->setRange(-1000000, 1000000);
     ui->balanceSpinBox->setValue(0);
 
-    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
+//    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     ui->okButton->setEnabled(false);
 }
 
@@ -45,6 +45,11 @@ void EditAccount::set_curr(int id)
     ui->currencyBox->setValue(id);
 }
 
+void EditAccount::set_parent(int id)
+{
+    ui->parentBox->setValue(id);
+}
+
 double EditAccount::balance()
 {
     return ui->balanceSpinBox->value();
@@ -65,6 +70,7 @@ Account_Data EditAccount::data()
     d.balance = ui->balanceSpinBox->value();
     d.descr = ui->descrEdit->text();
     d.hidden = ui->hiddenBox->isChecked();
+    d.parent = ui->parentBox->value();
 
     return d;
 }

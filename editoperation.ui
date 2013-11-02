@@ -108,7 +108,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
+      <widget class="CancelPushButton" name="cancelButton">
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -120,14 +120,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>currencyEdit</class>
-   <extends>QLineEdit</extends>
-   <header location="global">widgets/currencyedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>OkPushButton</class>
    <extends>QPushButton</extends>
    <header location="global">widgets/okpushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">widgets/accountcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>MyDateEdit</class>
@@ -135,19 +135,26 @@
    <header location="global">widgets/mydateedit.h</header>
   </customwidget>
   <customwidget>
+   <class>currencyEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">widgets/currencyedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CancelPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/cancelpushbutton.h</header>
+  </customwidget>
+  <customwidget>
    <class>AgentComboBox</class>
    <extends>QComboBox</extends>
    <header location="global">widgets/agentcombobox.h</header>
   </customwidget>
-  <customwidget>
-   <class>AccountComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">widgets/accountcombobox.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>from_account</tabstop>
+  <tabstop>agent_comboBox</tabstop>
   <tabstop>to_Account</tabstop>
+  <tabstop>summSpinBox</tabstop>
   <tabstop>dateEdit</tabstop>
   <tabstop>descrEdit</tabstop>
   <tabstop>okButton</tabstop>

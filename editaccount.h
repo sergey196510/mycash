@@ -19,6 +19,7 @@ public:
     int type();
     int curr();
     void set_curr(int);
+    void set_parent(int);
     double balance();
     bool hidden();
     QString descr();

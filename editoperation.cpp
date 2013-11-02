@@ -10,7 +10,7 @@ EditOperation::EditOperation(QWidget *parent) :
 
     db = new Database;
 
-    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
+//    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     ui->okButton->setEnabled(false);
 
     ui->warning->setVisible(false);

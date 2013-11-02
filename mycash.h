@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "widgets/currencycombobox.h"
+#include "global.h"
+#include "database.h"
 
 namespace Ui {
 class MyCash;
@@ -20,6 +22,8 @@ signals:
     void call_mark();
 
 private:
+    Globals var;
+    Database *db;
     bool opened;
     QString dbname;
     Ui::MyCash *ui;
@@ -44,6 +48,10 @@ private slots:
     void list_plan_oper();
     void report1();
     void report2();
+    void update_curr();
+
+signals:
+    void update_currency();
 
 };
 

@@ -4,11 +4,12 @@
 #include <QtSql>
 #include "global.h"
 
-enum Type {active = 1,
-          passive = 2,
-          debet = 3,
-          credit = 4
-          };
+enum Type {
+    Active_type  = 1,
+    Passive_type = 2,
+    Debet_type   = 3,
+    Credit_type  = 4
+};
 
 class Database
 {
@@ -32,7 +33,7 @@ public:
     bool    del_account_oper(int);
     bool    change_account_balance(const int, const double);
     bool    save_operation(operation_data &);
-    bool    new_plan_oper(PlanOper_data &data);
+    int     new_plan_oper(PlanOper_data &data);
     operation_data get_operation(int);
     PlanOper_data get_plan_oper_data(int);
 };

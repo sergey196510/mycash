@@ -105,6 +105,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QToolButton" name="clearButton">
+         <property name="text">
+          <string>Clear</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -124,6 +131,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>cityEdit</tabstop>
+  <tabstop>addrEdit</tabstop>
+  <tabstop>phoneEdit</tabstop>
+  <tabstop>contactEdit</tabstop>
+  <tabstop>newButton</tabstop>
+  <tabstop>editButton</tabstop>
+  <tabstop>delButton</tabstop>
+  <tabstop>treeView</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

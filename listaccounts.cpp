@@ -8,7 +8,7 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
     QSqlQuery q;
     int id;
     int i = 0;
-    int row;
+    int row = 0;
     double summ = 0;
 
     q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = :parent");
@@ -18,7 +18,6 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
         return 0;
     }
     while (q.next()) {
-        summ += get_list(q.value(0).toInt(), idx);
         if (q.value(5) == false) {
             summ += q.value(2).toDouble();
         }
@@ -31,9 +30,11 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
         setData(index(i,4,idx), q.value(3).toString());
         setData(index(i,3,idx), q.value(5).toBool());
         setData(index(i,5,idx), q.value(0).toInt());
+        summ += get_list(q.value(0).toInt(), index(i,0,idx));
         i++;
     }
-    setData(index(row,1), summ);
+    if (summ > 0)
+        setData(index(row,1), summ);
 
     return summ;
 }
@@ -75,9 +76,6 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
         if (!q.exec())
             continue;
         while (q.next()) {
-
-            summ2 += get_list(q.value(0).toInt(), index(row,0));
-
             if (q.value(5) == false) {
                 summ += q.value(2).toDouble();
                 summ2 += q.value(2).toDouble();
@@ -91,6 +89,7 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
             setData(index(i,4,idx), q.value(3).toString());
             setData(index(i,3,idx), q.value(5).toBool());
             setData(index(i,5,idx), q.value(0).toInt());
+            summ2 += get_list(q.value(0).toInt(), index(i,0,idx));
             i += 1;
         }
         setData(index(row,1), summ);
@@ -235,33 +234,31 @@ void ListAccounts::new_account()
 {
     Globals var;
     EditAccount ea(this);
+    int id = get_selected_id();
 
     ea.set_curr(var.Currency());
+    ea.set_parent(id);
 
     if (ea.exec() == QDialog::Accepted) {
         Account_Data data = ea.data();
-//        QString name = ea.name();
-//        int type = ea.type();
-//        int ccod = ea.curr();
-//        double balance = ea.balance();
-//        QString descr = ea.descr();
-//        bool hidden = ea.hidden();
         QSqlQuery q;
 
         if (data.name.length() == 0) {
             return;
         }
 
-        q.prepare("INSERT INTO account(name, type, ccod, balance, descr, hidden) VALUES(:name, :type, :ccod, :balance, :descr, :hidden)");
+        q.prepare("INSERT INTO account(name, type, ccod, balance, descr, hidden, parent) VALUES(:name, :type, :ccod, :balance, :descr, :hidden, :parent)");
         q.bindValue(":name", data.name);
         q.bindValue(":type", data.type);
         q.bindValue(":ccod", data.curr);
         q.bindValue(":balance", data.balance);
         q.bindValue(":descr", data.descr);
         q.bindValue(":hidden", (data.hidden == false) ? "false" : "true");
-        q.exec();
-
-        reload_model();
+        q.bindValue(":parent", data.parent);
+        if (!q.exec())
+            qDebug() << q.lastError().text();
+        else
+            reload_model();
     }
 }
 

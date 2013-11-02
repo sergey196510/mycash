@@ -6,6 +6,7 @@ ListOperationsModel::ListOperationsModel(QObject *parent) :
     QSqlQueryModel(parent)
 {
     db = new Database;
+    var = new Globals;
     header_data << "" << tr("From Account") << tr("To Account") << tr("Summ") << tr("Date") << tr("Description");
     list = db->get_accounts_list();
 }
@@ -30,7 +31,7 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 //            return db->get_account_name(value.toInt());
 //        }
         else if (index.column() == 3) {
-            return default_locale->toString(value.toDouble());
+            return default_locale->toString(value.toDouble()/var->Kurs());
         }
         else if (index.column() == 4) {
 //            return value.toDate().toString("dddd dd MMMM yyyy");
@@ -68,6 +69,7 @@ ListOperations::ListOperations(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListOperations)
 {
+    Globals var;
     QString fdate, ldate;
 
     ui->setupUi(this);
@@ -77,7 +79,7 @@ ListOperations::ListOperations(QWidget *parent) :
     db = new Database;
 
     ui->accountcomboBox->load(1);
-    ui->accountcomboBox->setValue(current_account);
+    ui->accountcomboBox->setValue(var.Account());
     change_current_account(0);
     ui->fdate->setDate(QDate().currentDate().addDays(-29));
     fdate = ui->fdate->value();
@@ -138,6 +140,7 @@ ListOperations::~ListOperations()
 
 void ListOperations::edit_operation(int oper)
 {
+    Globals var;
     QModelIndex idx = ui->treeView->currentIndex();
 
     if (eo.exec() == QDialog::Accepted) {
@@ -154,7 +157,7 @@ void ListOperations::edit_operation(int oper)
     	    ui->accountcomboBox->setValue(d.to);
     }
 
-    current_account = ui->accountcomboBox->value();
+    var.setAccount(ui->accountcomboBox->value());
 }
 
 void ListOperations::debet_operation()
@@ -189,6 +192,7 @@ void ListOperations::transfer_operation()
 
 void ListOperations::change_current_account(int idx)
 {
+    Globals var;
     QLocale *lc;
     QFont font;
     font.setBold(true);
@@ -209,7 +213,7 @@ void ListOperations::change_current_account(int idx)
     ui->account_ostatok->setText(lc->toCurrencyString(data.balance));
     ui->account_ostatok->setFont(font);
 
-    current_account = ui->accountcomboBox->value();
+    var.setAccount(ui->accountcomboBox->value());
 }
 
 void ListOperations::select_list_operations()
@@ -272,7 +276,7 @@ void ListOperations::del_operation()
     int id = get_selected_id();
 
     if (id == 0)
-	return;
+        return;
 
     q.exec("BEGIN");
 
@@ -296,6 +300,8 @@ void ListOperations::del_operation()
     }
 
     q.exec("COMMIT");
+
+    model->setQuery(query);
 
     return;
 }
@@ -321,6 +327,18 @@ void ListOperations::plann_operation()
     pd.setValue(po);
     if (pd.exec() == QDialog::Accepted) {
         po = pd.Value();
-        db->new_plan_oper(po);
+        int plan = db->new_plan_oper(po);
+        QSqlQuery q;
+
+        q.prepare("UPDATE operation SET plan_id = :plan WHERE id = :id");
+        q.bindValue(":plan", plan);
+        q.bindValue(":id", id);
+        if (!q.exec())
+            qDebug() << q.lastError().text();
     }
+}
+
+void ListOperations::reload_model()
+{
+    model->setQuery(query);
 }

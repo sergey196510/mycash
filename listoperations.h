@@ -23,6 +23,7 @@ public:
 
 private:
     Database *db;
+    Globals *var;
     QStringList header_data;
     QMap<int,QString> list;
 };
@@ -34,6 +35,9 @@ class ListOperations : public QWidget
 public:
     explicit ListOperations(QWidget *parent = 0);
     ~ListOperations();
+
+public slots:
+    void reload_model();
     
 private:
     Ui::ListOperations *ui;

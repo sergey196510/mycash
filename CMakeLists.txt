@@ -16,6 +16,7 @@ cmake_minimum_required(VERSION 2.8)
     widgets/currencycombobox.cpp
     widgets/currencyedit.cpp
     widgets/okpushbutton.cpp
+    widgets/cancelpushbutton.cpp
     database.cpp
     editaccount.cpp
     editoperation.cpp
@@ -34,6 +35,7 @@ cmake_minimum_required(VERSION 2.8)
     opendatabase.cpp
     createdatabase.cpp
     correctbalance.cpp
+    settings.cpp
   )
   
   # another list, this time it includes all header files that should be treated with moc
@@ -44,6 +46,7 @@ cmake_minimum_required(VERSION 2.8)
     widgets/currencycombobox.h
     widgets/currencyedit.h
     widgets/okpushbutton.h
+    widgets/cancelpushbutton.h
     database.h
     editaccount.h
     editoperation.h
@@ -61,6 +64,7 @@ cmake_minimum_required(VERSION 2.8)
     opendatabase.h
     createdatabase.h
     correctbalance.h
+    settings.h
   )
   
   # some .ui files
@@ -78,6 +82,7 @@ cmake_minimum_required(VERSION 2.8)
     opendatabase.ui
     createdatabase.ui
     correctbalance.ui
+    settings.ui
   )
   
   # and finally an resource file

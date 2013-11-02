@@ -44,12 +44,14 @@ ListAgents::ListAgents(QWidget *parent) :
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);
     ui->delButton->setEnabled(false);
+    ui->clearButton->setEnabled(false);
 
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(check_select_line()));
     connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(check_new_button(QString)));
     connect(ui->newButton, SIGNAL(released()), SLOT(save_new_record()));
     connect(ui->editButton, SIGNAL(released()), SLOT(update_record()));
     connect(ui->delButton, SIGNAL(released()), SLOT(del_record()));
+    connect(ui->clearButton, SIGNAL(released()), SLOT(clear_record()));
 }
 
 ListAgents::~ListAgents()
@@ -96,6 +98,7 @@ void ListAgents::check_select_line()
 
     ui->editButton->setEnabled(true);
     ui->delButton->setEnabled(true);
+    ui->clearButton->setEnabled(true);
 }
 
 void ListAgents::save_new_record()
@@ -174,4 +177,13 @@ void ListAgents::del_record()
     }
 
     model->setQuery(query);
+}
+
+void ListAgents::clear_record()
+{
+    ui->nameEdit->setText("");
+    ui->cityEdit->setText("");
+    ui->addrEdit->setText("");
+    ui->phoneEdit->setText("");
+    ui->contactEdit->setText("");
 }

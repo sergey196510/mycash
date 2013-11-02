@@ -30,9 +30,9 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
 
     case Qt::TextColorRole:
 //        qDebug() << record(index.row()).value(0).toInt();
-        if (record(index.row()).value(0).toInt() == var.Currency()) {
-            return QVariant(QColor(Qt::blue));
-        }
+//        if (record(index.row()).value(0).toInt() == var.Currency()) {
+//            return QVariant(QColor(Qt::blue));
+//        }
         return value;
     }
 
@@ -79,7 +79,7 @@ ListCurrency::ListCurrency(QWidget *parent) :
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);
     ui->delButton->setEnabled(false);
-    ui->defaultButton->setEnabled(false);
+    ui->clearButton->setEnabled(false);
 
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(check_select()));
     connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(check_new_button(QString)));
@@ -88,7 +88,7 @@ ListCurrency::ListCurrency(QWidget *parent) :
     connect(ui->newButton, SIGNAL(released()), SLOT(new_currency()));
     connect(ui->editButton, SIGNAL(released()), SLOT(update_currency()));
     connect(ui->delButton, SIGNAL(released()), SLOT(delete_currency()));
-    connect(ui->defaultButton, SIGNAL(released()), SLOT(set_default()));
+    connect(ui->clearButton, SIGNAL(released()), SLOT(clear_currency()));
 }
 
 ListCurrency::~ListCurrency()
@@ -181,16 +181,11 @@ void ListCurrency::delete_currency()
     q.exec();
 }
 
-void ListCurrency::set_default()
+void ListCurrency::clear_currency()
 {
-    Globals var;
-    QSqlQuery q;
-
-    var.setCurrency(get_selected_id());
-
-    model->setQuery(query);
-//    ui->tableView->resizeRowsToContents();
-//    ui->tableView->resizeColumnsToContents();
+    ui->nameEdit->setText("");
+    ui->symbolEdit->setText("");
+    ui->kursEdit->setValue(0);
 }
 
 void ListCurrency::check_select()
@@ -212,5 +207,5 @@ void ListCurrency::check_select()
 
     ui->editButton->setEnabled(true);
     ui->delButton->setEnabled(true);
-    ui->defaultButton->setEnabled(true);
+    ui->clearButton->setEnabled(true);
 }

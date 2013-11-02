@@ -11,10 +11,11 @@ double Database::get_account_summ(int type)
 
     query.prepare("SELECT SUM(balance) FROM account WHERE type = :type AND hidden = 'false'");
     query.bindValue(":type", type);
-    if (!query.exec() || !query.next())
+    if (!query.exec())
         return 0;
-
-    return query.value(0).toDouble();
+    if (query.next())
+	return query.value(0).toDouble();
+    return 0;
 }
 
 double Database::get_operation_summ(int type)
@@ -81,10 +82,11 @@ QString Database::get_account_scod(int id)
 
     query.prepare("SELECT c.scod FROM account a, currency c WHERE a.id = :id AND a.ccod = c.id");
     query.bindValue(":id", id);
-    if (!query.exec() || !query.next())
+    if (!query.exec())
         return 0;
-
-    return query.value(0).toString();
+    if (query.next())
+        return query.value(0).toString();
+    return 0;
 }
 
 /*
@@ -135,43 +137,45 @@ Account_Data Database::get_account_data(int id)
 
     q.prepare("SELECT name,type,balance,descr,ccod,hidden FROM account WHERE id = :id");
     q.bindValue(":id", id);
-    if (!q.exec() || !q.next()) {
+    if (!q.exec()) {
         qDebug() << "SELECT Error:" << q.lastError().text();
         return data;
     }
-
-    data.name = q.value(0).toString();
-    data.type = q.value(1).toInt();
-    data.balance = q.value(2).toDouble();
-    data.descr = q.value(3).toString();
-    data.curr = q.value(4).toInt();
-    data.hidden = q.value(5).toInt();
-
+    if (q.next()) {
+        data.name = q.value(0).toString();
+	data.type = q.value(1).toInt();
+        data.balance = q.value(2).toDouble();
+	data.descr = q.value(3).toString();
+        data.curr = q.value(4).toInt();
+	data.hidden = q.value(5).toInt();
+    }
     return data;
 }
 
 QString Database::get_agent_name(int id)
 {
-    QSqlQuery query;
+    QSqlQuery q;
 
-    query.prepare("SELECT name FROM agent WHERE id = :id");
-    query.bindValue(":id", id);
-    if (!query.exec() || !query.next())
+    q.prepare("SELECT name FROM agent WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec())
         return 0;
-
-    return query.value(0).toString();
+    if (q.next())
+	return q.value(0).toString();
+    return 0;
 }
 
 QString Database::get_currency_scod(int id)
 {
-    QSqlQuery query;
+    QSqlQuery q;
 
-    query.prepare("SELECT scod FROM currency WHERE id = :id");
-    query.bindValue(":id", id);
-    if (!query.exec() || !query.next())
+    q.prepare("SELECT scod FROM currency WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec())
         return 0;
-
-    return query.value(0).toString();
+    if (q.next())
+        return q.value(0).toString();
+    return 0;
 }
 
 QMap<int,QString> Database::get_scod_list()
@@ -220,16 +224,18 @@ int Database::new_operation(operation_data &data)
         return 0;
 
     query.prepare("SELECT MAX(id) FROM operation");
-    if (!query.exec() || !query.next())
-	return -1;
-    return query.value(0).toInt();
+    if (!query.exec())
+	return 0;
+    if (query.next())
+        return query.value(0).toInt();
+    return 0;
 }
 
 bool Database::new_account_oper(const int a_id, const int o_id, const double delta)
 {
     QSqlQuery q;
     Account_Data data = get_account_data(a_id);
-    int flag = (data.type == active || data.type == credit) ? 1 : -1;
+    int flag = (data.type == Active_type || data.type == Credit_type) ? 1 : -1;
     double summ = delta * flag;
 
     q.prepare("INSERT INTO account_oper(a_id, o_id, summ) VALUES(:a_id, :o_id, :summ)");
@@ -277,7 +283,7 @@ bool Database::change_account_balance(const int id, const double delta)
 
     data = get_account_data(id);
 
-    if (data.type == active || data.type == credit)
+    if (data.type == Active_type || data.type == Credit_type)
         flag = 1;
     else if (data.type < 1 || data.type > 4) {
     qDebug() << "type is unknown: " << data.type;
@@ -340,22 +346,23 @@ operation_data Database::get_operation(int id)
 
     q.prepare("SELECT acc_from,acc_to,agent,summ,dt,descr,plan_id FROM operation WHERE id = :id");
     q.bindValue(":id", id);
-    if (!q.exec() || !q.next()) {
+    if (!q.exec()) {
         return data;
     }
-
-    data.from = q.value(0).toInt();
-    data.to   = q.value(1).toInt();
-    data.agent = q.value(2).toInt();
-    data.summ = q.value(3).toDouble();
-    data.date = q.value(4).toString();
-    data.descr = q.value(5).toString();
-    data.plan_id = q.value(6).toInt();
+    if (q.next()) {
+        data.from = q.value(0).toInt();
+	data.to   = q.value(1).toInt();
+        data.agent = q.value(2).toInt();
+	data.summ = q.value(3).toDouble();
+        data.date = q.value(4).toString();
+	data.descr = q.value(5).toString();
+        data.plan_id = q.value(6).toInt();
+    }
 
     return data;
 }
 
-bool Database::new_plan_oper(PlanOper_data &data)
+int Database::new_plan_oper(PlanOper_data &data)
 {
     QSqlQuery q;
 
@@ -369,10 +376,15 @@ bool Database::new_plan_oper(PlanOper_data &data)
     q.bindValue(":descr", data.descr);
     if (!q.exec()) {
         qDebug() << "Error Insert:" << q.lastError().text();
-        return false;
+        return 0;
     }
 
-    return true;
+    q.prepare("SELECT MAX(id) FROM plan_oper");
+    if (!q.exec())
+    return 0;
+    if (q.next())
+        return q.value(0).toInt();
+    return 0;
 }
 
 QList<PlanOper_data> Database::get_plan_oper_list()
@@ -410,18 +422,20 @@ PlanOper_data Database::get_plan_oper_data(int id)
 
     q.prepare("SELECT id, day, month, year, acc_from, acc_to, summ, descr FROM plan_oper WHERE id = :id");
     q.bindValue(":id", id);
-    if (!q.exec() || !q.next()) {
+    if (!q.exec()) {
         qDebug() << "Select Error:" << q.lastError().text();
         return data;
     }
-    data.id = q.value(0).toInt();
-    data.day = q.value(1).toInt();
-    data.month = q.value(2).toInt();
-    data.year = q.value(3).toInt();
-    data.from = q.value(4).toInt();
-    data.to = q.value(5).toInt();
-    data.summ = q.value(6).toDouble();
-    data.descr = q.value(7).toString();
+    if (q.next()) {
+        data.id = q.value(0).toInt();
+	data.day = q.value(1).toInt();
+        data.month = q.value(2).toInt();
+	data.year = q.value(3).toInt();
+        data.from = q.value(4).toInt();
+	data.to = q.value(5).toInt();
+        data.summ = q.value(6).toDouble();
+	data.descr = q.value(7).toString();
+    }
 
     return data;
 }

@@ -7,8 +7,10 @@ CorrectBalance::CorrectBalance(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->okButton->setIcon(QPixmap(":icons/accept.png"));
-    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
+    ui->comboBox->setValue(var.CorrectAccount());
+
+//    ui->okButton->setIcon(QPixmap(":icons/accept.png"));
+//    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     ui->okButton->setEnabled(false);
 
 //    ui->doubleSpinBox->setRange(-1000000, 1000000);

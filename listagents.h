@@ -44,6 +44,7 @@ private slots:
     void save_new_record();
     void update_record();
     void del_record();
+    void clear_record();
 };
 
 #endif // LISTAGENTS_H

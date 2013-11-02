@@ -8,6 +8,9 @@ ListPlanOperModel::ListPlanOperModel(QObject *parent) :
     db = new Database;
     header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Description");
     list = db->get_accounts_list();
+    var = new Globals;
+//    currency = db->get_currency_list();
+//    symbol = db->get_currency_scod(var.Currency());
 }
 
 QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
@@ -24,7 +27,7 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
             return list[value.toInt()];
         }
         else if (index.column() == 6) {
-            return default_locale->toString(value.toDouble());
+            return default_locale->toString(value.toDouble()/var->Kurs());
         }
         else
             return value;
@@ -119,9 +122,8 @@ void ListPlanOper::new_oper()
 
     if (po->exec() == QDialog::Accepted) {
         PlanOper_data data = po->Value();
-        db->new_plan_oper(data);
-
-        model->setQuery(query);
+        if (db->new_plan_oper(data) > 0)
+            model->setQuery(query);
 //        ui->treeView->resizeColumnsToContents();
 //        ui->treeView->resizeRowsToContents();
     }
@@ -195,4 +197,9 @@ void ListPlanOper::check_selected()
     int id = get_selected_id();
     comm->setEnabled(id);
     delo->setEnabled(id);
+}
+
+void ListPlanOper::reload_model()
+{
+    model->setQuery(query);
 }

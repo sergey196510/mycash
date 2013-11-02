@@ -44,7 +44,7 @@ private slots:
     void new_currency();
     void update_currency();
     void delete_currency();
-    void set_default();
+    void clear_currency();
     void check_select();
 };
 

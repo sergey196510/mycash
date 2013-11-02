@@ -80,14 +80,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="okButton">
+      <widget class="OkPushButton" name="okButton">
        <property name="text">
         <string>Ok</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
+      <widget class="CancelPushButton" name="cancelButton">
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -99,6 +99,16 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>OkPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/okpushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">widgets/accountcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>
    <header location="global">widgets/mydateedit.h</header>
@@ -109,11 +119,18 @@
    <header location="global">widgets/currencyedit.h</header>
   </customwidget>
   <customwidget>
-   <class>AccountComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">widgets/accountcombobox.h</header>
+   <class>CancelPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/cancelpushbutton.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>summEdit</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>dateEdit</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

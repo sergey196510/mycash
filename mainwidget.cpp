@@ -179,11 +179,15 @@ MainWidget::~MainWidget()
 
 void MainWidget::update_summ()
 {
-    QMap<QString,double> list;
-    QString symbol = default_locale->currencySymbol(default_locale->CurrencyIsoCode);
+//    QMap<QString,double> list = db->get_currency_list();
+//    QString symbol = db->get_currency_scod(var.Currency());
+    double active = db->get_account_summ(Active_type) / var.Kurs();
+    double passive = db->get_account_summ(Passive_type) / var.Kurs();
+    double debet = db->get_operation_summ(Debet_type) / var.Kurs();
+    double credit = db->get_operation_summ(Credit_type) / var.Kurs();
 
-    ui->active_value->setText(default_locale->toString(db->get_account_summ(active)) + " " + symbol);
-    ui->passive_value->setText(default_locale->toString(db->get_account_summ(passive)) + " " + symbol);
-    ui->debet_value->setText(default_locale->toString(db->get_operation_summ(debet)) + " " + symbol);
-    ui->credit_value->setText(default_locale->toString(db->get_operation_summ(credit)) + " " + symbol);
+    ui->active_value->setText(default_locale->toString(active) + " " + var.Symbol());
+    ui->passive_value->setText(default_locale->toString(passive) + " " + var.Symbol());
+    ui->debet_value->setText(default_locale->toString(debet) + " " + var.Symbol());
+    ui->credit_value->setText(default_locale->toString(credit) + " " + var.Symbol());
 }

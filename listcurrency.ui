@@ -86,9 +86,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="defaultButton">
+        <widget class="QToolButton" name="clearButton">
          <property name="text">
-          <string>Default</string>
+          <string>Clear</string>
          </property>
         </widget>
        </item>
@@ -118,6 +118,15 @@
    <header location="global">widgets/currencyedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>symbolEdit</tabstop>
+  <tabstop>kursEdit</tabstop>
+  <tabstop>newButton</tabstop>
+  <tabstop>editButton</tabstop>
+  <tabstop>delButton</tabstop>
+  <tabstop>treeView</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

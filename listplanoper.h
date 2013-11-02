@@ -22,8 +22,11 @@ public:
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 
 private:
+    Globals *var;
     QStringList header_data;
     QMap<int,QString> list;
+    QMap<QString,double> currency;
+    QString symbol;
     Database *db;
 };
 
@@ -34,6 +37,9 @@ class ListPlanOper : public QWidget
 public:
     explicit ListPlanOper(QWidget *parent = 0);
     ~ListPlanOper();
+
+public slots:
+    void reload_model();
 
 private:
     Ui::ListPlanOper *ui;
