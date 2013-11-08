@@ -12,3 +12,4 @@ int Globals::currency = 0;
 int Globals::correct_account = 0;
 double Globals::kurs = 1;
 QString Globals::symbol = "";
+QString Globals::list_font = "";

@@ -27,7 +27,7 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
             return list[value.toInt()];
         }
         else if (index.column() == 6) {
-            return default_locale->toString(value.toDouble()/var->Kurs());
+            return default_locale->toString(value.toDouble()/var->Kurs(),'f',2);
         }
         else
             return value;
@@ -157,7 +157,7 @@ void ListPlanOper::commit_oper()
     pod = db->get_plan_oper_data(id);
     od.from = pod.from;
     od.to = pod.to;
-    od.summ = pod.summ;
+    od.summ_from = pod.summ;
     od.descr = pod.descr;
     od.plan_id = id;
 

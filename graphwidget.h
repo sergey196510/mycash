@@ -13,6 +13,7 @@ public:
     graphWidget(QWidget *parent = 0);
 
 private:
+    Database db;
     QMap<QString,double> list, list2;
     int count;
     double summ;

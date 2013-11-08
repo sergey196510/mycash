@@ -43,6 +43,7 @@ private slots:
 //    void fill_model();
     void reload_model();
     void new_account();
+    void change_account();
     void correct_balance();
     void del_account();
     void check_type();
@@ -53,6 +54,7 @@ private:
     ListAccountsModel *model;
 //    QString query;
     Database db;
+    Globals var;
 };
 
 #endif // LISTACCOUNTS_H

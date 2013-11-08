@@ -50,6 +50,47 @@ double Database::get_operation_summ(int type)
     return summ;
 }
 
+QMap<QString,double> Database::get_operation_list(int type, int m1, int y1)
+{
+    QMap<QString,double> list;
+    QSqlQuery q1,q2;
+    int m2,y2;
+
+    if (m1 == 12) {
+        m2 = 1;
+        y2 = y1+1;
+    }
+    else {
+        m2 = m1 + 1;
+        y2 = y1;
+    }
+
+    QString query = QString("SELECT id FROM operation WHERE dt >= '%1-%2-01' AND dt < '%3-%4-01'")
+            .arg(y1)
+            .arg(m1)
+            .arg(y2)
+            .arg(m2);
+
+    if (!q1.exec(query)) {
+        qDebug() << q1.lastError().text();
+        return list;
+    }
+    while (q1.next()) {
+        q2.prepare("SELECT a.name,ao.summ FROM account a, account_oper ao WHERE ao.o_id = :id AND a.id = ao.a_id AND a.type = :type");
+        q2.bindValue(":id", q1.value(0).toInt());
+        q2.bindValue(":type", type);
+        if (!q2.exec()) {
+            qDebug() << q2.lastError().text();
+        }
+        while (q2.next()) {
+            qDebug() << q2.value(0).toString() << q2.value(1).toDouble();
+            list[q2.value(0).toString()] += q2.value(1).toDouble();
+        }
+    }
+
+    return list;
+}
+
 /*
 double Database::get_account_balance(int id)
 {
@@ -135,7 +176,7 @@ Account_Data Database::get_account_data(int id)
     Account_Data data;
     QSqlQuery q;
 
-    q.prepare("SELECT name,type,balance,descr,ccod,hidden FROM account WHERE id = :id");
+    q.prepare("SELECT name,type,balance,descr,ccod,hidden,parent FROM account WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec()) {
         qDebug() << "SELECT Error:" << q.lastError().text();
@@ -143,11 +184,12 @@ Account_Data Database::get_account_data(int id)
     }
     if (q.next()) {
         data.name = q.value(0).toString();
-	data.type = q.value(1).toInt();
+        data.type = q.value(1).toInt();
         data.balance = q.value(2).toDouble();
-	data.descr = q.value(3).toString();
+        data.descr = q.value(3).toString();
         data.curr = q.value(4).toInt();
-	data.hidden = q.value(5).toInt();
+        data.hidden = q.value(5).toInt();
+        data.parent = q.value(6).toInt();
     }
     return data;
 }
@@ -216,7 +258,7 @@ int Database::new_operation(operation_data &data)
     query.bindValue(":from", data.from);
     query.bindValue(":to", data.to);
     query.bindValue(":agent", data.agent);
-    query.bindValue(":summ", data.summ);
+    query.bindValue(":summ", data.summ_from);
     query.bindValue(":dt", data.date);
     query.bindValue(":descr", data.descr);
     query.bindValue(":plan_id", data.plan_id);
@@ -231,17 +273,18 @@ int Database::new_operation(operation_data &data)
     return 0;
 }
 
-bool Database::new_account_oper(const int a_id, const int o_id, const double delta)
+bool Database::new_account_oper(const int a_id, const int o_id, const double summ, const int direction)
 {
     QSqlQuery q;
     Account_Data data = get_account_data(a_id);
-    int flag = (data.type == Active_type || data.type == Credit_type) ? 1 : -1;
-    double summ = delta * flag;
+//    int flag = (data.type == Active_type || data.type == Credit_type) ? 1 : -1;
+//    double summ = delta * flag;
 
-    q.prepare("INSERT INTO account_oper(a_id, o_id, summ) VALUES(:a_id, :o_id, :summ)");
+    q.prepare("INSERT INTO account_oper(a_id, o_id, summ, direction) VALUES(:a_id, :o_id, :summ, :direction)");
     q.bindValue(":a_id", a_id);
     q.bindValue(":o_id", o_id);
     q.bindValue(":summ", summ);
+    q.bindValue(":direction", direction);
     if (!q.exec())
         return false;
 
@@ -264,7 +307,7 @@ bool Database::del_operation(int id)
 {
     QSqlQuery q;
 
-    q.prepare("DELETE FROM operation WHERE o_id = :id");
+    q.prepare("DELETE FROM operation WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec())
         return false;
@@ -318,19 +361,19 @@ bool Database::save_operation(operation_data &data)
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (new_account_oper(data.from, oper_id, -data.summ) == false) {
+    if (new_account_oper(data.from, oper_id, data.summ_from, direction_from) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (new_account_oper(data.to, oper_id, data.summ) == false) {
+    if (new_account_oper(data.to, oper_id, data.summ_to, direction_to) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (change_account_balance(data.from, -data.summ) == false) {
+    if (change_account_balance(data.from, -data.summ_from) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (change_account_balance(data.to, data.summ) == false) {
+    if (change_account_balance(data.to, data.summ_to) == false) {
 	q.exec("ROLLBACK TRANSACTION");
         return false;
     }
@@ -353,7 +396,7 @@ operation_data Database::get_operation(int id)
         data.from = q.value(0).toInt();
 	data.to   = q.value(1).toInt();
         data.agent = q.value(2).toInt();
-	data.summ = q.value(3).toDouble();
+    data.summ_from = q.value(3).toDouble();
         data.date = q.value(4).toString();
 	data.descr = q.value(5).toString();
         data.plan_id = q.value(6).toInt();

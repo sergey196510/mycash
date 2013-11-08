@@ -80,6 +80,7 @@ void MyCash::setconnects()
 
     connect(ui->actionReport_1, SIGNAL(triggered()), SLOT(report1()));
     connect(ui->actionReport_2, SIGNAL(triggered()), SLOT(report2()));
+    connect(ui->actionTest_2, SIGNAL(triggered()), SLOT(test()));
 
     connect(ui->actionAbout_program, SIGNAL(triggered()), SLOT(aboutProgram()));
     connect(ui->actionAbout_QT,      SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -121,6 +122,7 @@ void MyCash::readsettings()
     var.setAccount(settings.value("current_account", "").toInt());
     var.setCurrency(settings.value("current_currency", "").toInt());
     var.setCorrectAccount(settings.value("correct_account", "").toInt());
+    var.setListFont(settings.value("list_font", "").toString());
 //    fnt = settings.value("operations_font");
 }
 
@@ -132,6 +134,7 @@ void MyCash::writesettings()
     settings.setValue("current_account", var.Account());
     settings.setValue("current_currency", var.Currency());
     settings.setValue("correct_account", var.CorrectAccount());
+    settings.setValue("list_font", var.ListFont());
 //    settings.setValue("operations_font", fnt);
 }
 
@@ -215,6 +218,7 @@ void MyCash::list_home()
     MainWidget *mw = new MainWidget;
 
     connect(this, SIGNAL(update_currency()), mw, SLOT(update_summ()));
+    curr->setEnabled(true);
 
     setCentralWidget(mw);
 }
@@ -225,6 +229,7 @@ void MyCash::list_accounts()
 
     connect(ui->action_Open, SIGNAL(triggered()), la, SLOT(reload_model()));
     connect(ui->action_Close, SIGNAL(triggered()), la, SLOT(clear_list()));
+    curr->setEnabled(false);
 
     setCentralWidget(la);
 }
@@ -312,46 +317,29 @@ void MyCash::report1()
     year = localdate.year();
 
     te->append("Dohodi:");
-    QString str = "SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= '%1-%2-01' AND a.type = 3 AND o.acc_from = a.id GROUP BY a.name";
-    QString query = str.arg(year).arg(month);
-    if (!q.exec(query)) {
-        qDebug() << "Error select:" << q.lastError().text();
-        return;
+    QMap<QString,double> list = db->get_operation_list(3,month,year);
+    QMap<QString,double>::iterator i;
+    list = db->get_operation_list(3,month,year);
+    for (i = list.begin(); i != list.end(); i++) {
+        te->append(i.key() + ": " + default_locale->toString(i.value(),'f',2));
+        summ += i.value();
     }
-    summ = 0;
-    while (q.next()) {
-        te->append(q.value(0).toString() + ": " + default_locale->toString(q.value(1).toDouble()));
-        summ += q.value(1).toDouble();
-    }
-    te->append("Total: " + QString("%1").arg(default_locale->toString(summ)));
+    te->append("Total: " + default_locale->toString(summ,'f',2));
 
     te->append("-----------------------------------------------");
     te->append("Rashodi:");
 
-    str = "SELECT a.name, sum(o.summ) FROM account a, operation o WHERE o.dt >= '%1-%2-01' AND a.type = 4 AND o.acc_to = a.id GROUP BY a.name";
-    query = str.arg(year).arg(month);
-    if (!q.exec(query)) {
-        qDebug() << "Error select:" << q.lastError().text();
-        return;
+    list = db->get_operation_list(4,month,year);
+    for (i = list.begin(); i != list.end(); i++) {
+        te->append(i.key() + ": " + default_locale->toString(i.value(),'f',2));
+        summ += i.value();
     }
-    summ = 0;
-    while (q.next()) {
-        te->append(q.value(0).toString() + ": " + default_locale->toString(q.value(1).toDouble()));
-        summ += q.value(1).toDouble();
-    }
-    te->append("Total: " + QString("%1").arg(default_locale->toString(summ)));
+    te->append("Total: " + default_locale->toString(summ,'f',2));
 
     te->append("-----------------------------------------------");
 
-    query = "SELECT sum(balance) FROM account WHERE type = 1 AND hidden = 'false'";
-    if (!q.exec(query)) {
-        qDebug() << "Error select:" << q.lastError().text();
-        return;
-    }
-    if (q.next())
-        te->append("Balance: " + QString("%1").arg(default_locale->toString(q.value(0).toDouble())));
-    else
-        te->append("Balance: 0");
+    summ = db->get_account_summ(1);
+    te->append("Balance: " + default_locale->toString(summ,'f',2));
 }
 
 void MyCash::report2()
@@ -361,4 +349,66 @@ void MyCash::report2()
     curr->setEnabled(false);
 
     setCentralWidget(gw);
+}
+
+void MyCash::test()
+{
+    QSqlQuery q1, q2, q3;
+
+    q3.prepare("UPDATE account_oper set direction = :dir WHERE id = :id");
+
+    q1.prepare("SELECT id,acc_from,acc_to,summ FROM operation");
+    if (!q1.exec()) {
+        qDebug() << q1.lastError().text();
+        return;
+    }
+    while (q1.next()) {
+        int id = q1.value(0).toInt();
+        int from = q1.value(1).toInt();
+        Account_Data from_data = db->get_account_data(from);
+        int to = q1.value(2).toInt();
+        Account_Data to_data = db->get_account_data(to);
+        double summ1 = q1.value(3).toDouble();
+        qDebug() << summ1;
+
+        q2.prepare("SELECT id,a_id,o_id,summ FROM account_oper WHERE o_id = :id AND a_id = :from");
+        q2.bindValue(":id", id);
+        q2.bindValue(":from", from);
+        if (!q2.exec()) {
+            qDebug() << q2.lastError().text();
+            return;
+        }
+        while (q2.next()) {
+            int id2 = q2.value(0).toInt();
+            int a_id = q2.value(1).toInt();
+            int o_id = q2.value(2).toInt();
+            double summ2 = q2.value(3).toDouble();
+            q3.bindValue(":dir", 1);
+            q3.bindValue(":id", id2);
+            if (!q3.exec()) {
+                qDebug() << q3.lastError().text();
+                return;
+            }
+        }
+
+        q2.prepare("SELECT id,a_id,o_id,summ FROM account_oper WHERE o_id = :id AND a_id = :to");
+        q2.bindValue(":id", id);
+        q2.bindValue(":from", to);
+        if (!q2.exec()) {
+            qDebug() << q2.lastError().text();
+            return;
+        }
+        while (q2.next()) {
+            int id2 = q2.value(0).toInt();
+            int a_id = q2.value(1).toInt();
+            int o_id = q2.value(2).toInt();
+            double summ2 = q2.value(3).toDouble();
+            q3.bindValue(":dir", 2);
+            q3.bindValue(":id", id2);
+            if (!q3.exec()) {
+                qDebug() << q3.lastError().text();
+                return;
+            }
+        }
+    }
 }

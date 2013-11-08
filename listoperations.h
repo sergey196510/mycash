@@ -1,22 +1,24 @@
 #ifndef LISTOPERATIONS_H
 #define LISTOPERATIONS_H
 
+#include <QtGui>
 #include <QWidget>
 #include <QtSql>
 #include "database.h"
 #include "editoperation.h"
 #include "editplanoper.h"
+#include "widgets/mydateedit.h"
 
 namespace Ui {
 class ListOperations;
 }
 
-class ListOperationsModel : public QSqlQueryModel
+class ListOperationsModel : public QStandardItemModel
 {
     Q_OBJECT
 
 public:
-    explicit ListOperationsModel(QObject *parent = 0);
+    explicit ListOperationsModel(QString *dt1, QString *dt2, int id = 0, QObject *parent = 0);
     ~ListOperationsModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
@@ -44,8 +46,10 @@ private:
     ListOperationsModel *model;
     QString query;
     Database *db;
+    Globals var;
     EditOperation eo;
     operation_data d;
+    QMap<QString,double> list;
     void edit_operation(int);
 
 signals:
@@ -55,10 +59,10 @@ private slots:
     void debet_operation();
     void credit_operation();
     void transfer_operation();
-    void select_list_operations();
-    void change_current_account(int);
+//    void select_list_operations();
+    void change_current_account(int i = 0);
 //    void select_font();
-    void reload_table();
+//    void reload_table();
     void del_operation();
     void plann_operation();
     int get_selected_id();

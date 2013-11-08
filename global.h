@@ -11,12 +11,18 @@ extern QLocale *default_locale;
 //extern QLocale *english;
 extern QFont   fnt;
 
+enum Direction {
+    direction_from = 1,
+    direction_to = 2
+};
+
 class Globals {
     static int account;
     static int currency;
     static int correct_account;
     static double kurs;
     static QString symbol;
+    static QString list_font;
 public:
     int Account() { return account; }
     void setAccount(int i) { account = i; }
@@ -28,6 +34,8 @@ public:
     void setKurs(double i) { kurs = i; }
     QString Symbol() { return symbol; }
     void setSymbol(QString s) { symbol = s; }
+    QString ListFont() { return list_font; }
+    void setListFont(QString s) { list_font = s; }
 };
 
 struct Account_Data {
@@ -50,13 +58,15 @@ struct operation_data {
     int from;
     int to;
     int agent;
-    double summ;
+    double kurs;
+    double summ_from;
+    double summ_to;
     int plan_id;
     QString date;
     QString descr;
     operation_data() {
         from = to = agent = plan_id = 0;
-        summ = 0;
+        summ_from = summ_to = 0;
         date = "";
         descr = "";
     }

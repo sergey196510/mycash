@@ -8,6 +8,7 @@ Settings::Settings(QWidget *parent) :
     ui->setupUi(this);
 
     ui->accountBox->setValue(var.CorrectAccount());
+    ui->fontComboBox->setItemText(0, var.ListFont());
 
     connect(ui->okButton, SIGNAL(released()), SLOT(save_vars()));
 }
@@ -20,4 +21,5 @@ Settings::~Settings()
 void Settings::save_vars()
 {
     var.setCorrectAccount(ui->accountBox->value());
+    var.setListFont(ui->fontComboBox->itemText(0));
 }

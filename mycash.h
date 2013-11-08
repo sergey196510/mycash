@@ -49,6 +49,7 @@ private slots:
     void report1();
     void report2();
     void update_curr();
+    void test();
 
 signals:
     void update_currency();

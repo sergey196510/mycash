@@ -54,16 +54,6 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Select account:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="AccountComboBox" name="search_comboBox"/>
-     </item>
-     <item>
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Date:</string>

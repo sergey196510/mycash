@@ -6,8 +6,8 @@ enum Column {
     day = 1,
     month = 2,
     year = 3,
-    from = 4,
-    to = 5,
+    column_from = 4,
+    column_to = 5,
     summ = 6,
     status = 7,
     descr = 8
@@ -27,11 +27,11 @@ bool MainWidgetModel::get_operations(int plan)
 
     query = QString("SELECT count(id) FROM operation WHERE dt >= '01-%1-%2' AND plan_id = %3").arg(curr.month()).arg(curr.year()).arg(plan);
 //    qDebug() << query;
-    if (!q.exec(query) || !q.next()) {
+    if (!q.exec(query)) {
         qDebug() << q.lastError().text();
         return false;
     }
-    if (q.value(0).toInt() == 0)
+    if (q.next() && q.value(0).toInt() == 0)
         return false;
 
     return true;
@@ -72,8 +72,8 @@ MainWidgetModel::MainWidgetModel(QObject *parent) :
         setData(index(row,day),   data.day);
         setData(index(row,month), data.month);
         setData(index(row,year),  data.year);
-        setData(index(row,from),  accounts[data.from]);
-        setData(index(row,to),    accounts[data.to]);
+        setData(index(row,column_from),  accounts[data.from]);
+        setData(index(row,column_to),    accounts[data.to]);
         setData(index(row,summ),  default_locale->toString(data.summ));
         if (stat == actual)
             setData(index(row,status), tr("Actual"));
@@ -164,8 +164,8 @@ MainWidget::MainWidget(QWidget *parent) :
     ui->treeView->header()->setResizeMode(day, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(month, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(year, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(from, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(to, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(column_from, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(column_to, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(summ, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(status, QHeaderView::ResizeToContents);
 }
@@ -186,8 +186,8 @@ void MainWidget::update_summ()
     double debet = db->get_operation_summ(Debet_type) / var.Kurs();
     double credit = db->get_operation_summ(Credit_type) / var.Kurs();
 
-    ui->active_value->setText(default_locale->toString(active) + " " + var.Symbol());
-    ui->passive_value->setText(default_locale->toString(passive) + " " + var.Symbol());
-    ui->debet_value->setText(default_locale->toString(debet) + " " + var.Symbol());
-    ui->credit_value->setText(default_locale->toString(credit) + " " + var.Symbol());
+    ui->active_value->setText(default_locale->toString(active,'f',2) + " " + var.Symbol());
+    ui->passive_value->setText(default_locale->toString(passive,'f',2) + " " + var.Symbol());
+    ui->debet_value->setText(default_locale->toString(debet,'f',2) + " " + var.Symbol());
+    ui->credit_value->setText(default_locale->toString(credit,'f',2) + " " + var.Symbol());
 }

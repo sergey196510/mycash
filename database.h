@@ -26,10 +26,11 @@ public:
     QMap<int,QString> get_accounts_list();
     QMap<int,QString> get_scod_list();
     QMap<QString,double> get_currency_list();
+    QMap<QString,double> get_operation_list(int type,int month,int year);
     QList<PlanOper_data> get_plan_oper_list();
     int     new_operation(operation_data &);
     bool    del_operation(int);
-    bool    new_account_oper(const int, const int, const double);
+    bool    new_account_oper(const int, const int, const double, const int);
     bool    del_account_oper(int);
     bool    change_account_balance(const int, const double);
     bool    save_operation(operation_data &);

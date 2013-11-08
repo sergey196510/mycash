@@ -20,5 +20,5 @@ double currencyEdit::value()
 
 void currencyEdit::setValue(double value)
 {
-    this->setText(default_locale->toString(value));
+    this->setText(default_locale->toString(value,'f',2));
 }

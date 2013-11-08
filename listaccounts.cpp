@@ -9,7 +9,7 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
     int id;
     int i = 0;
     int row = 0;
-    double summ = 0;
+    double summ = 0, summ2 = 0;
 
     q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = :parent");
     q.bindValue(":parent", parent);
@@ -30,11 +30,11 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
         setData(index(i,4,idx), q.value(3).toString());
         setData(index(i,3,idx), q.value(5).toBool());
         setData(index(i,5,idx), q.value(0).toInt());
-        summ += get_list(q.value(0).toInt(), index(i,0,idx));
+        summ2 = get_list(q.value(0).toInt(), index(i,0,idx));
+        setData(index(i,1,idx), summ2+q.value(2).toDouble());
+        summ += summ2;
         i++;
     }
-    if (summ > 0)
-        setData(index(row,1), summ);
 
     return summ;
 }
@@ -44,7 +44,7 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
 {
     QSqlQuery query;
     db = new Database;
-    int type;
+//    int type;
     int row = 0;
     double summ, summ2;
     QModelIndex idx;
@@ -60,25 +60,27 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
         return;
     }
     while (query.next()) {
-        type = query.value(0).toInt();
+//        type = query.value(0).toInt();
         insertRow(row);
         idx = index(row, 0);
-        setData(idx, query.value(1).toString());
         QFont font;
         font.setBold(true);
         setData(idx, font, Qt::FontRole);
+        setData(idx, query.value(1).toString());
         int i = 0;
         summ = 0;
-        summ2 = 0;
+//        summ2 = 0;
         QSqlQuery q;
         q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE type = :type AND parent = 0 ORDER BY name");
-        q.bindValue(":type", type);
-        if (!q.exec())
+        q.bindValue(":type", query.value(0).toInt());
+        if (!q.exec()) {
+            qDebug() << q.lastError().text();
             continue;
+        }
         while (q.next()) {
             if (q.value(5) == false) {
                 summ += q.value(2).toDouble();
-                summ2 += q.value(2).toDouble();
+//                summ2 += q.value(2).toDouble();
             }
             insertRow(i, idx);
             if (i == 0)
@@ -89,7 +91,9 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
             setData(index(i,4,idx), q.value(3).toString());
             setData(index(i,3,idx), q.value(5).toBool());
             setData(index(i,5,idx), q.value(0).toInt());
-            summ2 += get_list(q.value(0).toInt(), index(i,0,idx));
+            summ2 = get_list(q.value(0).toInt(), index(i,0,idx));
+            setData(index(i,1,idx), summ2+q.value(2).toDouble());
+            summ += summ2;
             i += 1;
         }
         setData(index(row,1), summ);
@@ -115,7 +119,7 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 1) {
-            return default_locale->toString(value.toDouble());
+            return default_locale->toString(value.toDouble(),'f',2);
         }
         else if (index.column() == 2) {
 //            return db->get_currency_scod(value.toInt());
@@ -159,7 +163,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui(new Ui::ListAccounts)
 {
     int type;
-    QFont font;
+    QFont font, fnt;
     font.setBold(true);
 
     ui->setupUi(this);
@@ -177,11 +181,17 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui->treeView->expandAll();
     ui->treeView->resizeColumnToContents(0);
 
+    if (var.ListFont().length() > 0)
+        fnt.setFamily(var.ListFont());
+    ui->treeView->setFont(fnt);
+
     QAction *nacct = new QAction(tr("New account"), this);
+    QAction *chacc = new QAction(tr("Change account"), this);
     QAction *cacct = new QAction(tr("Correct balance"), this);
     QAction *dacct = new QAction(tr("Delete this account"), this);
 
     ui->treeView->addAction(nacct);
+    ui->treeView->addAction(chacc);
     ui->treeView->addAction(cacct);
     ui->treeView->addAction(dacct);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -193,6 +203,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui->treeView->header()->setResizeMode(4, QHeaderView::ResizeToContents);
 
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
+    connect(chacc, SIGNAL(triggered()), SLOT(change_account()));
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
     connect(dacct, SIGNAL(triggered()), SLOT(del_account()));
     connect(ui->newButton, SIGNAL(released()), SLOT(new_account()));
@@ -201,7 +212,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
 //    connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
 
-    ui->act_summ->setText(default_locale->toCurrencyString(db.get_account_summ(1)));
+    ui->act_summ->setText(default_locale->toString(db.get_account_summ(1),'f',2));
     ui->act_summ->setFont(font);
 }
 
@@ -223,7 +234,7 @@ void ListAccounts::reload_model()
     model = new ListAccountsModel;
     ui->treeView->setModel(model);
     ui->treeView->expandAll();
-    ui->act_summ->setText(default_locale->toCurrencyString(db.get_account_summ(1)));
+    ui->act_summ->setText(default_locale->toString(db.get_account_summ(1),'f',2));
     ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
@@ -233,11 +244,15 @@ void ListAccounts::reload_model()
 void ListAccounts::new_account()
 {
     Globals var;
-    EditAccount ea(this);
+    EditAccount ea(1, this);
     int id = get_selected_id();
+    Account_Data data;
 
-    ea.set_curr(var.Currency());
-    ea.set_parent(id);
+    data.curr = var.Currency();
+    data.parent = id;
+    ea.setData(data);
+//    ea.set_curr(var.Currency());
+//    ea.set_parent(id);
 
     if (ea.exec() == QDialog::Accepted) {
         Account_Data data = ea.data();
@@ -260,6 +275,32 @@ void ListAccounts::new_account()
         else
             reload_model();
     }
+}
+
+void ListAccounts::change_account()
+{
+    QSqlQuery q;
+    EditAccount ac(2, this);
+    Account_Data data;
+    int id = get_selected_id();
+
+    if (id == 0)
+        return;
+
+    data = db.get_account_data(id);
+    ac.setData(data);
+    if (ac.exec() != QDialog::Accepted)
+        return;
+
+    data = ac.data();
+
+    q.prepare("UPDATE account SET name=:name, descr=:descr, hidden=:hidden WHERE id=:id");
+    q.bindValue(":name", data.name);
+    q.bindValue(":descr", data.descr);
+    q.bindValue(":hidden", (data.hidden == false) ? "false" : "true");
+    q.bindValue(":id", id);
+    if (!q.exec())
+        qDebug() << q.lastError().text();
 }
 
 int ListAccounts::get_selected_id()
@@ -296,13 +337,13 @@ void ListAccounts::correct_balance()
         if (new_balance < current_balance) {
             od.from = id;
             od.to = cb.account();
-            od.summ = current_balance-new_balance;
+            od.summ_from = od.summ_to = current_balance-new_balance;
             db.save_operation(od);
         }
         else {
             od.to = id;
             od.from = cb.account();
-            od.summ = new_balance-current_balance;
+            od.summ_from = od.summ_to = new_balance-current_balance;
             db.save_operation(od);
         }
 

@@ -2,13 +2,22 @@
 #include "editaccount.h"
 #include "ui_editaccount.h"
 
-EditAccount::EditAccount(QWidget *parent) :
+EditAccount::EditAccount(int type, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditAccount)
 {
     ui->setupUi(this);
 
-    connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(nameCheck(QString)));
+    if (type == 2) {
+        ui->typeBox->setEnabled(false);
+        ui->currencyBox->setEnabled(false);
+        ui->parentBox->setEnabled(false);
+        ui->balanceSpinBox->setEnabled(false);
+    }
+
+    if (type != 2)
+        connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(nameCheck(QString)));
+    connect(ui->parentBox, SIGNAL(currentIndexChanged(int)), SLOT(parentCheck()));
     connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
 
@@ -17,7 +26,8 @@ EditAccount::EditAccount(QWidget *parent) :
     ui->balanceSpinBox->setValue(0);
 
 //    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
-    ui->okButton->setEnabled(false);
+    if (type != 2)
+        ui->okButton->setEnabled(false);
 }
 
 EditAccount::~EditAccount()
@@ -25,6 +35,7 @@ EditAccount::~EditAccount()
     delete ui;
 }
 
+/*
 QString EditAccount::name()
 {
     return ui->nameEdit->text();
@@ -59,6 +70,7 @@ QString EditAccount::descr()
 {
     return ui->descrEdit->text();
 }
+*/
 
 Account_Data EditAccount::data()
 {
@@ -73,6 +85,17 @@ Account_Data EditAccount::data()
     d.parent = ui->parentBox->value();
 
     return d;
+}
+
+void EditAccount::setData(Account_Data &data)
+{
+    ui->nameEdit->setText(data.name);
+    ui->typeBox->setValue(data.type);
+    ui->currencyBox->setValue(data.curr);
+    ui->balanceSpinBox->setValue(data.balance);
+    ui->descrEdit->setText(data.descr);
+    ui->hiddenBox->setChecked(data.hidden);
+    ui->parentBox->setValue(data.parent);
 }
 
 void EditAccount::nameCheck(QString str)
@@ -95,7 +118,15 @@ bool EditAccount::nameFind(QString name)
     return false;
 }
 
+/*
 bool EditAccount::hidden()
 {
     return ui->hiddenBox->isChecked();
+}
+*/
+
+void EditAccount::parentCheck()
+{
+    Account_Data data = db.get_account_data(ui->parentBox->value());
+    ui->typeBox->setValue(data.type);
 }

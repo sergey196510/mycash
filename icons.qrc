@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>icons/mycash.jpe</file>
         <file>icons/exit.png</file>
         <file>icons/stop_32.png</file>
         <file>icons/accept.png</file>
