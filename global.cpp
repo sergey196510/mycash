@@ -10,6 +10,7 @@ QFont   fnt;
 int Globals::account = 0;
 int Globals::currency = 0;
 int Globals::correct_account = 0;
+int Globals::precision = 2;
 double Globals::kurs = 1;
 QString Globals::symbol = "";
 QString Globals::list_font = "";

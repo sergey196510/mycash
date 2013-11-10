@@ -2,15 +2,17 @@
 #include "ui_settings.h"
 
 Settings::Settings(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::Settings)
 {
     ui->setupUi(this);
 
-    ui->accountBox->setValue(var.CorrectAccount());
-    ui->fontComboBox->setItemText(0, var.ListFont());
+    ui->comboBox->setValue(var.CorrectAccount());
+    ui->precisionBox->setValue(var.Precision());
 
-    connect(ui->okButton, SIGNAL(released()), SLOT(save_vars()));
+    connect(ui->acceptButton, SIGNAL(released()), SLOT(accept_values()));
+    connect(ui->okButton,     SIGNAL(released()), SLOT(accept()));
+    connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
 }
 
 Settings::~Settings()
@@ -18,8 +20,8 @@ Settings::~Settings()
     delete ui;
 }
 
-void Settings::save_vars()
+void Settings::accept_values()
 {
-    var.setCorrectAccount(ui->accountBox->value());
-    var.setListFont(ui->fontComboBox->itemText(0));
+    var.setCorrectAccount(ui->comboBox->value());
+    var.setPrecision(ui->precisionBox->value());
 }

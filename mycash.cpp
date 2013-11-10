@@ -122,6 +122,7 @@ void MyCash::readsettings()
     var.setAccount(settings.value("current_account", "").toInt());
     var.setCurrency(settings.value("current_currency", "").toInt());
     var.setCorrectAccount(settings.value("correct_account", "").toInt());
+    var.setPrecision(settings.value("precision", "").toInt());
     var.setListFont(settings.value("list_font", "").toString());
 //    fnt = settings.value("operations_font");
 }
@@ -134,6 +135,7 @@ void MyCash::writesettings()
     settings.setValue("current_account", var.Account());
     settings.setValue("current_currency", var.Currency());
     settings.setValue("correct_account", var.CorrectAccount());
+    settings.setValue("precision", var.Precision());
     settings.setValue("list_font", var.ListFont());
 //    settings.setValue("operations_font", fnt);
 }
@@ -274,11 +276,11 @@ void MyCash::list_plan_oper()
 
 void MyCash::settings()
 {
-    Settings *st = new Settings;
+    Settings *st = new Settings(this);
 
-    curr->setEnabled(false);
+//    curr->setEnabled(false);
 
-    setCentralWidget(st);
+    st->exec();
 
 //    QMessageBox::information(this, "Settings", "Settings");
 }

@@ -21,6 +21,7 @@ class Globals {
     static int currency;
     static int correct_account;
     static double kurs;
+    static int precision;
     static QString symbol;
     static QString list_font;
 public:
@@ -32,6 +33,8 @@ public:
     void setCorrectAccount(int i) { correct_account = i; }
     double Kurs() { return kurs; }
     void setKurs(double i) { kurs = i; }
+    int Precision() { return precision; }
+    void setPrecision(int i) { precision = i; }
     QString Symbol() { return symbol; }
     void setSymbol(QString s) { symbol = s; }
     QString ListFont() { return list_font; }
