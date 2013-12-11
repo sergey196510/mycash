@@ -132,6 +132,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>treeView</tabstop>
   <tabstop>nameEdit</tabstop>
   <tabstop>cityEdit</tabstop>
   <tabstop>addrEdit</tabstop>
@@ -140,7 +141,7 @@
   <tabstop>newButton</tabstop>
   <tabstop>editButton</tabstop>
   <tabstop>delButton</tabstop>
-  <tabstop>treeView</tabstop>
+  <tabstop>clearButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

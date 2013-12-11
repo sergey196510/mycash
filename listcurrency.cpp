@@ -58,13 +58,14 @@ ListCurrency::ListCurrency(QWidget *parent) :
 
     ui->groupBox->setTitle(tr("Currency"));
 
-    query = "SELECT id, name, icod, scod, kurs FROM currency ORDER BY name";
+    if (var.database_Opened()) {
+        query = "SELECT id, name, icod, scod, kurs FROM currency ORDER BY name";
+        model = new ListCurrencyModel;
+        model->setQuery(query);
+        ui->treeView->setModel(model);
+        ui->treeView->hideColumn(0);
+    }
 
-    model = new ListCurrencyModel;
-    model->setQuery(query);
-
-    ui->treeView->setModel(model);
-    ui->treeView->hideColumn(0);
 //    ui->treeView->resizeRowsToContents();
 //    ui->treeView->resizeColumnsToContents();
     ui->treeView->setAlternatingRowColors(true);
@@ -82,13 +83,14 @@ ListCurrency::ListCurrency(QWidget *parent) :
     ui->clearButton->setEnabled(false);
 
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(check_select()));
+    connect(ui->treeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), SLOT(check_select()));
     connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(check_new_button(QString)));
     connect(ui->symbolEdit, SIGNAL(textChanged(QString)), SLOT(check_symbol(QString)));
 
-    connect(ui->newButton, SIGNAL(released()), SLOT(new_currency()));
-    connect(ui->editButton, SIGNAL(released()), SLOT(update_currency()));
-    connect(ui->delButton, SIGNAL(released()), SLOT(delete_currency()));
-    connect(ui->clearButton, SIGNAL(released()), SLOT(clear_currency()));
+    connect(ui->newButton, SIGNAL(clicked()), SLOT(new_currency()));
+    connect(ui->editButton, SIGNAL(clicked()), SLOT(update_currency()));
+    connect(ui->delButton, SIGNAL(clicked()), SLOT(delete_currency()));
+    connect(ui->clearButton, SIGNAL(clicked()), SLOT(clear_currency()));
 }
 
 ListCurrency::~ListCurrency()
@@ -119,7 +121,7 @@ void ListCurrency::new_currency()
     q.bindValue(":kurs", ui->kursEdit->value());
     q.exec();
 
-    model->setQuery(query);
+    reload_model();
 //    ui->treeView->resizeRowsToContents();
 //    ui->treeView->resizeColumnsToContents();
 }
@@ -130,7 +132,6 @@ int ListCurrency::get_selected_id()
 
     list = ui->treeView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
-        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return 0;
     }
 
@@ -142,7 +143,10 @@ void ListCurrency::update_currency()
     QSqlQuery q;
     int id;
 
-    id = get_selected_id();
+    if ((id = get_selected_id()) == 0) {
+        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
+        return;
+    }
 
     q.prepare("UPDATE currency SET name = :name, scod = :scod, kurs = :kurs WHERE id = :id");
     q.bindValue(":name", ui->nameEdit->text());
@@ -154,15 +158,18 @@ void ListCurrency::update_currency()
         return;
     }
 
-    model->setQuery(query);
-//    ui->treeView->resizeRowsToContents();
-//    ui->treeView->resizeColumnsToContents();
+    reload_model();
 }
 
 void ListCurrency::delete_currency()
 {
     QSqlQuery q;
-    int ccod = get_selected_id();
+    int ccod;
+
+    if ((ccod = get_selected_id()) == 0) {
+        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
+        return;
+    }
 
     q.prepare("SELECT id FROM account WHERE ccod = :ccod");
     q.bindValue(":ccod", ccod);
@@ -170,7 +177,7 @@ void ListCurrency::delete_currency()
         int r = QMessageBox::warning(this, tr("Currency"),
                                      tr("Exist accounts whith this currencies\n"
                                         "You really want to delete this?"),
-                                     QMessageBox::Yes | QMessageBox::No);
+                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
         if (r == QMessageBox::No)
             return;
@@ -178,7 +185,12 @@ void ListCurrency::delete_currency()
 
     q.prepare("DELETE FROM currency WHERE id = :id");
     q.bindValue(":id", ccod);
-    q.exec();
+    if (!q.exec()) {
+        qDebug() << q.lastError().text();
+        return;
+    }
+
+    reload_model();
 }
 
 void ListCurrency::clear_currency()
@@ -193,7 +205,11 @@ void ListCurrency::check_select()
     QSqlQuery q;
     int id;
 
-    id = get_selected_id();
+    if ((id = get_selected_id()) == 0) {
+//        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
+        return;
+    }
+
 
     q.prepare("SELECT name, scod, kurs FROM currency WHERE id = :id");
     q.bindValue(":id", id);
@@ -208,4 +224,14 @@ void ListCurrency::check_select()
     ui->editButton->setEnabled(true);
     ui->delButton->setEnabled(true);
     ui->clearButton->setEnabled(true);
+}
+
+void ListCurrency::reload_model()
+{
+    model->setQuery(query);
+}
+
+void ListCurrency::clear_model()
+{
+    model->clear();
 }

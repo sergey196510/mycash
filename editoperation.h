@@ -4,6 +4,8 @@
 #include <QDialog>
 #include "database.h"
 #include "global.h"
+#include "listseparateoper.h"
+#include "editagent.h"
 
 namespace Ui {
 class EditOperation;
@@ -14,9 +16,9 @@ class EditOperation : public QDialog
     Q_OBJECT
     
 public:
-    explicit EditOperation(QWidget *parent = 0);
+    explicit EditOperation(int type, QWidget *parent = 0);
     ~EditOperation();
-    void data(operation_data &);
+    operation_data data();
     void setdata(operation_data &);
     
 private:
@@ -27,6 +29,8 @@ private:
 private slots:
     void check_Ok();
     void check_balance(QString);
+    void separate_account();
+    int new_agent();
 };
 
 #endif // EDITOPERATION_H

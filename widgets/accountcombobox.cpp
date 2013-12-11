@@ -7,7 +7,7 @@ AccountComboBox::AccountComboBox(QWidget *parent) :
     this->setEditable(false);
 }
 
-void AccountComboBox::load(int type)
+void AccountComboBox::load(int top)
 {
     QSqlQuery q;
     QSqlRecord r;
@@ -19,12 +19,13 @@ void AccountComboBox::load(int type)
 
     addItem(tr("Account not present"), 0);
 
-    if (type == 0) {
-        q.prepare("SELECT id,name FROM account WHERE hidden = 'false' ORDER BY name");
+    if (top == 0) {
+        q.prepare("SELECT id,name FROM account WHERE hidden = 0 ORDER BY name");
     }
     else {
-        q.prepare("SELECT id,name FROM account WHERE type = :type AND hidden = 'false' ORDER BY name");
-	q.bindValue(":type", type);
+        q.prepare("SELECT id,name FROM account WHERE (top = :top1 OR top = :top2) AND hidden = 0 ORDER BY name");
+        q.bindValue(":top1", 1);
+        q.bindValue(":top2", 2);
     }
     q.exec();
     while (q.next()) {

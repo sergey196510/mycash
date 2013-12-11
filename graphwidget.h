@@ -11,9 +11,10 @@ class graphWidget : public QWidget
 {
 public:
     graphWidget(QWidget *parent = 0);
+    ~graphWidget();
 
 private:
-    Database db;
+    Database *db;
     QMap<QString,double> list, list2;
     int count;
     double summ;

@@ -17,8 +17,8 @@ CorrectBalance::CorrectBalance(QWidget *parent) :
 
     connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_ok()));
     connect(ui->summEdit, SIGNAL(textChanged(QString)), SLOT(check_ok()));
-    connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
-    connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
+    connect(ui->okButton, SIGNAL(clicked()), SLOT(accept()));
+    connect(ui->cancelButton, SIGNAL(clicked()), SLOT(reject()));
 }
 
 CorrectBalance::~CorrectBalance()

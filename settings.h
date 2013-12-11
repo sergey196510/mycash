@@ -3,6 +3,9 @@
 
 #include <QDialog>
 #include "global.h"
+#include "listaccountsmodel.h"
+#include "accountoper.h"
+#include "database.h"
 
 namespace Ui {
 class Settings;
@@ -19,9 +22,15 @@ public:
 private:
     Ui::Settings *ui;
     Globals var;
+    bool isdown;
+    Database *db;
+//    SelectAccount *selacc;
 
 private slots:
     void accept_values();
+    void check_down();
+//    void correct_account();
+//    void initial_account();
 };
 
 #endif // SETTINGS_H

@@ -2,39 +2,70 @@
 #include "ui_editoperation.h"
 #include "global.h"
 
-EditOperation::EditOperation(QWidget *parent) :
+EditOperation::EditOperation(int type, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditOperation)
 {
     ui->setupUi(this);
-    QString from, to;
+    QString from, to, to2;
+
+    if (type == 1) {
+        ui->horizontalLayout_5->setEnabled(false);
+    }
+    else {
+        ui->dayBox->addItem("0");
+        for (int i = 1; i < 32; i++)
+            ui->dayBox->addItem(QString("%1").arg(i));
+
+        QStringList months;
+        months <<
+                  "Any" <<
+                  QDate::longMonthName(1) <<
+                  QDate::longMonthName(2) <<
+                  QDate::longMonthName(3) <<
+                  QDate::longMonthName(4) <<
+                  QDate::longMonthName(5) <<
+                  QDate::longMonthName(6) <<
+                  QDate::longMonthName(7) <<
+                  QDate::longMonthName(8) <<
+                  QDate::longMonthName(9) <<
+                  QDate::longMonthName(10) <<
+                  QDate::longMonthName(11) <<
+                  QDate::longMonthName(12);
+        ui->monBox->addItems(months);
+
+        ui->yearBox->setRange(0, 2020);
+    }
 
     db = new Database;
 
     list = db->get_currency_list();
 
-    from = db->get_account_scod(ui->from_account->value());
-    to = db->get_account_scod(ui->to_Account->value());
+    from = db->get_account_scod(ui->fromWidget->value());
+    to = db->get_account_scod(ui->toWidget->value());
+    to2 = db->get_account_scod(ui->to2Widget->value());
 
     ui->from_cod->setText(from);
     ui->to_cod->setText(to);
-    ui->from_to->setText(from + "->" + to);
+    ui->to_cod_2->setText(to2);
 
-//    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
+    ui->groupBox_3->hide();
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
+
     ui->okButton->setEnabled(false);
 
-    ui->warning->setVisible(false);
-//    ui->kursEdit->setVisible(false);
-//    ui->label_7->setVisible(false);
+    ui->warning->hide();
 
-//    ui->summSpinBox->setRange(-1000000, 1000000);
-
-    connect(ui->from_account, SIGNAL(currentIndexChanged(int)), SLOT(check_Ok()));
-    connect(ui->to_Account, SIGNAL(currentIndexChanged(int)), SLOT(check_Ok()));
-    connect(ui->summSpinBox, SIGNAL(textChanged(QString)), SLOT(check_Ok()));
-    connect(ui->summSpinBox, SIGNAL(textChanged(QString)), SLOT(check_balance(QString)));
-    connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
-    connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
+//    connect(ui->from_account, SIGNAL(activated(QModelIndex)), SLOT(check_Ok()));
+//    connect(ui->to_account, SIGNAL(activated(QModelIndex)), SLOT(check_Ok()));
+    connect(ui->fromWidget, SIGNAL(changed_value()), SLOT(check_Ok()));
+    connect(ui->toWidget, SIGNAL(changed_value()), SLOT(check_Ok()));
+    connect(ui->fromSpinBox, SIGNAL(textChanged(QString)), SLOT(check_Ok()));
+    connect(ui->fromSpinBox, SIGNAL(textChanged(QString)), SLOT(check_balance(QString)));
+    connect(ui->separateButton, SIGNAL(clicked()), SLOT(separate_account()));
+    connect(ui->newAgentButton, SIGNAL(clicked()), SLOT(new_agent()));
+    connect(ui->okButton, SIGNAL(clicked()), SLOT(accept()));
+    connect(ui->cancelButton, SIGNAL(clicked()), SLOT(reject()));
 }
 
 EditOperation::~EditOperation()
@@ -45,62 +76,133 @@ EditOperation::~EditOperation()
 
 void EditOperation::check_Ok()
 {
-    QString from, to;
+    QString from, to, to2;
+    double kurs;
 
-    if (ui->from_account->value() > 0 && ui->to_Account->value() > 0 && ui->summSpinBox->value() > 0)
-        ui->okButton->setEnabled(true);
-    else
+    if (ui->fromWidget->value() == 0)
         ui->okButton->setEnabled(false);
+    else if (ui->toWidget->value() == 0)
+        ui->okButton->setEnabled(false);
+    else if (ui->fromSpinBox->value() == 0)
+        ui->okButton->setEnabled(false);
+    else if (ui->toSpinBox->value() == 0)
+        ui->okButton->setEnabled(false);
+    else if (ui->fromWidget->value() == ui->toWidget->value())
+        ui->okButton->setEnabled(false);
+    else
+        ui->okButton->setEnabled(true);
 
-    from = db->get_account_scod(ui->from_account->value());
-    to = db->get_account_scod(ui->to_Account->value());
+    if (ui->fromWidget->value() == 0)
+        ui->fromSpinBox->setEnabled(false);
+    else
+        ui->fromSpinBox->setEnabled(true);
+
+    if (ui->toWidget->value() == 0)
+        ui->toSpinBox->setEnabled(false);
+    else
+        ui->toSpinBox->setEnabled(true);
+
+    from = db->get_account_scod(ui->fromWidget->value());
+    to = db->get_account_scod(ui->toWidget->value());
+    to2 = db->get_account_scod(ui->to2Widget->value());
 
     ui->from_cod->setText(from);
     ui->to_cod->setText(to);
-    ui->from_to->setText(from + "->" + to);
+    ui->to_cod_2->setText(to2);
 
-    ui->kursEdit->setValue(list[from]/list[to]);
+    if (list[from] > 0 && list[to] > 0)
+        kurs = list[from]/list[to];
+    else
+        kurs = 0;
+
+    ui->kursEdit->setValue(kurs);
+    ui->toSpinBox->setValue(ui->fromSpinBox->value()*kurs);
 }
 
 void EditOperation::check_balance(QString value)
 {
     double balance;
-    Account_Data data = db->get_account_data(ui->from_account->value());
+    Account_Data data = db->get_account_data(ui->fromWidget->value());
 
     if (data.type != 1)
         return;
 
-//    balance = db->get_account_balance(ui->from_account->value());
-    if (value.toDouble() > data.balance)
-        ui->warning->setVisible(true);
+    if (value.toDouble() > data.balance.value())
+        ui->warning->show();
     else
-        ui->warning->setVisible(false);
-
-//    qDebug() << value << default_locale->toDouble(value) << balance;
-//        qDebug() << value << balance << "Balance is small";
+        ui->warning->hide();
 }
 
-void EditOperation::data(operation_data &d)
+operation_data EditOperation::data()
 {
-    QString from_sym = db->get_account_scod(ui->from_account->value());
-    QString to_sym   = db->get_account_scod(ui->to_Account->value());
+    operation_data d;
 
-    d.from = ui->from_account->value() * list[from_sym];
-    d.to   = ui->to_Account->value() * list[to_sym];
+//    QString from_sym = db->get_account_scod(ui->from_account->value());
+//    QString to_sym   = db->get_account_scod(ui->to_account->value());
+
+    d.day = ui->dayBox->currentIndex();
+    d.month = ui->monBox->currentIndex();
+    d.year = ui->yearBox->value();
+    d.from.account = ui->fromWidget->value();
+    d.to.account   = ui->toWidget->value();
+    d.to2.account = ui->to2Widget->value();
     d.agent = ui->agent_comboBox->value();
     d.kurs = ui->kursEdit->value();
-    d.summ_from = ui->summSpinBox->value();
-    d.summ_to = ui->summSpinBox->value() * ui->kursEdit->value();
+    d.from.summ = ui->fromSpinBox->value();
+    d.to.summ = ui->toSpinBox->value();
+    d.to2.summ = ui->toSpinBox_2->value();
     d.date = ui->dateEdit->value();
     d.descr = ui->descrEdit->text();
+
+    return d;
 }
 
 void EditOperation::setdata(operation_data &d)
 {
-    ui->from_account->setValue(d.from);
-    ui->to_Account->setValue(d.to);
+    Account_Data data;
+
+    ui->dayBox->setCurrentIndex(d.day);
+    ui->monBox->setCurrentIndex(d.month);
+    ui->yearBox->setValue(d.year);
+    ui->fromWidget->setValue(d.from.account);
+    ui->toWidget->setValue(d.to.account);
+
+//    ui->to_account_2->setValue(d.to2.account);
+    if (d.to2.account > 0) {
+//        data = db->get_account_data(d.to2.account);
+        ui->to2Widget->setValue(d.to2.account);
+//        ui->toAccount2Line->setText(data.name);
+    }
+
     ui->agent_comboBox->setValue(d.agent);
     ui->kursEdit->setValue(d.kurs);
-    ui->summSpinBox->setValue(d.summ_from);
+    ui->fromSpinBox->setValue(d.from.summ);
+    ui->toSpinBox->setValue(d.to.summ);
+    ui->toSpinBox_2->setValue(d.to2.summ);
     ui->descrEdit->setText(d.descr);
+
+    ui->fromSpinBox->setEnabled(ui->fromWidget->value());
+    ui->toSpinBox->setEnabled(ui->toWidget->value());
+}
+
+void EditOperation::separate_account()
+{
+    ListSeparateOper *lst = new ListSeparateOper;
+
+    lst->exec();
+}
+
+int EditOperation::new_agent()
+{
+    EditAgent *agent = new EditAgent(tr("Agent"), this);
+    agent_data data;
+
+    if (agent->exec() == QDialog::Accepted) {
+        data = agent->data();
+        int id = db->new_agent(data);
+        ui->agent_comboBox->load();
+        ui->agent_comboBox->setValue(id);
+    }
+
+    return 0;
 }

@@ -1,20 +1,15 @@
 #include "currencyedit.h"
 #include "global.h"
 
-currencyValidator::currencyValidator(QObject *parent) :
-    QValidator(parent)
-{
-}
-
 currencyEdit::currencyEdit(QWidget *parent) :
     QLineEdit(parent)
 {
-//    currencyValidator *val = new currencyValidator(this);
-//    setValidator(val);
+    setValidator(new QDoubleValidator);
 }
 
 double currencyEdit::value()
 {
+//    qDebug() << this->text() << default_locale->toDouble(this->text());
     return default_locale->toDouble(this->text());
 }
 

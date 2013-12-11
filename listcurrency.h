@@ -32,11 +32,16 @@ public:
     explicit ListCurrency(QWidget *parent = 0);
     ~ListCurrency();
 
+public slots:
+    void reload_model();
+    void clear_model();
+
 private:
     Ui::ListCurrency *ui;
     ListCurrencyModel *model;
     QString query;
     int get_selected_id();
+    Globals var;
 
 private slots:
     void check_new_button(QString);

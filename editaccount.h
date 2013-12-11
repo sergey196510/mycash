@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "global.h"
 #include "database.h"
+#include "listaccountsmodel.h"
 
 namespace Ui {
 class EditAccount;
@@ -29,11 +30,12 @@ public:
     
 private:
     Ui::EditAccount *ui;
-    Database db;
+    Database *db;
     bool nameFind(QString);
+    ListAccountsModel *model;
 
 private slots:
-    void nameCheck(QString);
+    void okCheck();
     void parentCheck();
 };
 

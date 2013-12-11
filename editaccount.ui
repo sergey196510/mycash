@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>248</height>
+    <height>257</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,72 +16,82 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="1">
-      <widget class="AccountTypeComboBox" name="typeBox"/>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Account type:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Description:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Account name:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="currencyEdit" name="balanceSpinBox"/>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Balance:</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="nameEdit"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="CurrencyComboBox" name="currencyBox"/>
+     </item>
+     <item row="6" column="1">
+      <widget class="MyDateEdit" name="dateEdit"/>
      </item>
      <item row="5" column="1">
       <widget class="QLineEdit" name="descrEdit"/>
      </item>
-     <item row="3" column="0">
+     <item row="6" column="0" alignment="Qt::AlignRight">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Date:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" alignment="Qt::AlignRight">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Currency:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="CurrencyComboBox" name="currencyBox"/>
+     <item row="2" column="0" alignment="Qt::AlignRight">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Account type:</string>
+       </property>
+      </widget>
      </item>
-     <item row="6" column="1">
+     <item row="7" column="0" alignment="Qt::AlignRight">
       <widget class="QCheckBox" name="hiddenBox">
        <property name="text">
         <string>Hidden</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="4" column="1">
+      <widget class="currencyEdit" name="balanceSpinBox"/>
+     </item>
+     <item row="4" column="0" alignment="Qt::AlignRight">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Balance:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="AccountTypeComboBox" name="typeBox"/>
+     </item>
+     <item row="1" column="0" alignment="Qt::AlignRight">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Parent account:</string>
        </property>
       </widget>
      </item>
+     <item row="0" column="0" alignment="Qt::AlignRight">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Account name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" alignment="Qt::AlignRight">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Description:</string>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="1">
-      <widget class="AccountComboBox" name="parentBox"/>
+      <widget class="AccountOper" name="accountWidget" native="true"/>
      </item>
     </layout>
    </item>
@@ -138,14 +148,25 @@
    <header location="global">widgets/okpushbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>AccountComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">widgets/accountcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>currencyEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">widgets/currencyedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CancelPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/cancelpushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyDateEdit</class>
+   <extends>QDateEdit</extends>
+   <header location="global">widgets/mydateedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountOper</class>
+   <extends>QWidget</extends>
+   <header location="global">accountoper.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>CurrencyComboBox</class>
@@ -157,11 +178,6 @@
    <extends>QComboBox</extends>
    <header location="global">widgets/accounttypecombobox.h</header>
   </customwidget>
-  <customwidget>
-   <class>CancelPushButton</class>
-   <extends>QPushButton</extends>
-   <header location="global">widgets/cancelpushbutton.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>nameEdit</tabstop>
@@ -169,6 +185,7 @@
   <tabstop>currencyBox</tabstop>
   <tabstop>balanceSpinBox</tabstop>
   <tabstop>descrEdit</tabstop>
+  <tabstop>dateEdit</tabstop>
   <tabstop>hiddenBox</tabstop>
   <tabstop>okButton</tabstop>
   <tabstop>cancelButton</tabstop>

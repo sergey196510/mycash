@@ -6,8 +6,9 @@
 #include <QtSql>
 #include "database.h"
 #include "editoperation.h"
-#include "editplanoper.h"
 #include "widgets/mydateedit.h"
+#include "listaccountsmodel.h"
+#include "accountsview.h"
 
 namespace Ui {
 class ListOperations;
@@ -18,10 +19,13 @@ class ListOperationsModel : public QStandardItemModel
     Q_OBJECT
 
 public:
-    explicit ListOperationsModel(QString *dt1, QString *dt2, int id = 0, QObject *parent = 0);
+    explicit ListOperationsModel(QObject *parent = 0);
     ~ListOperationsModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+
+public slots:
+    void fill_model(QString *dt1, QString *dt2, int id = 0);
 
 private:
     Database *db;
@@ -40,17 +44,18 @@ public:
 
 public slots:
     void reload_model();
+    void clear_model();
     
 private:
     Ui::ListOperations *ui;
     ListOperationsModel *model;
+    ListAccountsModel *accts;
     QString query;
     Database *db;
     Globals var;
-    EditOperation eo;
-    operation_data d;
+//    operation_data d;
     QMap<QString,double> list;
-    void edit_operation(int);
+    void edit_operation(operation_data &);
 
 signals:
     void call_reload_table();
@@ -59,10 +64,7 @@ private slots:
     void debet_operation();
     void credit_operation();
     void transfer_operation();
-//    void select_list_operations();
     void change_current_account(int i = 0);
-//    void select_font();
-//    void reload_table();
     void del_operation();
     void plann_operation();
     int get_selected_id();

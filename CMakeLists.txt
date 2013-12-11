@@ -13,29 +13,36 @@ cmake_minimum_required(VERSION 2.8)
     widgets/accountcombobox.cpp
     widgets/agentcombobox.cpp
     widgets/accounttypecombobox.cpp
+    widgets/accounttype2combobox.cpp
     widgets/currencycombobox.cpp
     widgets/currencyedit.cpp
     widgets/okpushbutton.cpp
     widgets/cancelpushbutton.cpp
+    widgets/mydateedit.cpp
+    accountoper.cpp
+    accountsview.cpp
     database.cpp
+    debetcreditreport.cpp
     editaccount.cpp
+    editagent.cpp
     editoperation.cpp
-    editplanoper.cpp
     global.cpp
     graphwidget.cpp
     listaccounts.cpp
+    listaccountsmodel.cpp
     listagents.cpp
     listcurrency.cpp
     listoperations.cpp
     listplanoper.cpp
+    listseparateoper.cpp
     main.cpp
     mainwidget.cpp
     mycash.cpp
-    widgets/mydateedit.cpp
     opendatabase.cpp
-    createdatabase.cpp
     correctbalance.cpp
+    selectaccount.cpp
     settings.cpp
+    summaccount.cpp
   )
   
   # another list, this time it includes all header files that should be treated with moc
@@ -43,45 +50,55 @@ cmake_minimum_required(VERSION 2.8)
     widgets/accountcombobox.h
     widgets/agentcombobox.h
     widgets/accounttypecombobox.h
+    widgets/accounttype2combobox.h
     widgets/currencycombobox.h
     widgets/currencyedit.h
     widgets/okpushbutton.h
     widgets/cancelpushbutton.h
+    accountoper.h
+    accountsview.h
     database.h
+    debetcreditreport.h
     editaccount.h
+    editagent.h
     editoperation.h
-    editplanoper.h
     global.h
     graphwidget.h
     listaccounts.h
+    listaccountsmodel.h
     listagents.h
     listcurrency.h
     listoperations.h
     listplanoper.h
+    listseparateoper.h
     mainwidget.h
     mycash.h
     widgets/mydateedit.h
     opendatabase.h
-    createdatabase.h
     correctbalance.h
+    selectaccount.h
     settings.h
+    summaccount.h
   )
   
   # some .ui files
   SET( mycash_UIS
+    accountoper.ui
+    debetcreditreport.ui
     editaccount.ui
+    editagent.ui
     editoperation.ui
-    editplanoper.ui
     listaccounts.ui
     listagents.ui
     listcurrency.ui
     listoperations.ui
     listplanoper.ui
+    listseparateoper.ui
     mainwidget.ui
     mycash.ui
     opendatabase.ui
-    createdatabase.ui
     correctbalance.ui
+    selectaccount.ui
     settings.ui
   )
   
@@ -101,7 +118,8 @@ cmake_minimum_required(VERSION 2.8)
   # this command finds Qt4 libraries and sets all required variables
   # note that it's Qt4, not QT4 or qt4
   FIND_PACKAGE( Qt4 REQUIRED )
-  
+#  FIND_PACKAGE( Boost REQUIRED )
+
   # add some useful macros and variables
   # (QT_USE_FILE is a variable defined by FIND_PACKAGE( Qt4 ) that contains a path to CMake script)
   INCLUDE( ${QT_USE_FILE} )
@@ -119,7 +137,8 @@ cmake_minimum_required(VERSION 2.8)
   # we need this to be able to include headers produced by uic in our code
   # (CMAKE_BINARY_DIR holds a path to the build directory, while INCLUDE_DIRECTORIES() works just like INCLUDEPATH from qmake)
   INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR} )
-  
+#  INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS} )
+
   # here we instruct CMake to build "mycash" executable from all of the source files
   ADD_EXECUTABLE( mycash ${mycash_SRCS} ${mycash_MOC_SRCS} ${mycash_RC_SRCS} ${mycash_UI_HDRS} )
   

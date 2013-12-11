@@ -37,18 +37,21 @@ bool MainWidgetModel::get_operations(int plan)
     return true;
 }
 
-MainWidgetModel::MainWidgetModel(QObject *parent) :
-    QStandardItemModel(parent)
+void MainWidgetModel::fill_model()
 {
     QDate curr = QDate::currentDate();
-    db = new Database;
-    list = db->get_plan_oper_list();
-    QList<PlanOper_data>::iterator i;
-    PlanOper_data data;
+    QList<operation_data>::iterator i;
+    operation_data data;
     int row = 0;
     int stat = actual;
 
+    clear();
+
     header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Status") << tr("Descr");
+
+    if (!var.database_Opened())
+        return;
+
     accounts = db->get_accounts_list();
 
     insertColumns(0,9);
@@ -72,9 +75,9 @@ MainWidgetModel::MainWidgetModel(QObject *parent) :
         setData(index(row,day),   data.day);
         setData(index(row,month), data.month);
         setData(index(row,year),  data.year);
-        setData(index(row,column_from),  accounts[data.from]);
-        setData(index(row,column_to),    accounts[data.to]);
-        setData(index(row,summ),  default_locale->toString(data.summ));
+        setData(index(row,column_from),  accounts[data.from.account]);
+        setData(index(row,column_to),    accounts[data.to.account]);
+        setData(index(row,summ),  default_locale->toString(data.from.summ,'f',2));
         if (stat == actual)
             setData(index(row,status), tr("Actual"));
         else if (stat == committed)
@@ -88,6 +91,14 @@ MainWidgetModel::MainWidgetModel(QObject *parent) :
         setData(index(row,descr), data.descr);
         row++;
     }
+}
+
+MainWidgetModel::MainWidgetModel(QObject *parent) :
+    QStandardItemModel(parent)
+{
+    db = new Database;
+    list = db->get_plan_oper_list();
+//    fill_model();
 }
 
 MainWidgetModel::~MainWidgetModel()
@@ -150,17 +161,27 @@ MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MainWidget)
 {
+    summAccount active(Active_type), passive(Passive_type);
+
     ui->setupUi(this);
+
     db = new Database;
     model = new MainWidgetModel;
+    model->fill_model();
 
     ui->groupBox->setTitle(tr("Balance status"));
     ui->groupBox_2->setTitle(tr("Prosrochennie operations"));
 
-    update_summ();
+//    reload_model();
+
+    ui->active_value->setText(active.text());
+    ui->passive_value->setText(passive.text());
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
+    ui->treeView->setAlternatingRowColors(true);
+    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->treeView->header()->setResizeMode(day, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(month, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(year, QHeaderView::ResizeToContents);
@@ -177,17 +198,36 @@ MainWidget::~MainWidget()
     delete ui;
 }
 
-void MainWidget::update_summ()
+void MainWidget::reload_model()
 {
-//    QMap<QString,double> list = db->get_currency_list();
-//    QString symbol = db->get_currency_scod(var.Currency());
-    double active = db->get_account_summ(Active_type) / var.Kurs();
-    double passive = db->get_account_summ(Passive_type) / var.Kurs();
-    double debet = db->get_operation_summ(Debet_type) / var.Kurs();
-    double credit = db->get_operation_summ(Credit_type) / var.Kurs();
+    summAccount active(Active_type), passive(Passive_type);
 
-    ui->active_value->setText(default_locale->toString(active,'f',2) + " " + var.Symbol());
-    ui->passive_value->setText(default_locale->toString(passive,'f',2) + " " + var.Symbol());
+    model->fill_model();
+    ui->treeView->hideColumn(0);
+    ui->treeView->header()->setResizeMode(day, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(month, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(year, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(column_from, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(column_to, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(summ, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(status, QHeaderView::ResizeToContents);
+
+//    double active = db->get_account_summ(Active_type);
+//    double passive = db->get_account_summ(Passive_type);
+    double debet = db->get_operation_summ(Debet_type);
+    double credit = db->get_operation_summ(Credit_type);
+
+    ui->active_value->setText(active.text() + " " + var.Symbol());
+    ui->passive_value->setText(passive.text() + " " + var.Symbol());
     ui->debet_value->setText(default_locale->toString(debet,'f',2) + " " + var.Symbol());
     ui->credit_value->setText(default_locale->toString(credit,'f',2) + " " + var.Symbol());
+}
+
+void MainWidget::clear_model()
+{
+    ui->active_value->setText("0");
+    ui->passive_value->setText("0");
+    ui->debet_value->setText("0");
+    ui->credit_value->setText("0");
+    model->clear();
 }

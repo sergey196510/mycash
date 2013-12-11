@@ -6,27 +6,12 @@
 #include "QtSql"
 #include "database.h"
 #include "global.h"
+#include "listaccountsmodel.h"
+#include "summaccount.h"
 
 namespace Ui {
 class ListAccounts;
 }
-
-class ListAccountsModel : public QStandardItemModel
-{
-    Q_OBJECT
-
-private:
-    Database *db;
-    QStringList header_data;
-    QMap<int,QString> list;
-
-public:
-    explicit ListAccountsModel(QObject *parent = 0);
-    ~ListAccountsModel();
-    double get_list(int, QModelIndex);
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
-};
 
 class ListAccounts : public QWidget
 {
@@ -37,7 +22,15 @@ public:
     ~ListAccounts();
 
 public slots:
-    void clear_list();
+    void clear_model();
+
+protected:
+    void keyPressEvent(QKeyEvent *);
+
+signals:
+    void pressEnter();
+    void pressInsert();
+    void pressDelete();
 
 private slots:
 //    void fill_model();
@@ -46,14 +39,14 @@ private slots:
     void change_account();
     void correct_balance();
     void del_account();
-    void check_type();
+//    void check_type();
     int get_selected_id();
 
 private:
     Ui::ListAccounts *ui;
     ListAccountsModel *model;
 //    QString query;
-    Database db;
+    Database *db;
     Globals var;
 };
 

@@ -24,10 +24,13 @@ ListAgents::ListAgents(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    query = "SELECT id,name,city,address FROM agent ORDER BY name";
+    if (var.database_Opened()) {
+        query = "SELECT id,name,city,address FROM agent ORDER BY name";
+        model = new ListAgentsModel;
+        model->setQuery(query);
+    }
 
-    model = new ListAgentsModel;
-    model->setQuery(query);
+    db = new Database;
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
@@ -47,15 +50,17 @@ ListAgents::ListAgents(QWidget *parent) :
     ui->clearButton->setEnabled(false);
 
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(check_select_line()));
+    connect(ui->treeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), SLOT(check_select_line()));
     connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(check_new_button(QString)));
-    connect(ui->newButton, SIGNAL(released()), SLOT(save_new_record()));
-    connect(ui->editButton, SIGNAL(released()), SLOT(update_record()));
-    connect(ui->delButton, SIGNAL(released()), SLOT(del_record()));
-    connect(ui->clearButton, SIGNAL(released()), SLOT(clear_record()));
+    connect(ui->newButton, SIGNAL(clicked()), SLOT(save_new_record()));
+    connect(ui->editButton, SIGNAL(clicked()), SLOT(update_record()));
+    connect(ui->delButton, SIGNAL(clicked()), SLOT(del_record()));
+    connect(ui->clearButton, SIGNAL(clicked()), SLOT(clear_record()));
 }
 
 ListAgents::~ListAgents()
 {
+    delete db;
     delete ui;
     delete model;
 }
@@ -72,7 +77,7 @@ int ListAgents::get_selected_id()
 
     list = ui->treeView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
-        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
+//        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return 0;
     }
 
@@ -84,7 +89,10 @@ void ListAgents::check_select_line()
     QSqlQuery q;
     int id;
 
-    id = get_selected_id();
+    if ((id = get_selected_id()) == 0) {
+//        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
+        return;
+    }
 
     q.prepare("SELECT name,city,address,phone,contact FROM agent WHERE id = :id");
     q.bindValue(":id", id);
@@ -104,32 +112,41 @@ void ListAgents::check_select_line()
 void ListAgents::save_new_record()
 {
     QSqlQuery q;
-    QString name, city, address, phone, contact;
+    agent_data data;
+//    QString name, city, address, phone, contact;
 
-    name = ui->nameEdit->text();
-    city = ui->cityEdit->text();
-    address = ui->addrEdit->text();
-    phone = ui->phoneEdit->text();
-    contact = ui->contactEdit->text();
+    data.name = ui->nameEdit->text();
+    data.city = ui->cityEdit->text();
+    data.address = ui->addrEdit->text();
+    data.phone = ui->phoneEdit->text();
+    data.contact = ui->contactEdit->text();
 
-    q.prepare("INSERT INTO agent(name, city, address, phone, contact) VALUES(:name, :city, :address, :phone, :contact)");
-    q.bindValue(":name", name);
-    q.bindValue(":city", city);
-    q.bindValue(":address", address);
-    q.bindValue(":phone", phone);
-    q.bindValue(":contact", contact);
-    if (!q.exec()) {
-        qDebug() << "Insert error";
+    if (db->new_agent(data) == 0)
         return;
-    }
 
-    model->setQuery(query);
+//    q.prepare("INSERT INTO agent(name, city, address, phone, contact) VALUES(:name, :city, :address, :phone, :contact)");
+//    q.bindValue(":name", name);
+//    q.bindValue(":city", city);
+//    q.bindValue(":address", address);
+//    q.bindValue(":phone", phone);
+//    q.bindValue(":contact", contact);
+//    if (!q.exec()) {
+//        qDebug() << "Insert error";
+//        return;
+//    }
+
+    reload_model();
 }
 
 void ListAgents::update_record()
 {
     QSqlQuery q;
-    int id = get_selected_id();
+    int id;
+
+    if ((id = get_selected_id()) == 0) {
+        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
+        return;
+    }
 
     q.prepare("UPDATE agent SET name = :name, city = :city, address = :address, phone = :phone, contact = :contact WHERE id = :id");
     q.bindValue(":name", ui->nameEdit->text());
@@ -144,7 +161,7 @@ void ListAgents::update_record()
         return;
     }
 
-    model->setQuery(query);
+    reload_model();
 }
 
 void ListAgents::del_record()
@@ -152,12 +169,16 @@ void ListAgents::del_record()
     QSqlQuery q;
     int id;
 
-    id = get_selected_id();
-    QString name = db.get_agent_name(id);
+    if ((id = get_selected_id()) == 0) {
+        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
+        return;
+    }
+
+    QString name = db->get_agent_name(id);
 
     int r = QMessageBox::warning(this, tr("Agent"),
                                  tr("You want delete agent %1?").arg(name),
-                                 QMessageBox::Yes | QMessageBox::No);
+                                 QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
     if (r == QMessageBox::No)
         return;
@@ -176,7 +197,7 @@ void ListAgents::del_record()
         return;
     }
 
-    model->setQuery(query);
+    reload_model();
 }
 
 void ListAgents::clear_record()
@@ -186,4 +207,14 @@ void ListAgents::clear_record()
     ui->addrEdit->setText("");
     ui->phoneEdit->setText("");
     ui->contactEdit->setText("");
+}
+
+void ListAgents::reload_model()
+{
+    model->setQuery(query);
+}
+
+void ListAgents::clear_model()
+{
+    model->clear();
 }

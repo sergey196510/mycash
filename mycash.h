@@ -22,12 +22,14 @@ signals:
     void call_mark();
 
 private:
+    QSqlDatabase base;
     Globals var;
     Database *db;
-    bool opened;
+//    bool opened;
     QString dbname;
     Ui::MyCash *ui;
     CurrencyComboBox *curr;
+    QMap<int,QString> currs;
     void readsettings();
     void writesettings();
     void setconnects();
@@ -49,7 +51,7 @@ private slots:
     void report1();
     void report2();
     void update_curr();
-    void test();
+//    void test();
 
 signals:
     void update_currency();

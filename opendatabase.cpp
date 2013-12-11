@@ -8,9 +8,9 @@ OpenDatabase::OpenDatabase(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->nameEdit,     SIGNAL(textChanged(QString)), SLOT(nameChanged(QString)));
-    connect(ui->nameButton,   SIGNAL(released()), SLOT(select_filename()));
-    connect(ui->okButton,     SIGNAL(released()), SLOT(accept()));
-    connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
+    connect(ui->nameButton,   SIGNAL(clicked()), SLOT(select_filename()));
+    connect(ui->okButton,     SIGNAL(clicked()), SLOT(accept()));
+    connect(ui->cancelButton, SIGNAL(clicked()), SLOT(reject()));
 
     ui->okButton->setEnabled(false);
 }

@@ -10,7 +10,9 @@ graphWidget::graphWidget(QWidget *parent) :
 
     summ = 0;
 
-    list2 = db.get_operation_list(4,current.month(),current.year());
+    db = new Database;
+
+    list2 = db->get_opersummbyaccount_list(4,current.month(),current.year());
     for (i = list2.begin(); i != list2.end(); i++) {
         summ += i.value();
     }
@@ -19,6 +21,11 @@ graphWidget::graphWidget(QWidget *parent) :
     }
 
     count = list.size();
+}
+
+graphWidget::~graphWidget()
+{
+    delete db;
 }
 
 void graphWidget::paintEvent(QPaintEvent *pe)

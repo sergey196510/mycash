@@ -6,113 +6,287 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>507</width>
-    <height>277</height>
+    <width>575</width>
+    <height>345</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Operation</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="2">
-      <widget class="QLabel" name="from_cod">
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>TextLabel</string>
+        <string>Day:</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
-      <widget class="MyDateEdit" name="dateEdit"/>
+     <item>
+      <widget class="QComboBox" name="dayBox"/>
      </item>
-     <item row="2" column="0">
+     <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>To account:</string>
+        <string>Month:</string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="monBox"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Year:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="yearBox"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_5">
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>From Account</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="AccountOper" name="fromWidget" native="true"/>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="currencyEdit" name="fromSpinBox"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="from_cod">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="AccountComboBox" name="to_Account"/>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="title">
+        <string>To Account</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="AccountOper" name="to2Widget" native="true"/>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="currencyEdit" name="toSpinBox_2"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="to_cod_2">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>To Account</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="AccountOper" name="toWidget" native="true"/>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="currencyEdit" name="toSpinBox"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="to_cod">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </item>
      <item row="1" column="1">
-      <widget class="AgentComboBox" name="agent_comboBox"/>
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item>
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QToolButton" name="separateButton">
+         <property name="text">
+          <string>Separate</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
-     <item row="4" column="1">
-      <widget class="currencyEdit" name="summSpinBox"/>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="label_5">
+     <item>
+      <widget class="QLabel" name="warning">
        <property name="text">
-        <string>Description:</string>
+        <string>there isn't enough means on the account</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="7">
+      <widget class="MyDateEdit" name="dateEdit"/>
+     </item>
+     <item row="0" column="6">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Date:</string>
        </property>
       </widget>
      </item>
+     <item row="0" column="4">
+      <widget class="currencyEdit" name="kursEdit"/>
+     </item>
      <item row="0" column="1">
-      <widget class="AccountComboBox" name="from_account"/>
+      <widget class="AgentComboBox" name="agent_comboBox"/>
      </item>
-     <item row="7" column="1">
-      <widget class="QLineEdit" name="descrEdit"/>
+     <item row="0" column="3">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Rate</string>
+       </property>
+      </widget>
      </item>
-     <item row="1" column="0">
+     <item row="0" column="5">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Agent:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
+     <item row="0" column="2">
+      <widget class="QToolButton" name="newAgentButton">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add new agent&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
-        <string>From account:</string>
+        <string>New</string>
        </property>
       </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="descrEdit"/>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Summ:</string>
+        <string>Description:</string>
        </property>
       </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QLabel" name="warning">
-       <property name="text">
-        <string>Nedostatochno sredstv na schete</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QLabel" name="to_cod">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Kurs:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QLabel" name="from_to">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="currencyEdit" name="kursEdit"/>
      </item>
     </layout>
    </item>
@@ -156,16 +330,6 @@
    <header location="global">widgets/okpushbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>AccountComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">widgets/accountcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>MyDateEdit</class>
-   <extends>QDateEdit</extends>
-   <header location="global">widgets/mydateedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>currencyEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">widgets/currencyedit.h</header>
@@ -176,16 +340,32 @@
    <header location="global">widgets/cancelpushbutton.h</header>
   </customwidget>
   <customwidget>
+   <class>MyDateEdit</class>
+   <extends>QDateEdit</extends>
+   <header location="global">widgets/mydateedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountOper</class>
+   <extends>QWidget</extends>
+   <header location="global">accountoper.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>AgentComboBox</class>
    <extends>QComboBox</extends>
    <header location="global">widgets/agentcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>from_account</tabstop>
+  <tabstop>dayBox</tabstop>
+  <tabstop>monBox</tabstop>
+  <tabstop>yearBox</tabstop>
+  <tabstop>fromSpinBox</tabstop>
+  <tabstop>toSpinBox</tabstop>
+  <tabstop>separateButton</tabstop>
+  <tabstop>toSpinBox_2</tabstop>
   <tabstop>agent_comboBox</tabstop>
-  <tabstop>to_Account</tabstop>
-  <tabstop>summSpinBox</tabstop>
+  <tabstop>kursEdit</tabstop>
   <tabstop>dateEdit</tabstop>
   <tabstop>descrEdit</tabstop>
   <tabstop>okButton</tabstop>

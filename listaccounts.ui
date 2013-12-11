@@ -53,21 +53,28 @@
      <item>
       <widget class="QToolButton" name="newButton">
        <property name="text">
-        <string>New</string>
+        <string>New Alt+N</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="editButton">
+       <property name="text">
+        <string>Edit Alt+E</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QToolButton" name="correctButton">
        <property name="text">
-        <string>Correct balance</string>
+        <string>Correct balance Alt+C</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QToolButton" name="deleteButton">
        <property name="text">
-        <string>Delete</string>
+        <string>Delete Alt+D</string>
        </property>
       </widget>
      </item>

@@ -10,5 +10,6 @@
         <file>icons/user.png</file>
         <file>icons/payment.ico</file>
         <file>icons/home.png</file>
+        <file>mycash.sql</file>
     </qresource>
 </RCC>

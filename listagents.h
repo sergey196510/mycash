@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QtSql>
 #include "database.h"
+#include "global.h"
 
 namespace Ui {
 class ListAgents;
@@ -29,14 +30,19 @@ class ListAgents : public QWidget
 public:
     explicit ListAgents(QWidget *parent = 0);
     ~ListAgents();
-    
+
+public slots:
+    void reload_model();
+    void clear_model();
+
 private:
     Ui::ListAgents *ui;
     QString query;
     QStringList header_data;
     ListAgentsModel *model;
-    Database db;
+    Database *db;
     int get_selected_id();
+    Globals var;
 
 private slots:
     void check_new_button(QString);

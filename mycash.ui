@@ -59,7 +59,6 @@
     </property>
     <addaction name="actionReport_1"/>
     <addaction name="actionReport_2"/>
-    <addaction name="actionTest_2"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Accounts"/>

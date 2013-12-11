@@ -2,7 +2,6 @@
 #include <QtSql>
 #include "mycash.h"
 #include "ui_mycash.h"
-#include "createdatabase.h"
 #include "opendatabase.h"
 #include "listaccounts.h"
 #include "listcurrency.h"
@@ -13,6 +12,7 @@
 #include "graphwidget.h"
 #include "global.h"
 #include "settings.h"
+#include "debetcreditreport.h"
 
 MyCash::MyCash(QWidget *parent) :
     QMainWindow(parent),
@@ -20,28 +20,30 @@ MyCash::MyCash(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    opened = false;
+//    opened = false;
 
     readsettings();
 
+    setconnects();
+    emit call_mark();
+
+    base = QSqlDatabase::addDatabase("QSQLITE");
     if (!dbname.isEmpty())
         opendb(dbname);
+    else
+        return;
 
     db = new Database;
 
     curr = new CurrencyComboBox;
     curr->setValue(var.Currency());
     curr->setToolTip(tr("Select current currency"));
+    currs = db->get_scod_list();
+    ui->mainToolBar->addWidget(curr);
+    connect(curr, SIGNAL(currentIndexChanged(int)), SLOT(update_curr()));
 
-    var.setSymbol(db->get_currency_scod(var.Currency()));
 
-    setconnects();
-
-//    QDockWidget *pdock = new QDockWidget("MyDock", this);
-//    QLabel * plbl = new QLabel("Label in Dock", pdock);
-//    pdock->addAction(ui->action_ListAccounts);
-//    pdock->setWidget(plbl);
-//    addDockWidget(Qt::LeftDockWidgetArea, pdock);
+    var.setSymbol(currs[var.Currency()]);
 
     list_home();
 
@@ -51,6 +53,7 @@ MyCash::MyCash(QWidget *parent) :
 MyCash::~MyCash()
 {
     writesettings();
+    delete db;
     delete curr;
     delete ui;
 }
@@ -80,12 +83,10 @@ void MyCash::setconnects()
 
     connect(ui->actionReport_1, SIGNAL(triggered()), SLOT(report1()));
     connect(ui->actionReport_2, SIGNAL(triggered()), SLOT(report2()));
-    connect(ui->actionTest_2, SIGNAL(triggered()), SLOT(test()));
+//    connect(ui->actionTest_2, SIGNAL(triggered()), SLOT(test()));
 
     connect(ui->actionAbout_program, SIGNAL(triggered()), SLOT(aboutProgram()));
     connect(ui->actionAbout_QT,      SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-
-    connect(curr, SIGNAL(currentIndexChanged(int)), SLOT(update_curr()));
 
     ui->mainToolBar->addAction(ui->action_Create);
     ui->mainToolBar->addAction(ui->action_Open);
@@ -99,32 +100,39 @@ void MyCash::setconnects()
     ui->mainToolBar->addAction(ui->action_Settings);
     ui->mainToolBar->addAction(ui->action_Quit);
 
-    ui->mainToolBar->addWidget(curr);
-
-    setWindowTitle("MyCash version: " + version);
+    setWindowTitle("MyCash version: " + var.Version() + " [" + dbname + "]");
 }
 
 void MyCash::mark_Object()
 {
-    ui->action_Create->setEnabled(!opened);
-    ui->action_Open->setEnabled(!opened);
-    ui->action_Close->setEnabled(opened);
-    ui->menu_Accounts->setEnabled(opened);
-    ui->action_ListAccounts->setEnabled(opened);
-    ui->action_ListOperations->setEnabled(opened);
+    ui->action_Create->setEnabled(!var.database_Opened());
+    ui->action_Open->setEnabled(!var.database_Opened());
+    ui->action_Close->setEnabled(var.database_Opened());
+    ui->action_ListAgents->setEnabled(var.database_Opened());
+    ui->action_ListCurrencies->setEnabled(var.database_Opened());
+    ui->actionReport_1->setEnabled(var.database_Opened());
+    ui->actionReport_2->setEnabled(var.database_Opened());
+    ui->menu_Accounts->setEnabled(var.database_Opened());
+    ui->menuReports->setEnabled(var.database_Opened());
+    ui->action_ListAccounts->setEnabled(var.database_Opened());
+    ui->action_ListOperations->setEnabled(var.database_Opened());
+    ui->action_Home->setEnabled(var.database_Opened());
+    ui->action_Settings->setEnabled(var.database_Opened());
 }
 
 void MyCash::readsettings()
 {
     QSettings settings("MyCash", "MyCash");
     restoreGeometry(settings.value("geometry").toByteArray());
-    dbname = settings.value("dbname", "").toString();
-    var.setAccount(settings.value("current_account", "").toInt());
-    var.setCurrency(settings.value("current_currency", "").toInt());
-    var.setCorrectAccount(settings.value("correct_account", "").toInt());
-    var.setPrecision(settings.value("precision", "").toInt());
-    var.setListFont(settings.value("list_font", "").toString());
+    dbname = settings.value("dbname").toString();
+    var.setAccount(settings.value("current_account", 1).toInt());
+    var.setCurrency(settings.value("current_currency", 1).toInt());
+    var.setCorrectAccount(settings.value("correct_account").toInt());
+    var.setInitialAccount(settings.value("initial_account").toInt());
+    var.setPrecision(settings.value("precision", 2).toInt());
+//    var.setListFont(settings.value("list_font").toString());
 //    fnt = settings.value("operations_font");
+    var.setSymbol(currs[var.Currency()]);
 }
 
 void MyCash::writesettings()
@@ -135,14 +143,15 @@ void MyCash::writesettings()
     settings.setValue("current_account", var.Account());
     settings.setValue("current_currency", var.Currency());
     settings.setValue("correct_account", var.CorrectAccount());
+    settings.setValue("initial_account", var.InitialAccount());
     settings.setValue("precision", var.Precision());
-    settings.setValue("list_font", var.ListFont());
+//    settings.setValue("list_font", var.ListFont());
 //    settings.setValue("operations_font", fnt);
 }
 
 void MyCash::create()
 {
-    CreateDatabase *dbf = new CreateDatabase(this);
+    OpenDatabase *dbf = new OpenDatabase(this);
     QString str;
 
     if (dbf->exec() != QDialog::Accepted) {
@@ -150,11 +159,12 @@ void MyCash::create()
         return;
     }
 
-    opendb(dbf->name());
+    dbname = dbf->filename();
+    opendb(dbname);
 
     QSqlQuery q;
 
-    QFile file("mycash.sql");
+    QFile file(":mycash.sql");
     file.open(QIODevice::ReadOnly);
     QTextStream in(&file);
 
@@ -173,53 +183,68 @@ void MyCash::create()
 
 void MyCash::open()
 {
-    OpenDatabase *db = new OpenDatabase(this);
+    OpenDatabase *dbf = new OpenDatabase(this);
 
-    db->set_filename(dbname);
-    if (db->exec() == QDialog::Rejected) {
-        delete db;
+    dbf->set_filename(dbname);
+    if (dbf->exec() == QDialog::Rejected) {
+        delete dbf;
         return;
     }
 
-    dbname = db->filename();
+    dbname = dbf->filename();
     if (dbname.isEmpty()) {
-        delete db;
+        delete dbf;
         return;
     }
 
     opendb(dbname);
 
-    delete db;
+    curr = new CurrencyComboBox;
+    curr->setValue(var.Currency());
+    curr->setToolTip(tr("Select current currency"));
+    currs = db->get_scod_list();
+    ui->mainToolBar->addWidget(curr);
+    connect(curr, SIGNAL(currentIndexChanged(int)), SLOT(update_curr()));
+
+    delete dbf;
 }
 
 void MyCash::closeDatabase()
 {
-    QSqlDatabase db = QSqlDatabase::database();
-    db.close();
-    opened = false;
+    delete curr;
+//    base = QSqlDatabase::database();
+    base.close();
+//    opened = false;
+    var.database_Close();
     emit call_mark();
+    setWindowTitle("MyCash version: " + var.Version() + " []");
 }
 
 void MyCash::opendb(QString dbname)
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-
-    db.setDatabaseName(dbname);
-    if (!db.open()) {
-        opened = false;
-//        db->lastError().setDatabaseText()
+    base.setDatabaseName(dbname);
+    if (!base.open()) {
+//        opened = false;
+        var.database_Close();
+        qDebug() << base.lastError().text();
     }
     else
-	opened = true;
+//        opened = true;
+        var.database_Open();
+
+//    QSqlQuery query("PRAGMA journal_mode = WAL");
 
     emit call_mark();
+    setWindowTitle("MyCash version: " + var.Version() + " [" + dbname + "]");
 }
 
 void MyCash::list_home()
 {
     MainWidget *mw = new MainWidget;
 
-    connect(this, SIGNAL(update_currency()), mw, SLOT(update_summ()));
+    connect(ui->action_Open, SIGNAL(triggered()), mw, SLOT(reload_model()));
+    connect(ui->action_Close, SIGNAL(triggered()), mw, SLOT(clear_model()));
+    connect(this, SIGNAL(update_currency()), mw, SLOT(reload_model()));
     curr->setEnabled(true);
 
     setCentralWidget(mw);
@@ -230,7 +255,7 @@ void MyCash::list_accounts()
     ListAccounts *la = new ListAccounts;
 
     connect(ui->action_Open, SIGNAL(triggered()), la, SLOT(reload_model()));
-    connect(ui->action_Close, SIGNAL(triggered()), la, SLOT(clear_list()));
+    connect(ui->action_Close, SIGNAL(triggered()), la, SLOT(clear_model()));
     curr->setEnabled(false);
 
     setCentralWidget(la);
@@ -240,6 +265,8 @@ void MyCash::list_currency()
 {
     ListCurrency *lc = new ListCurrency;
 
+    connect(ui->action_Open, SIGNAL(triggered()), lc, SLOT(reload_model()));
+    connect(ui->action_Close, SIGNAL(triggered()), lc, SLOT(clear_model()));
     curr->setEnabled(false);
 
     setCentralWidget(lc);
@@ -249,6 +276,8 @@ void MyCash::list_operations()
 {
     ListOperations *lo = new ListOperations;
 
+    connect(ui->action_Open, SIGNAL(triggered()), lo, SLOT(reload_model()));
+    connect(ui->action_Close, SIGNAL(triggered()), lo, SLOT(clear_model()));
     connect(this, SIGNAL(update_currency()), lo, SLOT(reload_model()));
     curr->setEnabled(true);
 
@@ -259,6 +288,8 @@ void MyCash::list_agents()
 {
     ListAgents *la = new ListAgents;
 
+    connect(ui->action_Open, SIGNAL(triggered()), la, SLOT(reload_model()));
+    connect(ui->action_Close, SIGNAL(triggered()), la, SLOT(clear_model()));
     curr->setEnabled(false);
 
     setCentralWidget(la);
@@ -268,6 +299,8 @@ void MyCash::list_plan_oper()
 {
     ListPlanOper *po = new ListPlanOper;
 
+    connect(ui->action_Open, SIGNAL(triggered()), po, SLOT(reload_model()));
+    connect(ui->action_Close, SIGNAL(triggered()), po, SLOT(clear_model()));
     connect(this, SIGNAL(update_currency()), po, SLOT(reload_model()));
     curr->setEnabled(true);
 
@@ -278,22 +311,18 @@ void MyCash::settings()
 {
     Settings *st = new Settings(this);
 
-//    curr->setEnabled(false);
-
     st->exec();
-
-//    QMessageBox::information(this, "Settings", "Settings");
 }
 
 void MyCash::aboutProgram()
 {
-    QMessageBox::about(this, tr("MyCash"), tr("MyCash ver ") + version);
+    QMessageBox::about(this, tr("MyCash"), tr("MyCash ver ") + var.Version());
 }
 
 void MyCash::update_curr()
 {
     var.setCurrency(curr->value());
-    var.setSymbol(db->get_currency_scod(var.Currency()));
+    var.setSymbol(currs[var.Currency()]);
 
     QMap<QString,double> list = db->get_currency_list();
     var.setKurs(list[var.Symbol()]);
@@ -303,45 +332,9 @@ void MyCash::update_curr()
 
 void MyCash::report1()
 {
-    QTextEdit *te = new QTextEdit;
-    QSqlQuery q;
-    QDate localdate = QDate::currentDate();
-    int month, day, year;
-    double summ;
+    DebetCreditReport *dc = new DebetCreditReport;
 
-    curr->setEnabled(false);
-
-    te->setReadOnly(true);
-    setCentralWidget(te);
-
-    month = localdate.month();
-    day = localdate.day();
-    year = localdate.year();
-
-    te->append("Dohodi:");
-    QMap<QString,double> list = db->get_operation_list(3,month,year);
-    QMap<QString,double>::iterator i;
-    list = db->get_operation_list(3,month,year);
-    for (i = list.begin(); i != list.end(); i++) {
-        te->append(i.key() + ": " + default_locale->toString(i.value(),'f',2));
-        summ += i.value();
-    }
-    te->append("Total: " + default_locale->toString(summ,'f',2));
-
-    te->append("-----------------------------------------------");
-    te->append("Rashodi:");
-
-    list = db->get_operation_list(4,month,year);
-    for (i = list.begin(); i != list.end(); i++) {
-        te->append(i.key() + ": " + default_locale->toString(i.value(),'f',2));
-        summ += i.value();
-    }
-    te->append("Total: " + default_locale->toString(summ,'f',2));
-
-    te->append("-----------------------------------------------");
-
-    summ = db->get_account_summ(1);
-    te->append("Balance: " + default_locale->toString(summ,'f',2));
+    setCentralWidget(dc);
 }
 
 void MyCash::report2()
@@ -351,66 +344,4 @@ void MyCash::report2()
     curr->setEnabled(false);
 
     setCentralWidget(gw);
-}
-
-void MyCash::test()
-{
-    QSqlQuery q1, q2, q3;
-
-    q3.prepare("UPDATE account_oper set direction = :dir WHERE id = :id");
-
-    q1.prepare("SELECT id,acc_from,acc_to,summ FROM operation");
-    if (!q1.exec()) {
-        qDebug() << q1.lastError().text();
-        return;
-    }
-    while (q1.next()) {
-        int id = q1.value(0).toInt();
-        int from = q1.value(1).toInt();
-        Account_Data from_data = db->get_account_data(from);
-        int to = q1.value(2).toInt();
-        Account_Data to_data = db->get_account_data(to);
-        double summ1 = q1.value(3).toDouble();
-        qDebug() << summ1;
-
-        q2.prepare("SELECT id,a_id,o_id,summ FROM account_oper WHERE o_id = :id AND a_id = :from");
-        q2.bindValue(":id", id);
-        q2.bindValue(":from", from);
-        if (!q2.exec()) {
-            qDebug() << q2.lastError().text();
-            return;
-        }
-        while (q2.next()) {
-            int id2 = q2.value(0).toInt();
-            int a_id = q2.value(1).toInt();
-            int o_id = q2.value(2).toInt();
-            double summ2 = q2.value(3).toDouble();
-            q3.bindValue(":dir", 1);
-            q3.bindValue(":id", id2);
-            if (!q3.exec()) {
-                qDebug() << q3.lastError().text();
-                return;
-            }
-        }
-
-        q2.prepare("SELECT id,a_id,o_id,summ FROM account_oper WHERE o_id = :id AND a_id = :to");
-        q2.bindValue(":id", id);
-        q2.bindValue(":from", to);
-        if (!q2.exec()) {
-            qDebug() << q2.lastError().text();
-            return;
-        }
-        while (q2.next()) {
-            int id2 = q2.value(0).toInt();
-            int a_id = q2.value(1).toInt();
-            int o_id = q2.value(2).toInt();
-            double summ2 = q2.value(3).toDouble();
-            q3.bindValue(":dir", 2);
-            q3.bindValue(":id", id2);
-            if (!q3.exec()) {
-                qDebug() << q3.lastError().text();
-                return;
-            }
-        }
-    }
 }

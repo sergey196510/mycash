@@ -12,14 +12,18 @@ namespace Ui {
 class ListPlanOper;
 }
 
-class ListPlanOperModel : public QSqlQueryModel
+class ListPlanOperModel : public QStandardItemModel
 {
     Q_OBJECT
 
 public:
     explicit ListPlanOperModel(QObject *parent = 0);
+    ~ListPlanOperModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+
+public slots:
+    void fill_model();
 
 private:
     Globals *var;
@@ -28,6 +32,9 @@ private:
     QMap<QString,double> currency;
     QString symbol;
     Database *db;
+
+private slots:
+    bool find_operations(int);
 };
 
 class ListPlanOper : public QWidget
@@ -40,6 +47,7 @@ public:
 
 public slots:
     void reload_model();
+    void clear_model();
 
 private:
     Ui::ListPlanOper *ui;

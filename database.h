@@ -8,35 +8,46 @@ enum Type {
     Active_type  = 1,
     Passive_type = 2,
     Debet_type   = 3,
-    Credit_type  = 4
+    Credit_type  = 4,
+    Initial_type = 5
 };
 
 class Database
 {
 //    bool opened;
 
+private:
+    QMap<QString,double> currency_list;
+    QMap<int,QString> scod_list;
+    Globals var;
+
 public:
     Database();
-    double  get_account_summ(int);
+    double convert_currency(double, int);
+    double get_account_summ(int);
     double get_operation_summ(int);
     Account_Data get_account_data(int);
     QString get_account_scod(int);
     QString get_agent_name(int);
-    QString get_currency_scod(int);
+//    QString get_currency_scod(int);
     QMap<int,QString> get_accounts_list();
     QMap<int,QString> get_scod_list();
     QMap<QString,double> get_currency_list();
-    QMap<QString,double> get_operation_list(int type,int month,int year);
-    QList<PlanOper_data> get_plan_oper_list();
+    QMap<QString,double> get_opersummbyaccount_list(int type,int month,int year);
+    QMap<int,double> get_account_oper_list(int, int);
+    QMap<int,double> get_plan_account_oper_list(int, int);
+    QList<operation_data> get_plan_oper_list();
+    int     new_account(Account_Data &);
+    int     new_agent(agent_data &);
     int     new_operation(operation_data &);
     bool    del_operation(int);
-    bool    new_account_oper(const int, const int, const double, const int);
+    bool    new_account_oper(const QString, const int oper, account_summ &, const int direction);
     bool    del_account_oper(int);
-    bool    change_account_balance(const int, const double);
+    bool    change_account_balance(account_summ &);
     bool    save_operation(operation_data &);
-    int     new_plan_oper(PlanOper_data &data);
+    int     new_plan_oper(operation_data &data);
     operation_data get_operation(int);
-    PlanOper_data get_plan_oper_data(int);
+    operation_data get_plan_oper_data(int);
 };
 
 #endif // DATABASE_H

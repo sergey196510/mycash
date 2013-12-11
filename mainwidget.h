@@ -5,6 +5,7 @@
 #include <QWidget>
 #include "global.h"
 #include "database.h"
+#include "summaccount.h"
 
 namespace Ui {
 class MainWidget;
@@ -20,11 +21,15 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 
+public slots:
+    void fill_model();
+
 private:
     Database *db;
-    QList<PlanOper_data> list;
+    QList<operation_data> list;
     QMap<int,QString> accounts;
     QStringList header_data;
+    Globals var;
 
 private slots:
     bool get_operations(int);
@@ -39,7 +44,8 @@ public:
     ~MainWidget();
 
 public slots:
-    void update_summ();
+    void reload_model();
+    void clear_model();
 
 private:
     Globals var;

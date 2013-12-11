@@ -8,30 +8,33 @@ EditAccount::EditAccount(int type, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    db = new Database;
+
     if (type == 2) {
         ui->typeBox->setEnabled(false);
         ui->currencyBox->setEnabled(false);
-        ui->parentBox->setEnabled(false);
+        ui->accountWidget->setEnabled(false);
         ui->balanceSpinBox->setEnabled(false);
     }
+    ui->okButton->setEnabled(false);
 
-    if (type != 2)
-        connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(nameCheck(QString)));
-    connect(ui->parentBox, SIGNAL(currentIndexChanged(int)), SLOT(parentCheck()));
-    connect(ui->okButton, SIGNAL(released()), SLOT(accept()));
-    connect(ui->cancelButton, SIGNAL(released()), SLOT(reject()));
+    if (type != 2) {
+        connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(okCheck()));
+        connect(ui->accountWidget, SIGNAL(changed_value()), SLOT(okCheck()));
+    }
+    connect(ui->accountWidget, SIGNAL(changed_value()), SLOT(parentCheck()));
+    connect(ui->okButton, SIGNAL(clicked()), SLOT(accept()));
+    connect(ui->cancelButton, SIGNAL(clicked()), SLOT(reject()));
 
-//    ui->balanceSpinBox->setSuffix(default_locale->toCurrencyString(0));
-//    ui->balanceSpinBox->setRange(-1000000, 1000000);
     ui->balanceSpinBox->setValue(0);
 
-//    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
     if (type != 2)
         ui->okButton->setEnabled(false);
 }
 
 EditAccount::~EditAccount()
 {
+    delete db;
     delete ui;
 }
 
@@ -79,10 +82,11 @@ Account_Data EditAccount::data()
     d.name = ui->nameEdit->text();
     d.type = ui->typeBox->value();
     d.curr = ui->currencyBox->value();
-    d.balance = ui->balanceSpinBox->value();
+    d.balance.setValue(ui->balanceSpinBox->value());
     d.descr = ui->descrEdit->text();
     d.hidden = ui->hiddenBox->isChecked();
-    d.parent = ui->parentBox->value();
+    d.parent = ui->accountWidget->value();
+    d.dt = ui->dateEdit->value();
 
     return d;
 }
@@ -92,15 +96,19 @@ void EditAccount::setData(Account_Data &data)
     ui->nameEdit->setText(data.name);
     ui->typeBox->setValue(data.type);
     ui->currencyBox->setValue(data.curr);
-    ui->balanceSpinBox->setValue(data.balance);
+    ui->balanceSpinBox->setValue(data.balance.value());
     ui->descrEdit->setText(data.descr);
     ui->hiddenBox->setChecked(data.hidden);
-    ui->parentBox->setValue(data.parent);
+    ui->accountWidget->setValue(data.parent);
 }
 
-void EditAccount::nameCheck(QString str)
+void EditAccount::okCheck()
 {
-    if (str.length() > 0 && nameFind(str) == true)
+    QString str = ui->nameEdit->text();
+
+//    qDebug() << ui->balanceSpinBox->value();
+//    if (str.length() > 0 && nameFind(str) == true && ui->parentBox->value() > 0)
+    if (str.length() > 0 && ui->accountWidget->value() > 0)
         ui->okButton->setEnabled(true);
     else
         ui->okButton->setEnabled(false);
@@ -127,6 +135,12 @@ bool EditAccount::hidden()
 
 void EditAccount::parentCheck()
 {
-    Account_Data data = db.get_account_data(ui->parentBox->value());
-    ui->typeBox->setValue(data.type);
+    Account_Data data = db->get_account_data(ui->accountWidget->value());
+    qDebug() << data.top;
+    if (data.top == 1 || data.top == 2) {
+        ui->typeBox->setEnabled(true);
+    }
+    else
+        ui->typeBox->setEnabled(false);
+//    ui->typeBox->setValue(data.type);
 }
