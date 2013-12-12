@@ -188,8 +188,14 @@ void EditOperation::setdata(operation_data &d)
 void EditOperation::separate_account()
 {
     ListSeparateOper *lst = new ListSeparateOper;
+    QMap<int,double> acc_oper;
 
-    lst->exec();
+    if (lst->exec() == QDialog::Accepted) {
+        acc_oper = lst->data();
+        qDebug() << "accept";
+    }
+    else
+        qDebug() << "Reject";
 }
 
 int EditOperation::new_agent()
