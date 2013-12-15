@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>575</width>
-    <height>345</height>
+    <height>263</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -63,66 +63,6 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_5">
-     <item row="0" column="0">
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>From Account</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="AccountOper" name="fromWidget" native="true"/>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="currencyEdit" name="fromSpinBox"/>
-            </item>
-            <item>
-             <widget class="QLabel" name="from_cod">
-              <property name="text">
-               <string>TextLabel</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QGroupBox" name="groupBox_3">
-       <property name="title">
-        <string>To Account</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="AccountOper" name="to2Widget" native="true"/>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <widget class="currencyEdit" name="toSpinBox_2"/>
-            </item>
-            <item>
-             <widget class="QLabel" name="to_cod_2">
-              <property name="text">
-               <string>TextLabel</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
@@ -141,6 +81,36 @@
             </item>
             <item>
              <widget class="QLabel" name="to_cod">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>From Account</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="AccountOper" name="fromWidget" native="true"/>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="currencyEdit" name="fromSpinBox"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="from_cod">
               <property name="text">
                <string>TextLabel</string>
               </property>
@@ -174,7 +144,7 @@
           <string>Separate</string>
          </property>
          <property name="checkable">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -363,7 +333,6 @@
   <tabstop>fromSpinBox</tabstop>
   <tabstop>toSpinBox</tabstop>
   <tabstop>separateButton</tabstop>
-  <tabstop>toSpinBox_2</tabstop>
   <tabstop>agent_comboBox</tabstop>
   <tabstop>kursEdit</tabstop>
   <tabstop>dateEdit</tabstop>

@@ -17,6 +17,10 @@ public:
     explicit AccountOper(QWidget *parent = 0);
     ~AccountOper();
 
+protected:
+    void mousePressEvent(QMouseEvent *);
+    void mouseDoubleClickEvent(QMouseEvent *);
+
 public slots:
     int value();
     void setValue(int);

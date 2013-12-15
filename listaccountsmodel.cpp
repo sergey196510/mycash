@@ -1,5 +1,25 @@
 #include "listaccountsmodel.h"
 
+ViewCurrency::ViewCurrency(int column, QObject *parent)
+{
+    this->column = column;
+}
+
+void ViewCurrency::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    if (index.column() == column) {
+        double value = index.model()->data(index,Qt::DisplayRole).toDouble();
+        QString text = default_locale->toString(value,'f',2);
+        QStyleOptionViewItem myOption = option;
+        myOption.displayAlignment = Qt::AlignRight | Qt::AlignCenter;
+
+        drawDisplay(painter, myOption, myOption.rect, text);
+        drawFocus(painter, myOption, myOption.rect);
+    }
+    else
+        QItemDelegate::paint(painter, option, index);
+}
+
 double ListAccountsModel::get_list(int parent, QModelIndex idx)
 {
     QSqlQuery q;
@@ -119,10 +139,10 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
         case Qt::DisplayRole:
-        if (index.column() == 1) {
-            return default_locale->toString(value.toDouble(),'f',2);
-        }
-        else if (index.column() == 2) {
+//        if (index.column() == 1) {
+//            return default_locale->toString(value.toDouble(),'f',2);
+//        }
+        if (index.column() == 2) {
 //            return db->get_currency_scod(value.toInt());
             return list[value.toInt()];
         }

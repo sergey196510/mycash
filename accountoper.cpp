@@ -14,6 +14,9 @@ AccountOper::AccountOper(QWidget *parent) :
 
 //    ui->cod->hide();
 
+    setLayout(ui->horizontalLayout);
+
+    connect(ui->name, SIGNAL(returnPressed()), SLOT(select_account()));
     connect(ui->button, SIGNAL(clicked()), SLOT(select_account()));
 }
 
@@ -23,13 +26,26 @@ AccountOper::~AccountOper()
     delete ui;
 }
 
+void AccountOper::mousePressEvent(QMouseEvent *)
+{
+    select_account();
+}
+
+void AccountOper::mouseDoubleClickEvent(QMouseEvent *)
+{
+    select_account();
+}
+
 void AccountOper::select_account()
 {
-    SelectAccount *acc = new SelectAccount;
+    SelectAccount *acc = new SelectAccount(this);
+    QPoint point = ui->name->pos();
 
+    qDebug() << point;
+    acc->move(point);
     acc->setValue(id);
     if (acc->exec() == QDialog::Accepted) {
-	id = acc->value();
+        id = acc->value();
         Account_Data data = db->get_account_data(id);
 //        ui->cod->setNum(acc->value());
         ui->name->setText(data.name);

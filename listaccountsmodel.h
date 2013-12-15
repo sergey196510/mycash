@@ -4,6 +4,18 @@
 #include <QtGui>
 #include "database.h"
 
+class ViewCurrency : public QItemDelegate
+{
+    Q_OBJECT
+
+public:
+    ViewCurrency(int column, QObject *parent = 0);
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+private:
+    int column;
+};
+
 class ListAccountsModel : public QStandardItemModel
 {
     Q_OBJECT

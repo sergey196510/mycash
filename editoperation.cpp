@@ -43,14 +43,14 @@ EditOperation::EditOperation(int type, QWidget *parent) :
 
     from = db->get_account_scod(ui->fromWidget->value());
     to = db->get_account_scod(ui->toWidget->value());
-    to2 = db->get_account_scod(ui->to2Widget->value());
+//    to2 = db->get_account_scod(ui->to2Widget->value());
 
     ui->from_cod->setText(from);
     ui->to_cod->setText(to);
-    ui->to_cod_2->setText(to2);
+//    ui->to_cod_2->setText(to2);
 
-    ui->groupBox_3->hide();
-    layout()->setSizeConstraint(QLayout::SetFixedSize);
+//    ui->groupBox_3->hide();
+//    layout()->setSizeConstraint(QLayout::SetFixedSize);
 
     ui->okButton->setEnabled(false);
 
@@ -104,11 +104,11 @@ void EditOperation::check_Ok()
 
     from = db->get_account_scod(ui->fromWidget->value());
     to = db->get_account_scod(ui->toWidget->value());
-    to2 = db->get_account_scod(ui->to2Widget->value());
+//    to2 = db->get_account_scod(ui->to2Widget->value());
 
     ui->from_cod->setText(from);
     ui->to_cod->setText(to);
-    ui->to_cod_2->setText(to2);
+//    ui->to_cod_2->setText(to2);
 
     if (list[from] > 0 && list[to] > 0)
         kurs = list[from]/list[to];
@@ -145,12 +145,12 @@ operation_data EditOperation::data()
     d.year = ui->yearBox->value();
     d.from.account = ui->fromWidget->value();
     d.to.account   = ui->toWidget->value();
-    d.to2.account = ui->to2Widget->value();
+//    d.to2.account = ui->to2Widget->value();
     d.agent = ui->agent_comboBox->value();
     d.kurs = ui->kursEdit->value();
     d.from.summ = ui->fromSpinBox->value();
     d.to.summ = ui->toSpinBox->value();
-    d.to2.summ = ui->toSpinBox_2->value();
+//    d.to2.summ = ui->toSpinBox_2->value();
     d.date = ui->dateEdit->value();
     d.descr = ui->descrEdit->text();
 
@@ -170,7 +170,7 @@ void EditOperation::setdata(operation_data &d)
 //    ui->to_account_2->setValue(d.to2.account);
     if (d.to2.account > 0) {
 //        data = db->get_account_data(d.to2.account);
-        ui->to2Widget->setValue(d.to2.account);
+//        ui->to2Widget->setValue(d.to2.account);
 //        ui->toAccount2Line->setText(data.name);
     }
 
@@ -178,7 +178,7 @@ void EditOperation::setdata(operation_data &d)
     ui->kursEdit->setValue(d.kurs);
     ui->fromSpinBox->setValue(d.from.summ);
     ui->toSpinBox->setValue(d.to.summ);
-    ui->toSpinBox_2->setValue(d.to2.summ);
+//    ui->toSpinBox_2->setValue(d.to2.summ);
     ui->descrEdit->setText(d.descr);
 
     ui->fromSpinBox->setEnabled(ui->fromWidget->value());

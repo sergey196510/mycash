@@ -1,6 +1,36 @@
 #include "listseparateoper.h"
 #include "ui_listseparateoper.h"
 
+AccountDelegate::AccountDelegate(int column, QObject *parent) :
+    QItemDelegate(parent)
+{
+    this->column = column;
+}
+
+void AccountDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+//    if (index.column() == column) {
+//        int value = index.model()->data(index,Qt::DisplayRole).toInt();
+//        QString text = QString("%1").arg(value);
+//        drawDisplay(painter, option, option.rect, text);
+//    }
+//    else
+        QItemDelegate::paint(painter, option, index);
+}
+
+QWidget *AccountDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    if (index.column() == column) {
+        int value = index.model()->data(index,Qt::DisplayRole).toInt();
+        AccountOper *oper = new AccountOper(parent);
+        oper->setValue(value);
+//        connect(oper, SIGNAL())
+        return oper;
+    }
+    else
+        return QItemDelegate::createEditor(parent, option, index);
+}
+
 ListSeparateOperModel::ListSeparateOperModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
@@ -158,8 +188,9 @@ ListSeparateOper::ListSeparateOper(QWidget *parent) :
 
     model = new ListSeparateOperModel;
 
+    ui->tableView->setItemDelegate(new AccountDelegate(0));
     ui->tableView->setModel(model);
-    ui->tableView->resizeRowsToContents();
+//    ui->tableView->resizeRowsToContents();
 
     ui->okButton->setDefault(false);
     ui->cancelButton->setDefault(false);

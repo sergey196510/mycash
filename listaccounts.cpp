@@ -25,6 +25,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
     model = new ListAccountsModel;
     model->fill_model();
 
+    ui->treeView->setItemDelegate(new ViewCurrency(1));
     ui->treeView->setModel(model);
 //    ui->treeView->hideColumn(4);
     ui->treeView->hideColumn(5);
