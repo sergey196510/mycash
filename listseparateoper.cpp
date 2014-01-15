@@ -22,7 +22,7 @@ QWidget *AccountDelegate::createEditor(QWidget *parent, const QStyleOptionViewIt
 {
     if (index.column() == column) {
         int value = index.model()->data(index,Qt::DisplayRole).toInt();
-        AccountOper *oper = new AccountOper(parent);
+        AccountOper2 *oper = new AccountOper2(parent);
         oper->setValue(value);
 //        connect(oper, SIGNAL())
         return oper;

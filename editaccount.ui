@@ -91,7 +91,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="AccountOper" name="accountWidget" native="true"/>
+      <widget class="AccountOper2" name="accountWidget"/>
      </item>
     </layout>
    </item>
@@ -148,25 +148,24 @@
    <header location="global">widgets/okpushbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>currencyEdit</class>
-   <extends>QLineEdit</extends>
-   <header location="global">widgets/currencyedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>CancelPushButton</class>
    <extends>QPushButton</extends>
    <header location="global">widgets/cancelpushbutton.h</header>
   </customwidget>
   <customwidget>
+   <class>AccountOper2</class>
+   <extends>QLineEdit</extends>
+   <header location="global">accountoper2.h</header>
+  </customwidget>
+  <customwidget>
+   <class>currencyEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">widgets/currencyedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>
    <header location="global">widgets/mydateedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>AccountOper</class>
-   <extends>QWidget</extends>
-   <header location="global">accountoper.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>CurrencyComboBox</class>
@@ -181,6 +180,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>nameEdit</tabstop>
+  <tabstop>accountWidget</tabstop>
   <tabstop>typeBox</tabstop>
   <tabstop>currencyBox</tabstop>
   <tabstop>balanceSpinBox</tabstop>

@@ -4,7 +4,7 @@
 #include <QtGui>
 #include <QDialog>
 #include "database.h"
-#include "accountoper.h"
+#include "accountoper2.h"
 
 namespace Ui {
 class ListSeparateOper;

@@ -26,7 +26,7 @@
          <x>30</x>
          <y>20</y>
          <width>433</width>
-         <height>181</height>
+         <height>121</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -112,10 +112,10 @@
          </layout>
         </item>
         <item row="1" column="1">
-         <widget class="AccountOper" name="correctWidget" native="true"/>
+         <widget class="AccountOper2" name="correctWidget"/>
         </item>
         <item row="2" column="1">
-         <widget class="AccountOper" name="initialWidget" native="true"/>
+         <widget class="AccountOper2" name="initialWidget"/>
         </item>
        </layout>
       </widget>
@@ -179,12 +179,23 @@
    <header location="global">widgets/cancelpushbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>AccountOper</class>
-   <extends>QWidget</extends>
-   <header location="global">accountoper.h</header>
-   <container>1</container>
+   <class>AccountOper2</class>
+   <extends>QLineEdit</extends>
+   <header location="global">accountoper2.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>fontComboBox</tabstop>
+  <tabstop>sizeBox</tabstop>
+  <tabstop>boldButton</tabstop>
+  <tabstop>correctWidget</tabstop>
+  <tabstop>initialWidget</tabstop>
+  <tabstop>precisionBox</tabstop>
+  <tabstop>acceptButton</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+  <tabstop>tabWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

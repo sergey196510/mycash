@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 2.8)
     widgets/okpushbutton.cpp
     widgets/cancelpushbutton.cpp
     widgets/mydateedit.cpp
-    accountoper.cpp
+    accountoper2.cpp
     accountsview.cpp
     database.cpp
     debetcreditreport.cpp
@@ -55,7 +55,7 @@ cmake_minimum_required(VERSION 2.8)
     widgets/currencyedit.h
     widgets/okpushbutton.h
     widgets/cancelpushbutton.h
-    accountoper.h
+    accountoper2.h
     accountsview.h
     database.h
     debetcreditreport.h
@@ -83,7 +83,6 @@ cmake_minimum_required(VERSION 2.8)
   
   # some .ui files
   SET( mycash_UIS
-    accountoper.ui
     debetcreditreport.ui
     editaccount.ui
     editagent.ui

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>575</width>
-    <height>263</height>
+    <height>276</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,7 +70,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="AccountOper" name="toWidget" native="true"/>
+         <widget class="AccountOper2" name="toWidget"/>
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_3">
@@ -100,7 +100,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="AccountOper" name="fromWidget" native="true"/>
+         <widget class="AccountOper2" name="fromWidget"/>
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -300,25 +300,24 @@
    <header location="global">widgets/okpushbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>currencyEdit</class>
-   <extends>QLineEdit</extends>
-   <header location="global">widgets/currencyedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>CancelPushButton</class>
    <extends>QPushButton</extends>
    <header location="global">widgets/cancelpushbutton.h</header>
   </customwidget>
   <customwidget>
+   <class>AccountOper2</class>
+   <extends>QLineEdit</extends>
+   <header location="global">accountoper2.h</header>
+  </customwidget>
+  <customwidget>
+   <class>currencyEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">widgets/currencyedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>
    <header location="global">widgets/mydateedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>AccountOper</class>
-   <extends>QWidget</extends>
-   <header location="global">accountoper.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>AgentComboBox</class>
@@ -330,10 +329,13 @@
   <tabstop>dayBox</tabstop>
   <tabstop>monBox</tabstop>
   <tabstop>yearBox</tabstop>
+  <tabstop>fromWidget</tabstop>
   <tabstop>fromSpinBox</tabstop>
+  <tabstop>toWidget</tabstop>
   <tabstop>toSpinBox</tabstop>
   <tabstop>separateButton</tabstop>
   <tabstop>agent_comboBox</tabstop>
+  <tabstop>newAgentButton</tabstop>
   <tabstop>kursEdit</tabstop>
   <tabstop>dateEdit</tabstop>
   <tabstop>descrEdit</tabstop>
