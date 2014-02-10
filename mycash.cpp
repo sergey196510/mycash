@@ -37,7 +37,7 @@ MyCash::MyCash(QWidget *parent) :
 
     curr = new CurrencyComboBox;
     curr->setValue(var.Currency());
-    curr->setToolTip(tr("Select current currency"));
+    curr->setToolTip(tr("Выберите текущую валюту"));
     currs = db->get_scod_list();
     ui->mainToolBar->addWidget(curr);
     connect(curr, SIGNAL(currentIndexChanged(int)), SLOT(update_curr()));
