@@ -37,10 +37,12 @@ bool ListPlanOperModel::find_operations(int plan)
 
 void ListPlanOperModel::fill_model()
 {
-    QSqlQuery q;
+//    QSqlQuery q;
     QMap<int,double> oper;
     QMap<int,double>::iterator i;
     QDate curr = QDate::currentDate();
+    QList<operation_data> po = db->get_plan_oper_list();
+    QList<operation_data>::iterator j;
     int row = 0;
 
     clear();
@@ -48,44 +50,46 @@ void ListPlanOperModel::fill_model()
     if (!var->database_Opened())
         return;
 
-    q.prepare("SELECT id,day,month,year,descr FROM plan_oper ORDER BY day,month,year");
-    if (!q.exec()) {
-        qDebug() << q.lastError().text();
-        return;
-    }
+//    q.prepare("SELECT id,day,month,year,descr FROM plan_oper ORDER BY day,month,year");
+//    if (!q.exec()) {
+//        qDebug() << q.lastError().text();
+//        return;
+//    }
 
     insertColumns(0,8);
 
-    while (q.next()) {
-	int id = q.value(0).toInt();
+    for (j = po.begin(); j != po.end(); j++) {
+//    while (q.next()) {
+        operation_data data = *j;
+//        int id = data.id;
 
         insertRow(row);
 
-        if (find_operations(q.value(0).toInt()) == true) {
+        if (find_operations(data.id) == true) {
             int i;
             for (i = 0; i < 8; i++)
                 setData(index(row,i), QColor(Qt::gray), Qt::TextColorRole);
         }
-        else if (q.value(1).toInt() - curr.day() < 0) {
+        else if (data.day - curr.day() < 0) {
             int i;
             for (i = 0; i < 8; i++)
                 setData(index(row,i), QColor(Qt::red), Qt::BackgroundColorRole);
         }
-        else if (q.value(1).toInt() - curr.day() < 3) {
+        else if (data.day - curr.day() < 3) {
             int i;
             for (i = 0; i < 8; i++)
                 setData(index(row,i), QColor(Qt::yellow), Qt::BackgroundColorRole);
         }
-        setData(index(row,0), q.value(0).toInt());
-        setData(index(row,1), q.value(1).toInt());
-        setData(index(row,2), q.value(2).toInt());
-        setData(index(row,3), q.value(3).toInt());
-        oper = db->get_plan_account_oper_list(id,1);
+        setData(index(row,0), data.id);
+        setData(index(row,1), data.day);
+        setData(index(row,2), data.month);
+        setData(index(row,3), data.year);
+        oper = db->get_plan_account_oper_list(data.id,1);
         i = oper.begin();
         if (i != oper.end()) {
             setData(index(row,4), list[i.key()]);
         }
-        oper = db->get_plan_account_oper_list(id,2);
+        oper = db->get_plan_account_oper_list(data.id,2);
         i = oper.begin();
         if (i != oper.end()) {
             setData(index(row,5), list[i.key()]);
@@ -93,7 +97,7 @@ void ListPlanOperModel::fill_model()
         }
         //        setData(index(row,5), list[q.value(5).toInt()]);
 //        setData(index(row,6), default_locale->toString(q.value(6).toDouble()/var->Kurs(),'f',2));
-        setData(index(row,7), q.value(4).toString());
+        setData(index(row,7), data.descr);
 
         row++;
     }
@@ -101,7 +105,7 @@ void ListPlanOperModel::fill_model()
 
 QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
 {
-    QDate curr = QDate::currentDate();
+//    QDate curr = QDate::currentDate();
     QVariant value = QStandardItemModel::data(index, role);
 
     switch (role) {
