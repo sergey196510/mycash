@@ -50,13 +50,13 @@ void DebetCreditReport::recalc_report()
 void DebetCreditReport::calc_report(int month, int year)
 {
     double summ;
-    int day;
-    QDate localdate = QDate::currentDate();
+//    int day;
+//    QDate localdate = QDate::currentDate();
 
     ui->textEdit->clear();
 
 //    month = localdate.month();
-    day = localdate.day();
+//    day = localdate.day();
 //    year = localdate.year();
 
     ui->textEdit->append("Dohodi:");

@@ -393,7 +393,7 @@ bool Database::change_account_balance(account_summ &acc)
     QSqlQuery query;
     double summ;
     Account_Data data;
-    int type, flag;
+    int flag;
 
     data = get_account_data(acc.account);
 

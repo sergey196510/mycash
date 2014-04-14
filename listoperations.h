@@ -41,6 +41,12 @@ class ListOperations : public QWidget
 public:
     explicit ListOperations(QWidget *parent = 0);
     ~ListOperations();
+    QAction *debt;
+    QAction *cred;
+    QAction *tran;
+    QAction *plan;
+    QAction *dele;
+    QList<QAction*> acts;
 
 public slots:
     void reload_model();
@@ -64,7 +70,7 @@ private slots:
     void debet_operation();
     void credit_operation();
     void transfer_operation();
-    void change_current_account(int i = 0);
+    void change_current_account();
     void del_operation();
     void plann_operation();
     int get_selected_id();

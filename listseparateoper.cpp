@@ -84,8 +84,8 @@ QVariant ListSeparateOperModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 1)
             return data.summ;
     }
-    else
-        return QVariant();
+//    else
+    return QVariant();
 }
 
 QVariant ListSeparateOperModel::headerData(int section, Qt::Orientation orientation, int role) const

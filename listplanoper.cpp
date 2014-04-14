@@ -158,9 +158,11 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListPlanOper)
 {
+    QList<QAction*>::iterator i;
+
     ui->setupUi(this);
 
-    query = "SELECT id,day,month,year,acc_from,acc_to,summ,descr FROM plan_oper ORDER BY day,month,year";
+//    query = "SELECT id,day,month,year,acc_from,acc_to,summ,descr FROM plan_oper ORDER BY day,month,year";
     db = new Database;
 
     model = new ListPlanOperModel;
@@ -183,9 +185,13 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     comm->setEnabled(false);
     delo->setEnabled(false);
 
-    ui->treeView->addAction(tran);
-    ui->treeView->addAction(comm);
-    ui->treeView->addAction(delo);
+    acts.append(tran);
+    acts.append(comm);
+    acts.append(delo);
+
+    for (i = acts.begin(); i != acts.end(); i++)
+        ui->treeView->addAction(*i);
+
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     for (int i = 1; i < 7; i++)

@@ -23,9 +23,9 @@ void ViewCurrency::paint(QPainter *painter, const QStyleOptionViewItem &option, 
 double ListAccountsModel::get_list(int parent, QModelIndex idx)
 {
     QSqlQuery q;
-    int id;
+//    int id;
     int i = 0;
-    int row = 0;
+//    int row = 0;
     double summ = 0, summ2 = 0;
 
     q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = :parent ORDER BY name");
@@ -68,7 +68,7 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
 {
     QSqlQuery query;
 //    int type;
-    int row = 0;
+//    int row = 0;
     double summ, summ2;
     QModelIndex idx;
     QFont fnt;

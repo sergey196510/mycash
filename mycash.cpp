@@ -253,6 +253,12 @@ void MyCash::list_home()
 void MyCash::list_accounts()
 {
     ListAccounts *la = new ListAccounts;
+    QList<QAction*>::Iterator i;
+
+    for (i = la->acts.begin(); i != la->acts.end(); i++) {
+        QAction *act = *i;
+        ui->mainToolBar->addAction(act);
+    }
 
     connect(ui->action_Open, SIGNAL(triggered()), la, SLOT(reload_model()));
     connect(ui->action_Close, SIGNAL(triggered()), la, SLOT(clear_model()));
@@ -275,6 +281,12 @@ void MyCash::list_currency()
 void MyCash::list_operations()
 {
     ListOperations *lo = new ListOperations;
+    QList<QAction*>::Iterator i;
+
+    for (i = lo->acts.begin(); i != lo->acts.end(); i++) {
+        QAction *act = *i;
+        ui->mainToolBar->addAction(act);
+    }
 
     connect(ui->action_Open, SIGNAL(triggered()), lo, SLOT(reload_model()));
     connect(ui->action_Close, SIGNAL(triggered()), lo, SLOT(clear_model()));
@@ -297,7 +309,14 @@ void MyCash::list_agents()
 
 void MyCash::list_plan_oper()
 {
+    QList<QAction*>::Iterator i;
+
     ListPlanOper *po = new ListPlanOper;
+
+    for (i = po->acts.begin(); i != po->acts.end(); i++) {
+        QAction *act = *i;
+        ui->mainToolBar->addAction(act);
+    }
 
     connect(ui->action_Open, SIGNAL(triggered()), po, SLOT(reload_model()));
     connect(ui->action_Close, SIGNAL(triggered()), po, SLOT(clear_model()));

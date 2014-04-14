@@ -73,7 +73,7 @@ void ListAgents::check_new_button(QString str)
 int ListAgents::get_selected_id()
 {
     QModelIndexList list;
-    int id;
+//    int id;
 
     list = ui->treeView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {

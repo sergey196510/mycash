@@ -44,6 +44,8 @@ class ListPlanOper : public QWidget
 public:
     explicit ListPlanOper(QWidget *parent = 0);
     ~ListPlanOper();
+    QAction *tran, *comm, *delo;
+    QList<QAction *> acts;
 
 public slots:
     void reload_model();
@@ -54,7 +56,6 @@ private:
     ListPlanOperModel *model;
     QString query;
     Database *db;
-    QAction *tran, *comm, *delo;
 
 private slots:
     void new_oper();

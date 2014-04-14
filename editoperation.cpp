@@ -121,7 +121,7 @@ void EditOperation::check_Ok()
 
 void EditOperation::check_balance(QString value)
 {
-    double balance;
+//    double balance;
     Account_Data data = db->get_account_data(ui->fromWidget->value());
 
     if (data.type != 1)

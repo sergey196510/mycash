@@ -7,7 +7,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListAccounts)
 {
-    int type;
+//    int type;
     QFont font, fnt;
     summAccount active(1);
 
@@ -40,23 +40,28 @@ ListAccounts::ListAccounts(QWidget *parent) :
         fnt.setFamily(var.ListFont());
     ui->treeView->setFont(fnt);
 
-    QAction *nacct = new QAction(tr("New account"), this);
+    nacct = new QAction(tr("New account"), this);
     nacct->setShortcut(tr("Alt+N"));
-    QAction *chacc = new QAction(tr("Change account"), this);
+    chacc = new QAction(tr("Change account"), this);
     chacc->setShortcut(tr("Alt+E"));
-    QAction *cacct = new QAction(tr("Correct balance"), this);
+    cacct = new QAction(tr("Correct balance"), this);
     cacct->setShortcut(tr("Alt+C"));
-    QAction *dacct = new QAction(tr("Delete this account"), this);
+    dacct = new QAction(tr("Delete this account"), this);
     dacct->setShortcut(tr("Alt+D"));
 
     ui->treeView->addAction(nacct);
     ui->treeView->addAction(chacc);
     ui->treeView->addAction(cacct);
     ui->treeView->addAction(dacct);
+    acts.append(nacct);
+    acts.append(chacc);
+    acts.append(cacct);
+    acts.append(dacct);
+
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     ui->treeView->setAlternatingRowColors(true);
-
+    
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
     connect(chacc, SIGNAL(triggered()), SLOT(change_account()));
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));

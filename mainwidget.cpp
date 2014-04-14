@@ -119,7 +119,7 @@ QVariant MainWidgetModel::headerData(int section,Qt::Orientation orientation, in
 
 QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
 {
-    QDate curr = QDate::currentDate();
+//    QDate curr = QDate::currentDate();
     QVariant value = QStandardItemModel::data(index, role);
 
     switch (role) {

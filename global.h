@@ -81,7 +81,12 @@ struct Account_Data {
     QString dt;
     Account_Data() {
         name = "";
-        type = curr = hidden = parent = top = system = 0;
+        type = 0;
+        curr = 0;
+        hidden = false;
+        parent = 0;
+        top = 0;
+        system = 0;
 //        balance = 0;
         descr = "";
         dt = "";

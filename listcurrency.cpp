@@ -13,7 +13,7 @@ ListCurrencyModel::~ListCurrencyModel()
 
 QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
 {
-    Globals var;
+//    Globals var;
     QVariant value = QSqlQueryModel::data(index, role);
 
     switch (role) {

@@ -20,6 +20,11 @@ class ListAccounts : public QWidget
 public:
     explicit ListAccounts(QWidget *parent = 0);
     ~ListAccounts();
+    QAction *nacct;
+    QAction *chacc;
+    QAction *cacct;
+    QAction *dacct;
+    QList<QAction*> acts;
 
 public slots:
     void clear_model();

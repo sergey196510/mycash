@@ -104,7 +104,7 @@ ListOperationsModel::~ListOperationsModel()
 
 QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 {
-    QDate curr = QDate::currentDate();
+//    QDate curr = QDate::currentDate();
     QVariant value = QStandardItemModel::data(index, role);
 
     switch (role) {
@@ -116,7 +116,7 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
             return default_locale->toString(value.toDouble()/var->Kurs(),'f',2);
         }
         else if (index.column() == col_Date) {
-            QDate dt = value.toDate();
+//            QDate dt = value.toDate();
             return value.toDate().toString(Qt::SystemLocaleDate);
         }
         else
@@ -188,11 +188,16 @@ ListOperations::ListOperations(QWidget *parent) :
     model = new ListOperationsModel();
     model->fill_model(&fdate, &ldate, var.Account());
 
-    QAction *debt = new QAction(tr("Debet"), this);
-    QAction *cred = new QAction(tr("Credit"), this);
-    QAction *tran = new QAction(tr("Transfer"), this);
-    QAction *plan = new QAction(tr("Planning operation"), this);
-    QAction *dele = new QAction(tr("Delete current operation"), this);
+    debt = new QAction(tr("Debet"), this);
+    cred = new QAction(tr("Credit"), this);
+    tran = new QAction(tr("Transfer"), this);
+    plan = new QAction(tr("Planning operation"), this);
+    dele = new QAction(tr("Delete current operation"), this);
+    acts.append(debt);
+    acts.append(cred);
+    acts.append(tran);
+    acts.append(plan);
+    acts.append(dele);
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
@@ -233,7 +238,7 @@ ListOperations::~ListOperations()
 void ListOperations::edit_operation(operation_data &d)
 {
     EditOperation eo(1, this);
-    Globals var;
+//    Globals var;
     QModelIndex idx = ui->treeView->currentIndex();
     operation_data data;
 
@@ -277,7 +282,7 @@ void ListOperations::transfer_operation()
 int ListOperations::get_selected_id()
 {
     QModelIndexList list;
-    int id;
+//    int id;
 
     list = ui->treeView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
@@ -352,7 +357,7 @@ void ListOperations::plann_operation()
     }
 }
 
-void ListOperations::change_current_account(int idx)
+void ListOperations::change_current_account()
 {
     Globals var;
     QLocale *lc;
