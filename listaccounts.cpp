@@ -40,23 +40,24 @@ ListAccounts::ListAccounts(QWidget *parent) :
         fnt.setFamily(var.ListFont());
     ui->treeView->setFont(fnt);
 
-    nacct = new QAction(tr("New account"), this);
+    nacct = new QAction(tr("New"), this);
     nacct->setShortcut(tr("Alt+N"));
-    chacc = new QAction(tr("Change account"), this);
+    nacct->setToolTip("New account");
+    chacc = new QAction(tr("Change"), this);
     chacc->setShortcut(tr("Alt+E"));
-    cacct = new QAction(tr("Correct balance"), this);
+    chacc->setToolTip("Change account");
+    cacct = new QAction(tr("Correct"), this);
     cacct->setShortcut(tr("Alt+C"));
-    dacct = new QAction(tr("Delete this account"), this);
+    cacct->setToolTip("Correct balance");
+    dacct = new QAction(tr("Delete"), this);
     dacct->setShortcut(tr("Alt+D"));
+    dacct->setToolTip("Delete this account");
 
-    ui->treeView->addAction(nacct);
-    ui->treeView->addAction(chacc);
-    ui->treeView->addAction(cacct);
-    ui->treeView->addAction(dacct);
     acts.append(nacct);
     acts.append(chacc);
     acts.append(cacct);
     acts.append(dacct);
+    ui->treeView->addActions(acts);
 
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 

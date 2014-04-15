@@ -189,9 +189,7 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     acts.append(comm);
     acts.append(delo);
 
-    for (i = acts.begin(); i != acts.end(); i++)
-        ui->treeView->addAction(*i);
-
+    ui->treeView->addActions(acts);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     for (int i = 1; i < 7; i++)

@@ -209,11 +209,12 @@ ListOperations::ListOperations(QWidget *parent) :
 
     change_current_account();
 
-    ui->treeView->addAction(debt);
-    ui->treeView->addAction(cred);
-    ui->treeView->addAction(tran);
-    ui->treeView->addAction(plan);
-    ui->treeView->addAction(dele);
+//    ui->treeView->addAction(debt);
+//    ui->treeView->addAction(cred);
+//    ui->treeView->addAction(tran);
+//    ui->treeView->addAction(plan);
+//    ui->treeView->addAction(dele);
+    ui->treeView->addActions(acts);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     connect(debt, SIGNAL(triggered()), SLOT(debet_operation()));
