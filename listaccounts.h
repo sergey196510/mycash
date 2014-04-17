@@ -24,6 +24,7 @@ public:
     QAction *chacc;
     QAction *cacct;
     QAction *dacct;
+    QAction *analis;
     QList<QAction*> acts;
 
 public slots:
@@ -46,6 +47,7 @@ private slots:
     void del_account();
 //    void check_type();
     int get_selected_id();
+    void show_analis();
 
 private:
     Ui::ListAccounts *ui;

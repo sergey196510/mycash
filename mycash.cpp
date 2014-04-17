@@ -95,6 +95,7 @@ void MyCash::setconnects()
     ui->mainToolBar->addAction(ui->action_Home);
     ui->mainToolBar->addAction(ui->action_ListAccounts);
     ui->mainToolBar->addAction(ui->action_ListOperations);
+    ui->mainToolBar->addAction(ui->action_Plan_Operations);
     ui->mainToolBar->addAction(ui->action_ListAgents);
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addAction(ui->action_Settings);
@@ -229,15 +230,13 @@ void MyCash::opendb(QString dbname)
 
     base.setDatabaseName(dbname);
     if (!base.open()) {
-//        opened = false;
         var.database_Close();
         qDebug() << base.lastError().text();
     }
-    else
-//        opened = true;
+    else {
         var.database_Open();
-
-//    QSqlQuery query("PRAGMA journal_mode = WAL");
+        check_plan_oper();
+    }
 
     emit call_mark();
     setWindowTitle("MyCash version: " + var.Version() + " [" + dbname + "]");
@@ -355,4 +354,29 @@ void MyCash::report2()
     curr->setEnabled(false);
 
     setCentralWidget(gw);
+}
+
+// проверка выполнения планвых операций в тек месяце
+void MyCash::check_plan_oper()
+{
+    QSqlQuery q;
+    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
+    int count = 0;
+
+    qDebug() << mon << year;
+
+    q.prepare("SELECT count(id) FROM plan_account_moper WHERE mon = :mon AND year = :year");
+    q.bindValue(":mon", mon);
+    q.bindValue(":year", year);
+    if (!q.exec() || !q.next()) {
+        qDebug() << q.lastError().text();
+        return;
+    }
+    count = q.value(0).toInt();
+    if (count == 0) {
+        qDebug() << count;
+    }
+    else {
+        qDebug() << count;
+    }
 }

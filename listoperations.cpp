@@ -2,15 +2,6 @@
 #include "ui_listoperations.h"
 #include "global.h"
 
-enum {
-    col_Id = 0,
-    col_Date = 1,
-    col_Account = 2,
-    col_Debet = 3,
-    col_Credit = 4,
-    col_Descr = 5
-};
-
 void ListOperationsModel::fill_model(QString *dt1, QString *dt2, int acc_id)
 {
     QSqlQuery q1, q2;

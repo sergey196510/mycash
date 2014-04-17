@@ -23,6 +23,14 @@ public:
     ~ListOperationsModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+    enum {
+        col_Id = 0,
+        col_Date = 1,
+        col_Account = 2,
+        col_Debet = 3,
+        col_Credit = 4,
+        col_Descr = 5
+    };
 
 public slots:
     void fill_model(QString *dt1, QString *dt2, int id = 0);

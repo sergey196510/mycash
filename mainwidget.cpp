@@ -1,24 +1,6 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 
-enum Column {
-    id = 0,
-    day = 1,
-    month = 2,
-    year = 3,
-    column_from = 4,
-    column_to = 5,
-    summ = 6,
-    status = 7,
-    descr = 8
-};
-enum Status {
-    actual = 1,
-    committed = 2,
-    minimum = 3,
-    expired = 4
-};
-
 bool MainWidgetModel::get_operations(int plan)
 {
     QSqlQuery q;
@@ -182,13 +164,13 @@ MainWidget::MainWidget(QWidget *parent) :
     ui->treeView->setAlternatingRowColors(true);
     ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->treeView->header()->setResizeMode(day, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(month, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(year, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(column_from, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(column_to, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(summ, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(status, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->day, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->month, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->year, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->column_from, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->column_to, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->summ, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->status, QHeaderView::ResizeToContents);
 }
 
 MainWidget::~MainWidget()
@@ -204,13 +186,13 @@ void MainWidget::reload_model()
 
     model->fill_model();
     ui->treeView->hideColumn(0);
-    ui->treeView->header()->setResizeMode(day, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(month, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(year, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(column_from, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(column_to, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(summ, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(status, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->day, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->month, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->year, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->column_from, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->column_to, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->summ, QHeaderView::ResizeToContents);
+    ui->treeView->header()->setResizeMode(model->status, QHeaderView::ResizeToContents);
 
 //    double active = db->get_account_summ(Active_type);
 //    double passive = db->get_account_summ(Passive_type);

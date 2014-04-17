@@ -41,22 +41,25 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui->treeView->setFont(fnt);
 
     nacct = new QAction(tr("New"), this);
-    nacct->setShortcut(tr("Alt+N"));
+//    nacct->setShortcut(tr("Alt+N"));
     nacct->setToolTip("New account");
     chacc = new QAction(tr("Change"), this);
-    chacc->setShortcut(tr("Alt+E"));
+//    chacc->setShortcut(tr("Alt+E"));
     chacc->setToolTip("Change account");
     cacct = new QAction(tr("Correct"), this);
-    cacct->setShortcut(tr("Alt+C"));
+//    cacct->setShortcut(tr("Alt+C"));
     cacct->setToolTip("Correct balance");
     dacct = new QAction(tr("Delete"), this);
-    dacct->setShortcut(tr("Alt+D"));
+//    dacct->setShortcut(tr("Alt+D"));
     dacct->setToolTip("Delete this account");
+    analis = new QAction(tr("Analis"), this);
+    analis->setToolTip(tr("Analis linear approximate"));
 
     acts.append(nacct);
     acts.append(chacc);
     acts.append(cacct);
     acts.append(dacct);
+    acts.append(analis);
     ui->treeView->addActions(acts);
 
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -67,11 +70,12 @@ ListAccounts::ListAccounts(QWidget *parent) :
     connect(chacc, SIGNAL(triggered()), SLOT(change_account()));
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
     connect(dacct, SIGNAL(triggered()), SLOT(del_account()));
+    connect(analis, SIGNAL(triggered()), SLOT(show_analis()));
 
-    connect(ui->newButton, SIGNAL(clicked()), SLOT(new_account()));
-    connect(ui->editButton, SIGNAL(clicked()), SLOT(change_account()));
-    connect(ui->correctButton, SIGNAL(clicked()), SLOT(correct_balance()));
-    connect(ui->deleteButton, SIGNAL(clicked()), SLOT(del_account()));
+//    connect(ui->newButton, SIGNAL(clicked()), SLOT(new_account()));
+//    connect(ui->editButton, SIGNAL(clicked()), SLOT(change_account()));
+//    connect(ui->correctButton, SIGNAL(clicked()), SLOT(correct_balance()));
+//    connect(ui->deleteButton, SIGNAL(clicked()), SLOT(del_account()));
 
     connect(this, SIGNAL(pressInsert()), SLOT(new_account()));
     connect(this, SIGNAL(pressEnter()), SLOT(change_account()));
@@ -321,9 +325,15 @@ void ListAccounts::del_account()
     reload_model();
 }
 
-/*
-void ListAccounts::check_type()
+void ListAccounts::show_analis()
 {
-    ui->treeView->resizeColumnToContents(0);
+    QDialog *w = new QDialog(this);
+    int id = get_selected_id();
+
+    if (id == 0) {
+        QMessageBox::critical(this, "Operation cancellation", "Nothing selected");
+        return;
+    }
+
+    w->exec();
 }
-*/

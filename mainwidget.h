@@ -20,6 +20,23 @@ public:
     ~MainWidgetModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+    enum Column {
+        id = 0,
+        day = 1,
+        month = 2,
+        year = 3,
+        column_from = 4,
+        column_to = 5,
+        summ = 6,
+        status = 7,
+        descr = 8
+    };
+    enum Status {
+        actual = 1,
+        committed = 2,
+        minimum = 3,
+        expired = 4
+    };
 
 public slots:
     void fill_model();

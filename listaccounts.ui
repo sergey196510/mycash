@@ -48,51 +48,6 @@
    <item>
     <widget class="QTreeView" name="treeView"/>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QToolButton" name="newButton">
-       <property name="text">
-        <string>New Alt+N</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="editButton">
-       <property name="text">
-        <string>Edit Alt+E</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="correctButton">
-       <property name="text">
-        <string>Correct balance Alt+C</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="deleteButton">
-       <property name="text">
-        <string>Delete Alt+D</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
   </layout>
  </widget>
  <resources/>
