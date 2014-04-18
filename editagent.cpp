@@ -23,11 +23,11 @@ agent_data EditAgent::data()
 {
     agent_data data;
 
-    data.name    = ui->nameEdit->text();
-    data.city    = ui->cityEdit->text();
-    data.address = ui->addrEdit->text();
-    data.phone   = ui->phoneEdit->text();
-    data.contact = ui->contactEdit->text();
+    data.set_name(ui->nameEdit->text());
+    data.set_city(ui->cityEdit->text());
+    data.set_address(ui->addrEdit->text());
+    data.set_phone(ui->phoneEdit->text());
+    data.set_contact(ui->contactEdit->text());
 
     return data;
 }

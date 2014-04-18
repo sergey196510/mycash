@@ -1,9 +1,11 @@
 #include "global.h"
+//#include "database.h"
 
 //QString version = "0.1";
 //int     current_account = 0;
 //int     current_currency;
 QLocale *default_locale;
+//Database *db;
 //QLocale *english;
 //QFont   fnt;
 

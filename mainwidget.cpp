@@ -57,9 +57,9 @@ void MainWidgetModel::fill_model()
         setData(index(row,day),   data.day);
         setData(index(row,month), data.month);
         setData(index(row,year),  data.year);
-        setData(index(row,column_from),  accounts[data.from.account]);
-        setData(index(row,column_to),    accounts[data.to.account]);
-        setData(index(row,summ),  default_locale->toString(data.from.summ,'f',2));
+        setData(index(row,column_from),  accounts[data.from.account()]);
+        setData(index(row,column_to),    accounts[data.to.account()]);
+        setData(index(row,summ),  default_locale->toString(data.from.summ(),'f',2));
         if (stat == actual)
             setData(index(row,status), tr("Actual"));
         else if (stat == committed)

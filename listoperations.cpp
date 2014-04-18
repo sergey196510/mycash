@@ -26,7 +26,7 @@ void ListOperationsModel::fill_model(QString *dt1, QString *dt2, int acc_id)
 
     list = db->get_accounts_list();
 
-    query = QString("SELECT id,dt,descr FROM operation WHERE dt >= '%1' AND dt <= '%2' ORDER BY dt").arg(*dt1).arg(*dt2);
+    query = QString("SELECT id,dt,descr FROM oper WHERE dt >= '%1' AND dt <= '%2' ORDER BY dt").arg(*dt1).arg(*dt2);
     if (!q1.exec(query)) {
         qDebug() << q1.lastError().text();
         return;
@@ -68,11 +68,11 @@ void ListOperationsModel::fill_model(QString *dt1, QString *dt2, int acc_id)
 
         if (a1 == acc_id) {
             setData(index(row,col_Account), list[a2]);
-            setData(index(row,col_Credit), s2);
+            setData(index(row,col_Credit), s1);
         }
         else if (a2 == acc_id) {
             setData(index(row,col_Account), list[a1]);
-            setData(index(row,col_Debet), s1);
+            setData(index(row,col_Debet), s2);
         }
 
         setData(index(row,col_Date), q1.value(1).toString());
@@ -248,7 +248,7 @@ void ListOperations::debet_operation()
 {
     operation_data d;
 
-    d.to.account = ui->listAccounts->value();
+    d.to.set_account(ui->listAccounts->value());
 
     edit_operation(d);
 }
@@ -257,7 +257,7 @@ void ListOperations::credit_operation()
 {
     operation_data d;
 
-    d.from.account = ui->listAccounts->value();
+    d.from.set_account(ui->listAccounts->value());
 
     edit_operation(d);
 }
@@ -266,7 +266,7 @@ void ListOperations::transfer_operation()
 {
     operation_data d;
 
-    d.from.account = ui->listAccounts->value();
+    d.from.set_account(ui->listAccounts->value());
 
     edit_operation(d);
 }

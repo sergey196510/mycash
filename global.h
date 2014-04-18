@@ -4,17 +4,27 @@
 #include <QtCore>
 #include <QFont>
 #include "widgets/mycurrency.h"
+//#include "database.h"
 
 //extern QString version;
 //extern int     current_account;
 //extern int     current_currency;
 extern QLocale *default_locale;
+//extern Database *db;
 //extern QLocale *english;
 //extern QFont   fnt;
 
 enum Direction {
     direction_from = 1,
     direction_to = 2
+};
+
+enum Type {
+    Active_type  = 1,
+    Passive_type = 2,
+    Debet_type   = 3,
+    Credit_type  = 4,
+    Initial_type = 5
 };
 
 struct Font {
@@ -59,13 +69,18 @@ public:
     void database_Close() { database_opened = false; }
 };
 
-struct account_summ {
-    int account;
-    double summ;
+class account_summ {
+    int acc;
+    double s;
+public:
     account_summ() {
-        account = 0;
-        summ = 0;
+        acc = 0;
+        s = 0;
     };
+    int account() { return acc; }
+    double summ() { return s; }
+    void set_account(int val) { acc = val; }
+    void set_summ(double val) { s = val; }
 };
 
 struct Account_Data {
@@ -119,12 +134,23 @@ struct operation_data {
     }
 };
 
-struct agent_data {
-    QString name;
-    QString city;
-    QString address;
-    QString phone;
-    QString contact;
+class agent_data {
+    QString nm;
+    QString ct;
+    QString addr;
+    QString ph;
+    QString cont;
+public:
+    QString name() { return nm; }
+    QString city() { return ct; }
+    QString address() { return addr; }
+    QString phone() { return ph; }
+    QString contact() { return cont; }
+    void set_name(QString s) { nm = s; }
+    void set_city(QString s) { ct = s; }
+    void set_address(QString s) { addr = s; }
+    void set_phone(QString s) { ph = s; }
+    void set_contact(QString s) { cont = s; }
 };
 
 /*

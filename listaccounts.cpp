@@ -176,11 +176,12 @@ void ListAccounts::new_account()
             return;
         }
 
-        oper.from.account = var.InitialAccount();
-        oper.to.account = acc;
+        oper.from.set_account(var.InitialAccount());
+        oper.to.set_account(acc);
         oper.date = data.dt;
         oper.descr = tr("Primary balance");
-        oper.from.summ = oper.to.summ = data.balance.value();
+        oper.from.set_summ(data.balance.value());
+        oper.to.set_summ(data.balance.value());
         db->save_operation(oper);
 
         q.exec("COMMIT");
@@ -262,15 +263,17 @@ void ListAccounts::correct_balance()
         od.agent = 0;
         od.descr = tr("correct");
         if (new_balance < current_balance) {
-            od.from.account = id;
-            od.to.account = cb->account();
-            od.from.summ = od.to.summ = current_balance-new_balance;
+            od.from.set_account(id);
+            od.to.set_account(cb->account());
+            od.from.set_summ(current_balance-new_balance);
+            od.to.set_summ(current_balance-new_balance);
             db->save_operation(od);
         }
         else {
-            od.to.account = id;
-            od.from.account = cb->account();
-            od.from.summ = od.to.summ = new_balance-current_balance;
+            od.to.set_account(id);
+            od.from.set_account(cb->account());
+            od.from.set_summ(new_balance-current_balance);
+            od.to.set_summ(new_balance-current_balance);
             db->save_operation(od);
         }
 

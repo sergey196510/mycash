@@ -47,7 +47,7 @@ double Database::get_operation_summ(int top)
     int year = current.year();
     double summ = 0;
 
-    QString query = QString("SELECT id,dt FROM operation WHERE dt >= '%1-%2-01'").arg(year).arg(month);
+    QString query = QString("SELECT id,dt FROM oper WHERE dt >= '%1-%2-01'").arg(year).arg(month);
 //    qDebug() << query;
     if (!q.exec(query)) {
         qDebug() << q.lastError().text();
@@ -86,11 +86,12 @@ QMap<QString,double> Database::get_opersummbyaccount_list(int top, int m1, int y
         y2 = y1;
     }
 
-    QString query = QString("SELECT id FROM operation WHERE dt >= '%1-%2-01' AND dt < '%3-%4-01'")
+    QString query = QString("SELECT id FROM oper WHERE dt >= '%1-%L2-01' AND dt < '%3-%L4-01'")
             .arg(y1)
-            .arg(m1)
+            .arg(m1,2,10,'0')
             .arg(y2)
-            .arg(m2);
+            .arg(m2,2,10,'0');
+    qDebug() << query;
 
     if (!q1.exec(query)) {
         qDebug() << q1.lastError().text();
@@ -270,11 +271,11 @@ int Database::new_agent(agent_data &data) {
     QSqlQuery q;
 
     q.prepare("INSERT INTO agent(name, city, address, phone, contact) VALUES(:name, :city, :address, :phone, :contact)");
-    q.bindValue(":name", data.name);
-    q.bindValue(":city", data.city);
-    q.bindValue(":address", data.address);
-    q.bindValue(":phone", data.phone);
-    q.bindValue(":contact", data.contact);
+    q.bindValue(":name", data.name());
+    q.bindValue(":city", data.city());
+    q.bindValue(":address", data.address());
+    q.bindValue(":phone", data.phone());
+    q.bindValue(":contact", data.contact());
     if (!q.exec()) {
         qDebug() << "Insert error" << q.lastError().text();
         return 0;
@@ -292,20 +293,20 @@ int Database::new_operation(operation_data &data)
 {
     QSqlQuery query;
 
-    query.prepare("INSERT INTO operation(acc_from, acc_to, agent, summ, dt, descr, plan_id) VALUES(:from, :to, :agent, :summ, :dt, :descr, :plan_id)");
-    query.bindValue(":from", data.from.account);
-    query.bindValue(":to", data.to.account);
-    query.bindValue(":agent", data.agent);
-    query.bindValue(":summ", data.from.summ);
+    query.prepare("INSERT INTO oper(dt, descr, plan_id) VALUES(:dt, :descr, :plan_id)");
+//    query.bindValue(":from", data.from.account());
+//    query.bindValue(":to", data.to.account());
+//    query.bindValue(":agent", data.agent);
+//    query.bindValue(":summ", data.from.summ());
     query.bindValue(":dt", data.date);
     query.bindValue(":descr", data.descr);
     query.bindValue(":plan_id", data.plan_id);
     if (!query.exec())
         return 0;
 
-    query.prepare("SELECT MAX(id) FROM operation");
+    query.prepare("SELECT MAX(id) FROM oper");
     if (!query.exec())
-	return 0;
+        return 0;
     if (query.next())
         return query.value(0).toInt();
     return 0;
@@ -320,7 +321,7 @@ bool Database::new_account_oper(QString table, const int o_id, account_summ &acc
 //    double summ = delta * flag;
 
     str = QString("INSERT INTO %1(a_id, o_id, summ, direction) VALUES(%2, %3, %4, %5)")
-    .arg(table).arg(acc.account).arg(o_id).arg(acc.summ).arg(direction);
+            .arg(table).arg(acc.account()).arg(o_id).arg(acc.summ()).arg(direction);
     qDebug() << str;
     if (!q.exec(str)) {
         qDebug() << q.lastError().text();
@@ -353,8 +354,8 @@ bool Database::del_operation(int id)
 
     list = get_account_oper_list(id,1);
     for (i = list.begin(); i != list.end(); i++) {
-        acc.account = i.key();
-        acc.summ = i.value();
+        acc.set_account(i.key());
+        acc.set_summ(i.value());
         if (change_account_balance(acc) == false) {
             q.exec("ROLLBACK");
             return false;
@@ -363,8 +364,8 @@ bool Database::del_operation(int id)
 
     list = get_account_oper_list(id,2);
     for (i = list.begin(); i != list.end(); i++) {
-        acc.account = i.key();
-        acc.summ = -i.value();
+        acc.set_account(i.key());
+        acc.set_summ(-i.value());
         if (change_account_balance(acc) == false) {
             q.exec("ROLLBACK");
             return false;
@@ -376,7 +377,7 @@ bool Database::del_operation(int id)
         return false;
     }
 
-    q.prepare("DELETE FROM operation WHERE id = :id");
+    q.prepare("DELETE FROM oper WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec()) {
         q.exec("ROLLBACK");
@@ -395,17 +396,17 @@ bool Database::change_account_balance(account_summ &acc)
     Account_Data data;
     int flag;
 
-    data = get_account_data(acc.account);
+    data = get_account_data(acc.account());
 
     if (data.top == Active_type || data.top == Credit_type)
         flag = 1;
     else
         flag = -1;
 
-    summ = acc.summ * flag;
+    summ = acc.summ() * flag;
 
     query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
-    query.bindValue(":id", acc.account);
+    query.bindValue(":id", acc.account());
     query.bindValue(":summ", summ);
     if (!query.exec()) {
         return false;
@@ -433,7 +434,8 @@ bool Database::save_operation(operation_data &data)
         q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    data.from.summ *= -1;
+    double val = data.from.summ();
+    data.from.set_summ(val*-1);
     if (change_account_balance(data.from) == false) {
         q.exec("ROLLBACK TRANSACTION");
         return false;
@@ -442,7 +444,7 @@ bool Database::save_operation(operation_data &data)
         q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (data.to2.summ > 0) {
+    if (data.to2.summ() > 0) {
         if (new_account_oper("account_oper", oper_id, data.to2, direction_to) == false) {
             q.exec("ROLLBACK TRANSACTION");
             return false;
@@ -464,7 +466,7 @@ operation_data Database::get_operation(int id)
     QMap<int,double> list;
     QMap<int,double>::iterator i;
 
-    q.prepare("SELECT id,agent,dt,descr,plan_id FROM operation WHERE id = :id");
+    q.prepare("SELECT id,agent,dt,descr,plan_id FROM oper WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec()) {
         return data;
@@ -479,21 +481,21 @@ operation_data Database::get_operation(int id)
     list = get_account_oper_list(q.value(0).toInt(), 1);
     i = list.begin();
     if (i != list.end()) {
-        data.from.account = i.key();
-        data.from.summ = i.value();
+        data.from.set_account(i.key());
+        data.from.set_summ(i.value());
     }
 
     list = get_account_oper_list(q.value(0).toInt(), 2);
     i = list.begin();
     if (i != list.end()) {
-        data.to.account = i.key();
-        data.to.summ = i.value();
+        data.to.set_account(i.key());
+        data.to.set_summ(i.value());
     }
 
     i++;
     if (i != list.end()) {
-        data.to2.account = i.key();
-        data.to2.summ = i.value();
+        data.to2.set_account(i.key());
+        data.to2.set_summ(i.value());
     }
 
     return data;
@@ -530,19 +532,19 @@ int Database::new_plan_oper(operation_data &data)
             qDebug() << q.lastError().text();
             q.exec("ROLLBACK");
             return 0;
-	}
+        }
         if (!new_account_oper("plan_account_oper", id, data.to, direction_to)) {
             qDebug() << q.lastError().text();
             q.exec("ROLLBACK");
             return 0;
-	}
-        if (data.to2.summ > 0) {
+        }
+        if (data.to2.summ() > 0) {
             if (!new_account_oper("plan_account_oper", id, data.to2, direction_to)) {
                 qDebug() << q.lastError().text();
-	        q.exec("ROLLBACK");
+                q.exec("ROLLBACK");
                 return 0;
-	    }
-	}
+            }
+        }
     }
 
     q.exec("COMMIT");
@@ -609,14 +611,14 @@ operation_data Database::get_plan_oper_data(int id)
         list = get_plan_account_oper_list(q.value(0).toInt(), 1);
         i = list.begin();
         if (i != list.end()) {
-            data.from.account = i.key();
-            data.from.summ = i.value();
+            data.from.set_account(i.key());
+            data.from.set_summ(i.value());
         }
         list = get_plan_account_oper_list(q.value(0).toInt(), 2);
         i = list.begin();
         if (i != list.end()) {
-            data.to.account = i.key();
-            data.to.summ = i.value();
+            data.to.set_account(i.key());
+            data.to.set_summ(i.value());
         }
     }
 

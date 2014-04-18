@@ -4,14 +4,6 @@
 #include <QtSql>
 #include "global.h"
 
-enum Type {
-    Active_type  = 1,
-    Passive_type = 2,
-    Debet_type   = 3,
-    Credit_type  = 4,
-    Initial_type = 5
-};
-
 class Database
 {
 //    bool opened;

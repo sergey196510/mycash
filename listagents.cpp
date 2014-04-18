@@ -113,27 +113,15 @@ void ListAgents::save_new_record()
 {
     QSqlQuery q;
     agent_data data;
-//    QString name, city, address, phone, contact;
 
-    data.name = ui->nameEdit->text();
-    data.city = ui->cityEdit->text();
-    data.address = ui->addrEdit->text();
-    data.phone = ui->phoneEdit->text();
-    data.contact = ui->contactEdit->text();
+    data.set_name(ui->nameEdit->text());
+    data.set_city(ui->cityEdit->text());
+    data.set_address(ui->addrEdit->text());
+    data.set_phone(ui->phoneEdit->text());
+    data.set_contact(ui->contactEdit->text());
 
     if (db->new_agent(data) == 0)
         return;
-
-//    q.prepare("INSERT INTO agent(name, city, address, phone, contact) VALUES(:name, :city, :address, :phone, :contact)");
-//    q.bindValue(":name", name);
-//    q.bindValue(":city", city);
-//    q.bindValue(":address", address);
-//    q.bindValue(":phone", phone);
-//    q.bindValue(":contact", contact);
-//    if (!q.exec()) {
-//        qDebug() << "Insert error";
-//        return;
-//    }
 
     reload_model();
 }

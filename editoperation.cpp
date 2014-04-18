@@ -143,13 +143,13 @@ operation_data EditOperation::data()
     d.day = ui->dayBox->currentIndex();
     d.month = ui->monBox->currentIndex();
     d.year = ui->yearBox->value();
-    d.from.account = ui->fromWidget->value();
-    d.to.account   = ui->toWidget->value();
+    d.from.set_account(ui->fromWidget->value());
+    d.to.set_account(ui->toWidget->value());
 //    d.to2.account = ui->to2Widget->value();
     d.agent = ui->agent_comboBox->value();
     d.kurs = ui->kursEdit->value();
-    d.from.summ = ui->fromSpinBox->value();
-    d.to.summ = ui->toSpinBox->value();
+    d.from.set_summ(ui->fromSpinBox->value());
+    d.to.set_summ(ui->toSpinBox->value());
 //    d.to2.summ = ui->toSpinBox_2->value();
     d.date = ui->dateEdit->value();
     d.descr = ui->descrEdit->text();
@@ -164,11 +164,11 @@ void EditOperation::setdata(operation_data &d)
     ui->dayBox->setCurrentIndex(d.day);
     ui->monBox->setCurrentIndex(d.month);
     ui->yearBox->setValue(d.year);
-    ui->fromWidget->setValue(d.from.account);
-    ui->toWidget->setValue(d.to.account);
+    ui->fromWidget->setValue(d.from.account());
+    ui->toWidget->setValue(d.to.account());
 
 //    ui->to_account_2->setValue(d.to2.account);
-    if (d.to2.account > 0) {
+    if (d.to2.account() > 0) {
 //        data = db->get_account_data(d.to2.account);
 //        ui->to2Widget->setValue(d.to2.account);
 //        ui->toAccount2Line->setText(data.name);
@@ -176,8 +176,8 @@ void EditOperation::setdata(operation_data &d)
 
     ui->agent_comboBox->setValue(d.agent);
     ui->kursEdit->setValue(d.kurs);
-    ui->fromSpinBox->setValue(d.from.summ);
-    ui->toSpinBox->setValue(d.to.summ);
+    ui->fromSpinBox->setValue(d.from.summ());
+    ui->toSpinBox->setValue(d.to.summ());
 //    ui->toSpinBox_2->setValue(d.to2.summ);
     ui->descrEdit->setText(d.descr);
 

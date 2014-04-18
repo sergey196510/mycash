@@ -161,7 +161,11 @@ void MyCash::create()
     }
 
     dbname = dbf->filename();
-    opendb(dbname);
+    base.setDatabaseName(dbname);
+    if (!base.open()) {
+        var.database_Close();
+        qDebug() << base.lastError().text();
+    }
 
     QSqlQuery q;
 
@@ -179,6 +183,8 @@ void MyCash::create()
         }
     }
 
+    var.database_Open();
+    emit call_mark();
     delete dbf;
 }
 
@@ -236,6 +242,7 @@ void MyCash::opendb(QString dbname)
     else {
         var.database_Open();
         check_plan_oper();
+        db = new Database;
     }
 
     emit call_mark();
@@ -287,7 +294,7 @@ void MyCash::list_operations()
     connect(ui->action_Open, SIGNAL(triggered()), lo, SLOT(reload_model()));
     connect(ui->action_Close, SIGNAL(triggered()), lo, SLOT(clear_model()));
     connect(this, SIGNAL(update_currency()), lo, SLOT(reload_model()));
-    curr->setEnabled(true);
+    curr->setEnabled(false);
 
     setCentralWidget(lo);
 }
@@ -356,7 +363,7 @@ void MyCash::report2()
     setCentralWidget(gw);
 }
 
-// проверка выполнения планвых операций в тек месяце
+// проверка выполнения плановых операций в тек месяце
 void MyCash::check_plan_oper()
 {
     QSqlQuery q;
