@@ -306,9 +306,8 @@ void ListAccounts::del_account()
     if (r == QMessageBox::No)
         return;
 
-    q.prepare("SELECT count(id) FROM operation WHERE acc_from = :id1 OR acc_to = :id2");
-    q.bindValue(":id1", id);
-    q.bindValue(":id2", id);
+    q.prepare("SELECT count(id) FROM account_oper WHERE a_id = :id");
+    q.bindValue(":id", id);
     if (!q.exec() || !q.next()) {
         qDebug() << q.lastError().text();
         return;

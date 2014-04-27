@@ -61,6 +61,7 @@ EditOperation::EditOperation(int type, QWidget *parent) :
     connect(ui->fromWidget, SIGNAL(changed_value()), SLOT(check_Ok()));
     connect(ui->toWidget, SIGNAL(changed_value()), SLOT(check_Ok()));
     connect(ui->fromSpinBox, SIGNAL(textChanged(QString)), SLOT(check_Ok()));
+    connect(ui->kursEdit,    SIGNAL(textChanged(QString)), SLOT(check_Ok()));
     connect(ui->fromSpinBox, SIGNAL(textChanged(QString)), SLOT(check_balance(QString)));
     connect(ui->separateButton, SIGNAL(clicked()), SLOT(separate_account()));
     connect(ui->newAgentButton, SIGNAL(clicked()), SLOT(new_agent()));
