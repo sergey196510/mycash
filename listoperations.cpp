@@ -26,7 +26,9 @@ void ListOperationsModel::fill_model(QString *dt1, QString *dt2, int acc_id)
 
     list = db->get_accounts_list();
 
-    query = QString("SELECT id,dt,descr FROM oper WHERE dt >= '%1' AND dt <= '%2' ORDER BY dt").arg(*dt1).arg(*dt2);
+    query = QString("SELECT id,dt,descr FROM oper WHERE dt >= '%1' AND dt <= '%2' ORDER BY dt")
+            .arg(*dt1)
+            .arg(*dt2);
     if (!q1.exec(query)) {
         qDebug() << q1.lastError().text();
         return;
@@ -166,7 +168,7 @@ ListOperations::ListOperations(QWidget *parent) :
 //    ui->accountcomboBox->setView(v);
 //    ui->accountcomboBox->setModelColumn(0);
 
-    list = db->get_currency_list();
+//    list = db->get_currency_list();
 
 //    ui->accountcomboBox->load(1);
 //    ui->accountcomboBox->setValue(var.Account());
@@ -247,8 +249,11 @@ void ListOperations::edit_operation(operation_data &d)
 void ListOperations::debet_operation()
 {
     operation_data d;
+    account_summ a;
 
-    d.to.set_account(ui->listAccounts->value());
+    a.set_account(ui->listAccounts->value());
+    d.to.append(a);
+//    d.to.set_account(ui->listAccounts->value());
 
     edit_operation(d);
 }

@@ -24,7 +24,7 @@ public:
 private:
     Ui::EditOperation *ui;
     Database *db;
-    QMap<QString,double> list;
+//    QMap<QString,double> list;
 
 private slots:
     void check_Ok();

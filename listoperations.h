@@ -68,7 +68,7 @@ private:
     Database *db;
     Globals var;
 //    operation_data d;
-    QMap<QString,double> list;
+//    QMap<QString,double> list;
     void edit_operation(operation_data &);
 
 signals:

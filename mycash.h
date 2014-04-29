@@ -29,7 +29,7 @@ private:
     QString dbname;
     Ui::MyCash *ui;
     CurrencyComboBox *curr;
-    QMap<int,QString> currs;
+//    QMap<int,QString> currs;
     void readsettings();
     void writesettings();
     void setconnects();

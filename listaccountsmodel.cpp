@@ -79,8 +79,8 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
     if (!var.database_Opened())
         return list_index;
 
-    list = db->get_scod_list();
-    list_curs = db->get_currency_list();
+//    list = db->get_scod_list();
+//    list_curs = db->get_currency_list();
     fnt.setBold(true);
 
     insertColumns(0,6);
@@ -144,7 +144,7 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
 //        }
         if (index.column() == 2) {
 //            return db->get_currency_scod(value.toInt());
-            return list[value.toInt()];
+            return db->scod_list[value.toInt()];
         }
         else if (index.column() == 3) {
             return (value.toBool() == false) ? "" : tr("H");

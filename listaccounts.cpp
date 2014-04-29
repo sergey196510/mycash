@@ -29,10 +29,6 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui->treeView->setModel(model);
 //    ui->treeView->hideColumn(4);
     ui->treeView->hideColumn(5);
-    ui->treeView->expandAll();
-    ui->treeView->setAlternatingRowColors(true);
-    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     for (int i = 0; i < 5; i++)
         ui->treeView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
 
@@ -137,6 +133,7 @@ void ListAccounts::new_account()
     int id = get_selected_id();
     Account_Data data;
     operation_data oper;
+    account_summ a;
     int acc;
 
     data.curr = var.Currency();
@@ -177,11 +174,14 @@ void ListAccounts::new_account()
         }
 
         oper.from.set_account(var.InitialAccount());
-        oper.to.set_account(acc);
+//        oper.to.set_account(acc);
         oper.date = data.dt;
         oper.descr = tr("Primary balance");
         oper.from.set_summ(data.balance.value());
-        oper.to.set_summ(data.balance.value());
+        a.set_account(acc);
+        a.set_summ(data.balance.value());
+//        oper.to.set_summ(data.balance.value());
+        oper.to.append(a);
         db->save_operation(oper);
 
         q.exec("COMMIT");
@@ -240,6 +240,7 @@ void ListAccounts::correct_balance()
     CorrectBalance *cb = new CorrectBalance(this);
     int id = get_selected_id();
     Account_Data data;
+    account_summ a;
 
     if (id == 0) {
         QMessageBox::critical(this, "Operation cancellation", "Nothing selected");
@@ -264,16 +265,22 @@ void ListAccounts::correct_balance()
         od.descr = tr("correct");
         if (new_balance < current_balance) {
             od.from.set_account(id);
-            od.to.set_account(cb->account());
             od.from.set_summ(current_balance-new_balance);
-            od.to.set_summ(current_balance-new_balance);
+            a.set_account(cb->account());
+            a.set_summ(current_balance-new_balance);
+            od.to.append(a);
+//            od.to.set_account(cb->account());
+//            od.to.set_summ(current_balance-new_balance);
             db->save_operation(od);
         }
         else {
-            od.to.set_account(id);
             od.from.set_account(cb->account());
             od.from.set_summ(new_balance-current_balance);
-            od.to.set_summ(new_balance-current_balance);
+            a.set_account(id);
+            a.set_summ(new_balance-current_balance);
+            od.to.append(a);
+//            od.to.set_account(id);
+//            od.to.set_summ(new_balance-current_balance);
             db->save_operation(od);
         }
 

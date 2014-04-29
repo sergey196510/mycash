@@ -38,12 +38,12 @@ MyCash::MyCash(QWidget *parent) :
     curr = new CurrencyComboBox;
     curr->setValue(var.Currency());
     curr->setToolTip(tr("Выберите текущую валюту"));
-    currs = db->get_scod_list();
+//    currs = db->get_scod_list();
     ui->mainToolBar->addWidget(curr);
     connect(curr, SIGNAL(currentIndexChanged(int)), SLOT(update_curr()));
 
-
-    var.setSymbol(currs[var.Currency()]);
+//    var.setSymbol(db->scod_list[var.Currency()]);
+    var.setSymbol(db->scod_list[var.Currency()]);
 
     list_home();
 
@@ -133,7 +133,7 @@ void MyCash::readsettings()
     var.setPrecision(settings.value("precision", 2).toInt());
 //    var.setListFont(settings.value("list_font").toString());
 //    fnt = settings.value("operations_font");
-    var.setSymbol(currs[var.Currency()]);
+//    var.setSymbol(db->scod_list[var.Currency()]);
 }
 
 void MyCash::writesettings()
@@ -209,7 +209,7 @@ void MyCash::open()
     curr = new CurrencyComboBox;
     curr->setValue(var.Currency());
     curr->setToolTip(tr("Select current currency"));
-    currs = db->get_scod_list();
+//    currs = db->get_scod_list();
     ui->mainToolBar->addWidget(curr);
     connect(curr, SIGNAL(currentIndexChanged(int)), SLOT(update_curr()));
 
@@ -241,7 +241,7 @@ void MyCash::opendb(QString dbname)
     }
     else {
         var.database_Open();
-        check_plan_oper();
+//        check_plan_oper();
         db = new Database;
     }
 
@@ -339,10 +339,10 @@ void MyCash::aboutProgram()
 void MyCash::update_curr()
 {
     var.setCurrency(curr->value());
-    var.setSymbol(currs[var.Currency()]);
+    var.setSymbol(db->scod_list[var.Currency()]);
 
-    QMap<QString,double> list = db->get_currency_list();
-    var.setKurs(list[var.Symbol()]);
+//    QMap<QString,double> list = db->get_currency_list();
+    var.setKurs(db->currency_list[var.Symbol()]);
 
     emit update_currency();
 }

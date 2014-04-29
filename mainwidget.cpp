@@ -1,13 +1,20 @@
 #include "mainwidget.h"
+#include "widgets/mydateedit.h"
 #include "ui_mainwidget.h"
 
 bool MainWidgetModel::get_operations(int plan)
 {
     QSqlQuery q;
-    QDate curr = QDate::currentDate();
+//    QDate curr = QDate::currentDate();
+    QDate cd(QDate::currentDate().year(), QDate::currentDate().month(), 1);
     QString query;
+//    QString cds = cd.value();
 
-    query = QString("SELECT count(id) FROM operation WHERE dt >= '01-%1-%2' AND plan_id = %3").arg(curr.month()).arg(curr.year()).arg(plan);
+//    cd.setDate(curr.year(), curr.month(), 1);
+
+    query = QString("SELECT count(id) FROM oper WHERE dt >= '%1' AND plan_id = %2")
+            .arg(cd.toString("yyyy-MM-dd"))
+            .arg(plan);
 //    qDebug() << query;
     if (!q.exec(query)) {
         qDebug() << q.lastError().text();
@@ -23,6 +30,8 @@ void MainWidgetModel::fill_model()
 {
     QDate curr = QDate::currentDate();
     QList<operation_data>::iterator i;
+    QList<account_summ>::iterator j;
+    account_summ a;
     operation_data data;
     int row = 0;
     int stat = actual;
@@ -58,7 +67,9 @@ void MainWidgetModel::fill_model()
         setData(index(row,month), data.month);
         setData(index(row,year),  data.year);
         setData(index(row,column_from),  accounts[data.from.account()]);
-        setData(index(row,column_to),    accounts[data.to.account()]);
+        j = data.to.begin();
+        a = *j;
+        setData(index(row,column_to),    accounts[a.account()]);
         setData(index(row,summ),  default_locale->toString(data.from.summ(),'f',2));
         if (stat == actual)
             setData(index(row,status), tr("Actual"));
@@ -161,9 +172,6 @@ MainWidget::MainWidget(QWidget *parent) :
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
-    ui->treeView->setAlternatingRowColors(true);
-    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->treeView->header()->setResizeMode(model->day, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(model->month, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(model->year, QHeaderView::ResizeToContents);

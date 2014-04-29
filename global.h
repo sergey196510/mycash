@@ -117,8 +117,8 @@ struct operation_data {
     int agent;
     double kurs;
     account_summ from;
-    account_summ to;
-    account_summ to2;
+    QList<account_summ> to;
+//    account_summ to2;
 //    MyCurrency summ_from;
 //    MyCurrency summ_to;
 //    MyCurrency summ_to2;

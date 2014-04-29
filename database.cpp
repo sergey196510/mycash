@@ -76,6 +76,7 @@ QMap<QString,double> Database::get_opersummbyaccount_list(int top, int m1, int y
     QMap<QString,double> list;
     QSqlQuery q1,q2;
     int m2,y2;
+    QDate bd, ld;
 
     if (m1 == 12) {
         m2 = 1;
@@ -86,12 +87,13 @@ QMap<QString,double> Database::get_opersummbyaccount_list(int top, int m1, int y
         y2 = y1;
     }
 
-    QString query = QString("SELECT id FROM oper WHERE dt >= '%1-%L2-01' AND dt < '%3-%L4-01'")
-            .arg(y1)
-            .arg(m1,2,10,'0')
-            .arg(y2)
-            .arg(m2,2,10,'0');
-    qDebug() << query;
+    bd.setDate(y1, m1, 1);
+    ld.setDate(y2, m2, 1);
+
+    QString query = QString("SELECT id FROM oper WHERE dt >= '%1' AND dt < '%2'")
+            .arg(bd.toString("yyyy-MM-dd"))
+            .arg(ld.toString("yyyy-MM-dd"));
+//    qDebug() << query;
 
     if (!q1.exec(query)) {
         qDebug() << q1.lastError().text();
@@ -419,6 +421,7 @@ bool Database::save_operation(operation_data &data)
 {
     QSqlQuery q;
     int oper_id;
+    QList<account_summ>::iterator i;
 
     q.exec("BEGIN TRANSACTION");
 
@@ -430,9 +433,12 @@ bool Database::save_operation(operation_data &data)
         q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (new_account_oper("account_oper", oper_id, data.to, direction_to) == false) {
-        q.exec("ROLLBACK TRANSACTION");
-        return false;
+    for (i = data.to.begin(); i != data.to.end(); i++) {
+        account_summ d = *i;
+        if (new_account_oper("account_oper", oper_id, d, direction_to) == false) {
+            q.exec("ROLLBACK TRANSACTION");
+            return false;
+        }
     }
     double val = data.from.summ();
     data.from.set_summ(val*-1);
@@ -440,20 +446,23 @@ bool Database::save_operation(operation_data &data)
         q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (change_account_balance(data.to) == false) {
-        q.exec("ROLLBACK TRANSACTION");
-        return false;
-    }
-    if (data.to2.summ() > 0) {
-        if (new_account_oper("account_oper", oper_id, data.to2, direction_to) == false) {
-            q.exec("ROLLBACK TRANSACTION");
-            return false;
-        }
-        if (change_account_balance(data.to2) == false) {
+    for (i = data.to.begin(); i != data.to.end(); i++) {
+        account_summ d = *i;
+        if (change_account_balance(d) == false) {
             q.exec("ROLLBACK TRANSACTION");
             return false;
         }
     }
+//    if (data.to2.summ() > 0) {
+//        if (new_account_oper("account_oper", oper_id, data.to2, direction_to) == false) {
+//            q.exec("ROLLBACK TRANSACTION");
+//            return false;
+//        }
+//        if (change_account_balance(data.to2) == false) {
+//            q.exec("ROLLBACK TRANSACTION");
+//            return false;
+//        }
+//    }
 
     q.exec("COMMIT TRANSACTION");
     return true;
@@ -486,17 +495,22 @@ operation_data Database::get_operation(int id)
     }
 
     list = get_account_oper_list(q.value(0).toInt(), 2);
-    i = list.begin();
-    if (i != list.end()) {
-        data.to.set_account(i.key());
-        data.to.set_summ(i.value());
+    for (i = list.begin(); i != list.end(); i++) {
+        if (i != list.end()) {
+            account_summ d;
+                d.set_account(i.key());
+            d.set_summ(i.value());
+            data.to.append(d);
+//        data.to.set_account(i.key());
+//        data.to.set_summ(i.value());
+        }
     }
 
-    i++;
-    if (i != list.end()) {
-        data.to2.set_account(i.key());
-        data.to2.set_summ(i.value());
-    }
+//    i++;
+//    if (i != list.end()) {
+//        data.to2.set_account(i.key());
+//        data.to2.set_summ(i.value());
+//    }
 
     return data;
 }
@@ -505,6 +519,7 @@ int Database::new_plan_oper(operation_data &data)
 {
     QSqlQuery q;
     int id = 0;
+    QList<account_summ>::iterator i;
 
     q.exec("BEGIN");
 
@@ -533,18 +548,21 @@ int Database::new_plan_oper(operation_data &data)
             q.exec("ROLLBACK");
             return 0;
         }
-        if (!new_account_oper("plan_account_oper", id, data.to, direction_to)) {
+        for (i = data.to.begin(); i != data.to.end(); i++) {
+            account_summ d = *i;
+        if (!new_account_oper("plan_account_oper", id, d, direction_to)) {
             qDebug() << q.lastError().text();
             q.exec("ROLLBACK");
             return 0;
         }
-        if (data.to2.summ() > 0) {
-            if (!new_account_oper("plan_account_oper", id, data.to2, direction_to)) {
-                qDebug() << q.lastError().text();
-                q.exec("ROLLBACK");
-                return 0;
-            }
         }
+//        if (data.to2.summ() > 0) {
+//            if (!new_account_oper("plan_account_oper", id, data.to2, direction_to)) {
+//                qDebug() << q.lastError().text();
+//                q.exec("ROLLBACK");
+//                return 0;
+//            }
+//        }
     }
 
     q.exec("COMMIT");
@@ -617,8 +635,12 @@ operation_data Database::get_plan_oper_data(int id)
         list = get_plan_account_oper_list(q.value(0).toInt(), 2);
         i = list.begin();
         if (i != list.end()) {
-            data.to.set_account(i.key());
-            data.to.set_summ(i.value());
+            account_summ d;
+            d.set_account(i.key());
+            d.set_summ(i.value());
+            data.to.append(d);
+//            data.to.set_account(i.key());
+//            data.to.set_summ(i.value());
         }
     }
 

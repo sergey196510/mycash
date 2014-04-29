@@ -15,6 +15,7 @@ ListPlanOperModel::ListPlanOperModel(QObject *parent) :
 ListPlanOperModel::~ListPlanOperModel()
 {
     delete db;
+    delete var;
 }
 
 bool ListPlanOperModel::find_operations(int plan)
@@ -22,8 +23,14 @@ bool ListPlanOperModel::find_operations(int plan)
     QSqlQuery q;
     QDate curr = QDate::currentDate();
     QString query;
+    QDate dt;
 
-    query = QString("SELECT count(id) FROM operation WHERE dt >= '01-%1-%2' AND plan_id = %3").arg(curr.month()).arg(curr.year()).arg(plan);
+    dt.setDate(curr.year(), curr.month(), 1);
+//    qDebug() << dt.toString("yyyy-MM-dd");
+
+    query = QString("SELECT count(id) FROM oper WHERE dt >= '%1' AND plan_id = %2")
+            .arg(dt.toString("yyyy-MM-dd"))
+            .arg(plan);
 //    qDebug() << query;
     if (!q.exec(query)) {
         qDebug() << q.lastError().text();
@@ -171,13 +178,6 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
-//    ui->treeView->resizeColumnsToContents();
-//    ui->treeView->resizeRowsToContents();
-    ui->treeView->setAlternatingRowColors(true);
-//    ui->treeView->horizontalHeader()->setStretchLastSection(true);
-    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
-//    ui->treeView->setShowGrid(false);
 
     tran = new QAction(tr("New plan operation"), this);
     comm = new QAction(tr("Commit this operation"), this);

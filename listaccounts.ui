@@ -46,10 +46,17 @@
     </layout>
    </item>
    <item>
-    <widget class="QTreeView" name="treeView"/>
+    <widget class="myTreeView" name="treeView"/>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>myTreeView</class>
+   <extends>QTreeView</extends>
+   <header location="global">mytreeview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

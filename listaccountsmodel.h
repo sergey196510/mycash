@@ -24,9 +24,9 @@ private:
 //    QModelIndex curr_index;
     Database *db;
     QStringList header_data;
-    QMap<int,QString> list;
+//    QMap<int,QString> list;
     QMap<int,QModelIndex> list_index;
-    QMap<QString,double> list_curs;
+//    QMap<QString,double> list_curs;
     Globals var;
 
 public:

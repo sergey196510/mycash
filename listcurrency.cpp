@@ -66,13 +66,6 @@ ListCurrency::ListCurrency(QWidget *parent) :
         ui->treeView->hideColumn(0);
     }
 
-//    ui->treeView->resizeRowsToContents();
-//    ui->treeView->resizeColumnsToContents();
-    ui->treeView->setAlternatingRowColors(true);
-//    ui->treeView->horizontalHeader()->setStretchLastSection(true);
-    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
-//    ui->treeView->setShowGrid(false);
     ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);

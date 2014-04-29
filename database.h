@@ -9,8 +9,6 @@ class Database
 //    bool opened;
 
 private:
-    QMap<QString,double> currency_list;
-    QMap<int,QString> scod_list;
     Globals var;
 
 public:
@@ -40,6 +38,8 @@ public:
     int     new_plan_oper(operation_data &data);
     operation_data get_operation(int);
     operation_data get_plan_oper_data(int);
+    QMap<int,QString> scod_list;
+    QMap<QString,double> currency_list;
 };
 
 #endif // DATABASE_H

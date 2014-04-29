@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>786</width>
-        <height>530</height>
+        <width>794</width>
+        <height>538</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -135,7 +135,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <widget class="QTreeView" name="treeView"/>
+               <widget class="myTreeView" name="treeView"/>
               </item>
              </layout>
             </item>
@@ -150,6 +150,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>myTreeView</class>
+   <extends>QTreeView</extends>
+   <header location="global">mytreeview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
