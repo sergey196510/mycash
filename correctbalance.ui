@@ -23,9 +23,6 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="AccountComboBox" name="comboBox"/>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="layoutDirection">
@@ -48,6 +45,9 @@
      </item>
      <item row="0" column="1">
       <widget class="currencyEdit" name="summEdit"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="AccountOper2" name="lineEdit"/>
      </item>
     </layout>
    </item>
@@ -104,14 +104,14 @@
    <header location="global">widgets/okpushbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>AccountComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">widgets/accountcombobox.h</header>
+   <class>CancelPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widgets/cancelpushbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>MyDateEdit</class>
-   <extends>QDateEdit</extends>
-   <header location="global">widgets/mydateedit.h</header>
+   <class>AccountOper2</class>
+   <extends>QLineEdit</extends>
+   <header location="global">accountoper2.h</header>
   </customwidget>
   <customwidget>
    <class>currencyEdit</class>
@@ -119,14 +119,13 @@
    <header location="global">widgets/currencyedit.h</header>
   </customwidget>
   <customwidget>
-   <class>CancelPushButton</class>
-   <extends>QPushButton</extends>
-   <header location="global">widgets/cancelpushbutton.h</header>
+   <class>MyDateEdit</class>
+   <extends>QDateEdit</extends>
+   <header location="global">widgets/mydateedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>summEdit</tabstop>
-  <tabstop>comboBox</tabstop>
   <tabstop>dateEdit</tabstop>
   <tabstop>okButton</tabstop>
   <tabstop>cancelButton</tabstop>

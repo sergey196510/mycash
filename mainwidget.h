@@ -49,7 +49,7 @@ private:
     Globals var;
 
 private slots:
-    bool get_operations(int);
+//    bool get_operations(int);
 };
 
 class MainWidget : public QWidget

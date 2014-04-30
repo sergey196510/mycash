@@ -38,6 +38,7 @@ public:
     int     new_plan_oper(operation_data &data);
     operation_data get_operation(int);
     operation_data get_plan_oper_data(int);
+    bool find_oper_by_plan(int plan);
     QMap<int,QString> scod_list;
     QMap<QString,double> currency_list;
 };

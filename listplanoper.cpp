@@ -18,6 +18,7 @@ ListPlanOperModel::~ListPlanOperModel()
     delete var;
 }
 
+/*************
 bool ListPlanOperModel::find_operations(int plan)
 {
     QSqlQuery q;
@@ -41,6 +42,7 @@ bool ListPlanOperModel::find_operations(int plan)
 
     return true;
 }
+***************/
 
 void ListPlanOperModel::fill_model()
 {
@@ -72,7 +74,7 @@ void ListPlanOperModel::fill_model()
 
         insertRow(row);
 
-        if (find_operations(data.id) == true) {
+        if (db->find_oper_by_plan(data.id) == true) {
             int i;
             for (i = 0; i < 8; i++)
                 setData(index(row,i), QColor(Qt::gray), Qt::TextColorRole);

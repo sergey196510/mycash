@@ -646,3 +646,27 @@ operation_data Database::get_plan_oper_data(int id)
 
     return data;
 }
+
+bool Database::find_oper_by_plan(int plan)
+{
+        QSqlQuery q;
+        QDate curr = QDate::currentDate();
+        QString query;
+        QDate dt;
+
+        dt.setDate(curr.year(), curr.month(), 1);
+    //    qDebug() << dt.toString("yyyy-MM-dd");
+
+        query = QString("SELECT count(id) FROM oper WHERE dt >= '%1' AND plan_id = %2")
+                .arg(dt.toString("yyyy-MM-dd"))
+                .arg(plan);
+    //    qDebug() << query;
+        if (!q.exec(query)) {
+            qDebug() << q.lastError().text();
+            return false;
+        }
+        if (q.next() && q.value(0).toInt() == 0)
+            return false;
+
+        return true;
+}

@@ -7,7 +7,7 @@ CorrectBalance::CorrectBalance(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->comboBox->setValue(var.CorrectAccount());
+    ui->lineEdit->setValue(var.CorrectAccount());
 
 //    ui->okButton->setIcon(QPixmap(":icons/accept.png"));
 //    ui->cancelButton->setIcon(QPixmap(":icons/block_32.png"));
@@ -15,7 +15,7 @@ CorrectBalance::CorrectBalance(QWidget *parent) :
 
 //    ui->doubleSpinBox->setRange(-1000000, 1000000);
 
-    connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_ok()));
+    connect(ui->lineEdit, SIGNAL(changed_value()), SLOT(check_ok()));
     connect(ui->summEdit, SIGNAL(textChanged(QString)), SLOT(check_ok()));
     connect(ui->okButton, SIGNAL(clicked()), SLOT(accept()));
     connect(ui->cancelButton, SIGNAL(clicked()), SLOT(reject()));
@@ -28,7 +28,7 @@ CorrectBalance::~CorrectBalance()
 
 void CorrectBalance::check_ok()
 {
-    if (ui->summEdit == 0 || ui->comboBox->value() == 0)
+    if (ui->summEdit == 0 || ui->lineEdit->value() == 0)
         ui->okButton->setEnabled(false);
     else
         ui->okButton->setEnabled(true);
@@ -36,7 +36,7 @@ void CorrectBalance::check_ok()
 
 void CorrectBalance::setAccount(int value)
 {
-    ui->comboBox->setValue(value);
+    ui->lineEdit->setValue(value);
 }
 
 void CorrectBalance::setBalance(double value)
@@ -53,7 +53,7 @@ double CorrectBalance::balance()
 
 int CorrectBalance::account()
 {
-    return ui->comboBox->value();
+    return ui->lineEdit->value();
 }
 
 QString CorrectBalance::date()

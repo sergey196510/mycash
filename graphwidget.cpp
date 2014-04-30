@@ -5,7 +5,7 @@ graphWidget::graphWidget(QWidget *parent) :
 {
     QSqlQuery q;
     QDate current = QDate::currentDate();
-    QDate first(1, current.month(), current.year());
+    QDate first(current.year(), current.month(), 1);
     QMap<QString,double>::iterator i;
 
     summ = 0;

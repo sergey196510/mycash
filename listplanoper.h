@@ -34,7 +34,7 @@ private:
     Database *db;
 
 private slots:
-    bool find_operations(int);
+//    bool find_operations(int);
 };
 
 class ListPlanOper : public QWidget
