@@ -49,22 +49,15 @@ void DebetCreditReport::recalc_report()
 
 void DebetCreditReport::calc_report(int month, int year)
 {
+    QMap<QString,double> list;
+    QMap<QString,double>::iterator i;
     double summ;
-//    int day;
-//    QDate localdate = QDate::currentDate();
 
     ui->textEdit->clear();
-
-//    month = localdate.month();
-//    day = localdate.day();
-//    year = localdate.year();
-
     ui->textEdit->append("Dohodi:");
-    QMap<QString,double> list = db->get_opersummbyaccount_list(3,month,year);
-    QMap<QString,double>::iterator i;
 
     summ = 0;
-    list = db->get_opersummbyaccount_list(3,month,year);
+    list = db->get_opersummbyaccount_list(Debet_type, month, year);
     for (i = list.begin(); i != list.end(); i++) {
         ui->textEdit->append(i.key() + ": " + default_locale->toString(i.value(),'f',2));
         summ += i.value();
@@ -75,7 +68,7 @@ void DebetCreditReport::calc_report(int month, int year)
     ui->textEdit->append("Rashodi:");
 
     summ = 0;
-    list = db->get_opersummbyaccount_list(4,month,year);
+    list = db->get_opersummbyaccount_list(Credit_type, month, year);
     for (i = list.begin(); i != list.end(); i++) {
         ui->textEdit->append(i.key() + ": " + default_locale->toString(i.value(),'f',2));
         summ += i.value();

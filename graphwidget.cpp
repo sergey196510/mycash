@@ -12,7 +12,7 @@ graphWidget::graphWidget(QWidget *parent) :
 
     db = new Database;
 
-    list2 = db->get_opersummbyaccount_list(4,current.month(),current.year());
+    list2 = db->get_opersummbyaccount_list(Credit_type, current.month(), current.year());
     for (i = list2.begin(); i != list2.end(); i++) {
         summ += i.value();
     }
