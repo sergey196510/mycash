@@ -46,7 +46,8 @@ SOURCES += \
     selectaccount.cpp \
     settings.cpp \
     summaccount.cpp \
-    mytreeview.cpp
+    mytreeview.cpp \
+    listbudget.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -81,7 +82,8 @@ HEADERS  += \
     selectaccount.h \
     settings.h \
     summaccount.h \
-    mytreeview.h
+    mytreeview.h \
+    listbudget.h
 
 FORMS    += \
     debetcreditreport.ui \
@@ -99,7 +101,8 @@ FORMS    += \
     opendatabase.ui \
     correctbalance.ui \
     selectaccount.ui \
-    settings.ui
+    settings.ui \
+    listbudget.ui
 
 RESOURCES += \
     icons.qrc

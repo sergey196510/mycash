@@ -2,32 +2,6 @@
 #include "widgets/mydateedit.h"
 #include "ui_mainwidget.h"
 
-/********************
-bool MainWidgetModel::get_operations(int plan)
-{
-    QSqlQuery q;
-//    QDate curr = QDate::currentDate();
-    QDate cd(QDate::currentDate().year(), QDate::currentDate().month(), 1);
-    QString query;
-//    QString cds = cd.value();
-
-//    cd.setDate(curr.year(), curr.month(), 1);
-
-    query = QString("SELECT count(id) FROM oper WHERE dt >= '%1' AND plan_id = %2")
-            .arg(cd.toString("yyyy-MM-dd"))
-            .arg(plan);
-//    qDebug() << query;
-    if (!q.exec(query)) {
-        qDebug() << q.lastError().text();
-        return false;
-    }
-    if (q.next() && q.value(0).toInt() == 0)
-        return false;
-
-    return true;
-}
-*******************/
-
 void MainWidgetModel::fill_model()
 {
     QDate curr = QDate::currentDate();
@@ -52,7 +26,7 @@ void MainWidgetModel::fill_model()
         data = *i;
         if (data.month == 0 && data.year == 0) {
             int diff = data.day - curr.day();
-            if (db->find_oper_by_plan(data.id) == true) {
+            if (db->find_oper_by_plan(data.id, curr.month(), curr.year()) == true) {
                 stat = committed;
                 continue;
             }

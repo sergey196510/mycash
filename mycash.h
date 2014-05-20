@@ -48,6 +48,7 @@ private slots:
     void list_operations();
     void list_agents();
     void list_plan_oper();
+    void list_budget();
     void report1();
     void report2();
     void update_curr();

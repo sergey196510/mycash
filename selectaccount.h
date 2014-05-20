@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include "listaccountsmodel.h"
+#include "editaccount.h"
+#include "database.h"
 
 namespace Ui {
 class SelectAccount;
@@ -18,6 +20,10 @@ public:
 
 private:
     Ui::SelectAccount *ui;
+    Database *db;
+
+private slots:
+    void new_account();
 
 public slots:
     void setValue(int);

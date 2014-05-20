@@ -172,9 +172,10 @@ void EditOperation::setdata(operation_data &d)
     ui->monBox->setCurrentIndex(d.month);
     ui->yearBox->setValue(d.year);
     ui->fromWidget->setValue(d.from.account());
-    i = d.to.begin();
-    if (i != d.to.end())
+    if (!d.to.empty()) {
+        i = d.to.begin();
         a = *i;
+    }
     ui->toWidget->setValue(a.account());
 //    ui->toWidget->setValue(d.to.account());
 

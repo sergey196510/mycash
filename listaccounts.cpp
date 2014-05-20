@@ -37,16 +37,16 @@ ListAccounts::ListAccounts(QWidget *parent) :
     ui->treeView->setFont(fnt);
 
     nacct = new QAction(tr("New"), this);
-//    nacct->setShortcut(tr("Alt+N"));
+    nacct->setShortcut(tr("Alt+N"));
     nacct->setToolTip("New account");
     chacc = new QAction(tr("Change"), this);
-//    chacc->setShortcut(tr("Alt+E"));
+    chacc->setShortcut(tr("Alt+E"));
     chacc->setToolTip("Change account");
     cacct = new QAction(tr("Correct"), this);
-//    cacct->setShortcut(tr("Alt+C"));
+    cacct->setShortcut(tr("Alt+C"));
     cacct->setToolTip("Correct balance");
     dacct = new QAction(tr("Delete"), this);
-//    dacct->setShortcut(tr("Alt+D"));
+    dacct->setShortcut(tr("Alt+D"));
     dacct->setToolTip("Delete this account");
     analis = new QAction(tr("Analis"), this);
     analis->setToolTip(tr("Analis linear approximate"));
@@ -141,9 +141,11 @@ void ListAccounts::new_account()
     ea->setData(data);
 
     if (ea->exec() == QDialog::Accepted) {
-        Account_Data parent = db->get_account_data(id);
         data = ea->data();
+        Account_Data parent = db->get_account_data(data.parent);
         QSqlQuery q;
+
+//        qDebug() << data.top << parent.top;
 
         q.exec("BEGIN");
 

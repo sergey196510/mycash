@@ -1,11 +1,11 @@
 #include "listplanoper.h"
 #include "ui_listplanoper.h"
 
-ListPlanOperModel::ListPlanOperModel(QObject *parent) :
+ListPlanOperModel::ListPlanOperModel(Database *db, QObject *parent) :
     QStandardItemModel(parent)
 {
-    db = new Database;
-    header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Description");
+//    db = new Database;
+    header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Auto") << tr("Description");
     list = db->get_accounts_list();
     var = new Globals;
 //    currency = db->get_currency_list();
@@ -14,37 +14,11 @@ ListPlanOperModel::ListPlanOperModel(QObject *parent) :
 
 ListPlanOperModel::~ListPlanOperModel()
 {
-    delete db;
+//    delete db;
     delete var;
 }
 
-/*************
-bool ListPlanOperModel::find_operations(int plan)
-{
-    QSqlQuery q;
-    QDate curr = QDate::currentDate();
-    QString query;
-    QDate dt;
-
-    dt.setDate(curr.year(), curr.month(), 1);
-//    qDebug() << dt.toString("yyyy-MM-dd");
-
-    query = QString("SELECT count(id) FROM oper WHERE dt >= '%1' AND plan_id = %2")
-            .arg(dt.toString("yyyy-MM-dd"))
-            .arg(plan);
-//    qDebug() << query;
-    if (!q.exec(query)) {
-        qDebug() << q.lastError().text();
-        return false;
-    }
-    if (q.next() && q.value(0).toInt() == 0)
-        return false;
-
-    return true;
-}
-***************/
-
-void ListPlanOperModel::fill_model()
+void ListPlanOperModel::fill_model(Database *db)
 {
 //    QSqlQuery q;
     QMap<int,double> oper;
@@ -59,22 +33,14 @@ void ListPlanOperModel::fill_model()
     if (!var->database_Opened())
         return;
 
-//    q.prepare("SELECT id,day,month,year,descr FROM plan_oper ORDER BY day,month,year");
-//    if (!q.exec()) {
-//        qDebug() << q.lastError().text();
-//        return;
-//    }
-
-    insertColumns(0,8);
+    insertColumns(0,9);
 
     for (j = po.begin(); j != po.end(); j++) {
-//    while (q.next()) {
         operation_data data = *j;
-//        int id = data.id;
 
         insertRow(row);
 
-        if (db->find_oper_by_plan(data.id) == true) {
+        if (db->find_oper_by_plan(data.id, curr.month(), curr.year()) == true) {
             int i;
             for (i = 0; i < 8; i++)
                 setData(index(row,i), QColor(Qt::gray), Qt::TextColorRole);
@@ -104,9 +70,7 @@ void ListPlanOperModel::fill_model()
             setData(index(row,5), list[i.key()]);
             setData(index(row,6), default_locale->toString(i.value()/var->Kurs(),'f',2));
         }
-        //        setData(index(row,5), list[q.value(5).toInt()]);
-//        setData(index(row,6), default_locale->toString(q.value(6).toDouble()/var->Kurs(),'f',2));
-        setData(index(row,7), data.descr);
+        setData(index(row,8), data.descr);
 
         row++;
     }
@@ -114,7 +78,6 @@ void ListPlanOperModel::fill_model()
 
 QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
 {
-//    QDate curr = QDate::currentDate();
     QVariant value = QStandardItemModel::data(index, role);
 
     switch (role) {
@@ -122,12 +85,6 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
         if (index.column() == 2 || index.column() == 3) {
             return (value.toInt() == 0) ? "" : value;
         }
-//        if (index.column() == 4 || index.column() == 5) {
-//            return list[value.toInt()];
-//        }
-//        else if (index.column() == 6) {
-//            return default_locale->toString(value.toDouble()/var->Kurs(),'f',2);
-//        }
         else
             return value;
 
@@ -141,12 +98,6 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
             if (index.column() == 6)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
-//        case Qt::TextColorRole:
-//	    if (record(index.row()).value(0).toInt() == current_currency) {
-//                return QVariant(QColor(Qt::red));
-//            }
-//            else
-//                return value;
     }
 
     return value;
@@ -174,8 +125,8 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
 //    query = "SELECT id,day,month,year,acc_from,acc_to,summ,descr FROM plan_oper ORDER BY day,month,year";
     db = new Database;
 
-    model = new ListPlanOperModel;
-    model->fill_model();
+    model = new ListPlanOperModel(db);
+    model->fill_model(db);
 //    model->setQuery(query);
 
     ui->treeView->setModel(model);
@@ -194,7 +145,7 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->treeView->addActions(acts);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    for (int i = 1; i < 7; i++)
+    for (int i = 1; i < 8; i++)
         ui->treeView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
 
     connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
@@ -261,8 +212,9 @@ void ListPlanOper::commit_oper()
         return;
 
     pod = eo->data();
-    pod.plan_id = id;
+//    pod.plan_id = id;
     db->save_operation(pod);
+    db->new_mon_oper(id);
 }
 
 void ListPlanOper::del_oper()
@@ -293,7 +245,7 @@ void ListPlanOper::check_selected()
 void ListPlanOper::reload_model()
 {
 //    model->setQuery(query);
-    model->fill_model();
+    model->fill_model(db);
     ui->treeView->hideColumn(0);
     for (int i = 1; i < 7; i++)
         ui->treeView->header()->setResizeMode(i, QHeaderView::ResizeToContents);

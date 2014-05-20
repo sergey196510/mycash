@@ -4,14 +4,11 @@ accountsView::accountsView(QWidget *parent) :
     QTreeView(parent)
 {
     model = new ListAccountsModel;
-    index_list = model->fill_model();
     setModel(model);
-    expandAll();
-    setAlternatingRowColors(true);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::SingleSelection);
-    for (int i = 1; i < 6; i++)
-        hideColumn(i);
+    reload();
+//    setAlternatingRowColors(true);
+//    setSelectionBehavior(QAbstractItemView::SelectRows);
+//    setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
 int accountsView::value()
@@ -44,4 +41,12 @@ void accountsView::setValue(int idx)
         sel->select(index, QItemSelectionModel::Select);
         setCurrentIndex(index);
     }
+}
+
+void accountsView::reload()
+{
+    model->fill_model();
+    expandAll();
+    for (int i = 1; i < 6; i++)
+        hideColumn(i);
 }

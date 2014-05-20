@@ -8,6 +8,7 @@
 #include "listoperations.h"
 #include "listagents.h"
 #include "listplanoper.h"
+#include "listbudget.h"
 #include "mainwidget.h"
 #include "graphwidget.h"
 #include "global.h"
@@ -80,6 +81,7 @@ void MyCash::setconnects()
     connect(ui->action_ListAgents, SIGNAL(triggered()), SLOT(list_agents()));
     connect(ui->action_ListCurrencies, SIGNAL(triggered()), SLOT(list_currency()));
     connect(ui->action_Plan_Operations, SIGNAL(triggered()), SLOT(list_plan_oper()));
+    connect(ui->actionBudget, SIGNAL(triggered()), SLOT(list_budget()));
 
     connect(ui->actionReport_1, SIGNAL(triggered()), SLOT(report1()));
     connect(ui->actionReport_2, SIGNAL(triggered()), SLOT(report2()));
@@ -97,6 +99,7 @@ void MyCash::setconnects()
     ui->mainToolBar->addAction(ui->action_ListOperations);
     ui->mainToolBar->addAction(ui->action_Plan_Operations);
     ui->mainToolBar->addAction(ui->action_ListAgents);
+    ui->mainToolBar->addAction(ui->actionBudget);
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addAction(ui->action_Settings);
     ui->mainToolBar->addAction(ui->action_Quit);
@@ -324,6 +327,13 @@ void MyCash::list_plan_oper()
     setCentralWidget(po);
 }
 
+void MyCash::list_budget()
+{
+    ListBudget *lb = new ListBudget;
+
+    setCentralWidget(lb);
+}
+
 void MyCash::settings()
 {
     Settings *st = new Settings(this);
@@ -333,7 +343,7 @@ void MyCash::settings()
 
 void MyCash::aboutProgram()
 {
-    QMessageBox::about(this, tr("MyCash"), tr("MyCash ver ") + var.Version());
+    QMessageBox::about(this, tr("MyCash"), tr("MyCash ver ") + var.Version() + " Build: " + QLibraryInfo::buildDate().toString("dd-MM-yyyy") + " " + QLibraryInfo::licensedProducts());
 }
 
 void MyCash::update_curr()

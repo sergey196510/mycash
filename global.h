@@ -111,24 +111,16 @@ struct Account_Data {
 struct operation_data {
     int id;
     int day,month,year;
-//    int from;
-//    int to;
-//    int to2;
     int agent;
     double kurs;
     account_summ from;
     QList<account_summ> to;
-//    account_summ to2;
-//    MyCurrency summ_from;
-//    MyCurrency summ_to;
-//    MyCurrency summ_to2;
-    int plan_id;
+//    int plan_id;
     QString date;
     QString descr;
     operation_data() {
         id = day = month = year = 0;
-        agent = plan_id = 0;
-//        summ_to2 = 0;
+        agent = 0;
         date = "";
         descr = "";
     }

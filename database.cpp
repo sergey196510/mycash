@@ -295,14 +295,14 @@ int Database::new_operation(operation_data &data)
 {
     QSqlQuery query;
 
-    query.prepare("INSERT INTO oper(dt, descr, plan_id) VALUES(:dt, :descr, :plan_id)");
+    query.prepare("INSERT INTO oper(dt, descr) VALUES(:dt, :descr)");
 //    query.bindValue(":from", data.from.account());
 //    query.bindValue(":to", data.to.account());
 //    query.bindValue(":agent", data.agent);
 //    query.bindValue(":summ", data.from.summ());
     query.bindValue(":dt", data.date);
     query.bindValue(":descr", data.descr);
-    query.bindValue(":plan_id", data.plan_id);
+//    query.bindValue(":plan_id", data.plan_id);
     if (!query.exec())
         return 0;
 
@@ -323,7 +323,11 @@ bool Database::new_account_oper(QString table, const int o_id, account_summ &acc
 //    double summ = delta * flag;
 
     str = QString("INSERT INTO %1(a_id, o_id, summ, direction) VALUES(%2, %3, %4, %5)")
-            .arg(table).arg(acc.account()).arg(o_id).arg(acc.summ()).arg(direction);
+            .arg(table)
+            .arg(acc.account())
+            .arg(o_id)
+            .arg(acc.summ())
+            .arg(direction);
     qDebug() << str;
     if (!q.exec(str)) {
         qDebug() << q.lastError().text();
@@ -475,17 +479,16 @@ operation_data Database::get_operation(int id)
     QMap<int,double> list;
     QMap<int,double>::iterator i;
 
-    q.prepare("SELECT id,agent,dt,descr,plan_id FROM oper WHERE id = :id");
+    q.prepare("SELECT id,dt,descr FROM oper WHERE id = :id");
     q.bindValue(":id", id);
-    if (!q.exec()) {
+    if (!q.exec() || !q.next()) {
         return data;
     }
-    if (q.next()) {
-        data.agent =     q.value(1).toInt();
-        data.date =      q.value(2).toString();
-        data.descr =     q.value(3).toString();
-        data.plan_id =   q.value(4).toInt();
-    }
+
+//    data.agent =     q.value(1).toInt();
+    data.date =      q.value(2).toString();
+    data.descr =     q.value(3).toString();
+//    data.plan_id =   q.value(4).toInt();
 
     list = get_account_oper_list(q.value(0).toInt(), 1);
     i = list.begin();
@@ -520,14 +523,16 @@ int Database::new_plan_oper(operation_data &data)
     QSqlQuery q;
     int id = 0;
     QList<account_summ>::iterator i;
+    QDate curr = QDate::currentDate();
 
     q.exec("BEGIN");
 
-    q.prepare("INSERT INTO plan_oper(day, month, year, descr) VALUES(:day, :month, :year, :descr)");
+    q.prepare("INSERT INTO plan_oper(day, month, year, descr, dt) VALUES(:day, :month, :year, :descr, :dt)");
     q.bindValue(":day", data.day);
     q.bindValue(":month", data.month);
     q.bindValue(":year", data.year);
     q.bindValue(":descr", data.descr);
+    q.bindValue(":dt", data.date);
     if (!q.exec()) {
         qDebug() << "Error Insert:" << q.lastError().text();
         q.exec("ROLLBACK");
@@ -543,30 +548,42 @@ int Database::new_plan_oper(operation_data &data)
 
     if (q.next()) {
         id = q.value(0).toInt();
-        if (!new_account_oper("plan_account_oper", id, data.from, direction_from)) {
+        if (!new_account_oper("plan_oper_acc", id, data.from, direction_from)) {
             qDebug() << q.lastError().text();
             q.exec("ROLLBACK");
             return 0;
         }
         for (i = data.to.begin(); i != data.to.end(); i++) {
             account_summ d = *i;
-        if (!new_account_oper("plan_account_oper", id, d, direction_to)) {
-            qDebug() << q.lastError().text();
-            q.exec("ROLLBACK");
-            return 0;
+            if (!new_account_oper("plan_oper_acc", id, d, direction_to)) {
+                qDebug() << q.lastError().text();
+                q.exec("ROLLBACK");
+                return 0;
+            }
         }
-        }
-//        if (data.to2.summ() > 0) {
-//            if (!new_account_oper("plan_account_oper", id, data.to2, direction_to)) {
-//                qDebug() << q.lastError().text();
-//                q.exec("ROLLBACK");
-//                return 0;
-//            }
-//        }
     }
 
     q.exec("COMMIT");
     return id;
+}
+
+bool Database::new_mon_oper(int p_id)
+{
+    QSqlQuery q;
+    QDate curr = QDate::currentDate();
+
+    q.prepare("INSERT INTO plan_oper_mon(mon, year, p_id, dt) VALUES(:mon, :year, :p_id, :dt)");
+    q.bindValue(":mon", curr.month());
+    q.bindValue(":year", curr.year());
+    q.bindValue(":p_id", p_id);
+    q.bindValue(":dt", curr.toString("yyyy-MM-dd"));
+    if (!q.exec()) {
+        qDebug() << q.lastError().text();
+        q.exec("ROLLBACK");
+        return false;
+    }
+
+    return true;
 }
 
 QList<operation_data> Database::get_plan_oper_list()
@@ -593,7 +610,7 @@ QMap<int,double> Database::get_plan_account_oper_list(int oper, int type)
     QMap<int,double> list;
     QSqlQuery q;
 
-    q.prepare("SELECT a_id,summ FROM plan_account_oper WHERE o_id = :oper AND direction = :type");
+    q.prepare("SELECT a_id,summ FROM plan_oper_acc WHERE o_id = :oper AND direction = :type");
     q.bindValue(":oper", oper);
     q.bindValue(":type", type);
     if (!q.exec()) {
@@ -626,39 +643,39 @@ operation_data Database::get_plan_oper_data(int id)
         data.month = q.value(2).toInt();
         data.year = q.value(3).toInt();
         data.descr = q.value(7).toString();
+
         list = get_plan_account_oper_list(q.value(0).toInt(), 1);
-        i = list.begin();
-        if (i != list.end()) {
+        if (!list.empty()) {
+            i = list.begin();
             data.from.set_account(i.key());
             data.from.set_summ(i.value());
         }
+
         list = get_plan_account_oper_list(q.value(0).toInt(), 2);
-        i = list.begin();
-        if (i != list.end()) {
+        for (i = list.begin(); i != list.end(); i++) {
             account_summ d;
             d.set_account(i.key());
             d.set_summ(i.value());
             data.to.append(d);
-//            data.to.set_account(i.key());
-//            data.to.set_summ(i.value());
         }
     }
 
     return data;
 }
 
-bool Database::find_oper_by_plan(int plan)
+bool Database::find_oper_by_plan(int plan, int mon, int year)
 {
         QSqlQuery q;
         QDate curr = QDate::currentDate();
         QString query;
-        QDate dt;
+//        QDate dt;
 
-        dt.setDate(curr.year(), curr.month(), 1);
+//        dt.setDate(curr.year(), curr.month(), 1);
     //    qDebug() << dt.toString("yyyy-MM-dd");
 
-        query = QString("SELECT count(id) FROM oper WHERE dt >= '%1' AND plan_id = %2")
-                .arg(dt.toString("yyyy-MM-dd"))
+        query = QString("SELECT count(id) FROM plan_oper_mon WHERE mon = '%1' AND year = %2 AND p_id = %3")
+                .arg(curr.month())
+                .arg(curr.year())
                 .arg(plan);
     //    qDebug() << query;
         if (!q.exec(query)) {

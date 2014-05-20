@@ -19,11 +19,13 @@ CREATE TABLE currency(id integer primary key autoincrement, name text, icod int,
 INSERT INTO "currency" VALUES(1,'Российский рубль',NULL,'RUB',1.0);
 INSERT INTO "currency" VALUES(2,'Доллар США',NULL,'USD',32.2676);
 INSERT INTO "currency" VALUES(3,'Евро',NULL,'EUR',43.7645);
-CREATE TABLE oper(id integer primary key autoincrement, dt date, descr text, plan_id int default 0);
+CREATE TABLE oper(id integer primary key autoincrement, dt date, descr text);
 CREATE TABLE account_oper(id integer primary key autoincrement, a_id int, o_id int, summ real, direction int default 0);
-CREATE TABLE plan_oper(id integer primary key autoincrement, day int, month int, year int, descr text);
-CREATE TABLE plan_account_oper(id integer primary key autoincrement, a_id int, o_id int, summ real, direction int default 0);
-DELETE FROM sqlite_sequence;
+CREATE TABLE plan_oper(id integer primary key autoincrement, day int, month int, year int, auto int default 0, dt date, descr text);
+CREATE TABLE plan_oper_acc(id integer primary key autoincrement, a_id int, o_id int, summ real, direction int default 0);
+CREATE TABLE plan_oper_mon(id integer primary key autoincrement, mon int, year int, p_id int, dt date);
+CREATE TABLE budget_plan(id integer primary key autoincrement, a_id int, summ real);
+CREATE TABLE budget_fact(id integer primary key autoincrement, year int, mon int, a_id int, summ real);
 INSERT INTO "sqlite_sequence" VALUES('account_type',5);
 INSERT INTO "sqlite_sequence" VALUES('account',7);
 INSERT INTO "sqlite_sequence" VALUES('currency',3);

@@ -17,13 +17,13 @@ class ListPlanOperModel : public QStandardItemModel
     Q_OBJECT
 
 public:
-    explicit ListPlanOperModel(QObject *parent = 0);
+    explicit ListPlanOperModel(Database *db, QObject *parent = 0);
     ~ListPlanOperModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 
 public slots:
-    void fill_model();
+    void fill_model(Database *db);
 
 private:
     Globals *var;
@@ -31,7 +31,7 @@ private:
     QMap<int,QString> list;
     QMap<QString,double> currency;
     QString symbol;
-    Database *db;
+//    Database *db;
 
 private slots:
 //    bool find_operations(int);

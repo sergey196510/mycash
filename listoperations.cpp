@@ -182,10 +182,25 @@ ListOperations::ListOperations(QWidget *parent) :
     model->fill_model(&fdate, &ldate, var.Account());
 
     debt = new QAction(tr("Debet"), this);
+    debt->setShortcut(tr("Alt+N"));
+    debt->setToolTip(tr("Debet operation"));
+
     cred = new QAction(tr("Credit"), this);
+    cred->setShortcut(tr("Alt+C"));
+    cred->setToolTip(tr("Credit operation"));
+
     tran = new QAction(tr("Transfer"), this);
+    tran->setShortcut(tr("Alt+T"));
+    tran->setToolTip(tr("Transfer operation"));
+
     plan = new QAction(tr("Planning operation"), this);
+    plan->setShortcut(tr("Alt+P"));
+    plan->setToolTip(tr("Planning operation"));
+
     dele = new QAction(tr("Delete current operation"), this);
+    dele->setShortcut(tr("Alt+D"));
+    dele->setText(tr("Delete operation"));
+
     acts.append(debt);
     acts.append(cred);
     acts.append(tran);
@@ -338,6 +353,7 @@ void ListOperations::plann_operation()
     pd.setdata(data);
     if (pd.exec() == QDialog::Accepted) {
 //        po = pd.Value();
+        data = pd.data();
         int plan = db->new_plan_oper(data);
         QSqlQuery q;
 

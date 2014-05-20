@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>787</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -52,10 +52,11 @@
     <addaction name="action_ListAgents"/>
     <addaction name="action_ListCurrencies"/>
     <addaction name="action_Plan_Operations"/>
+    <addaction name="actionBudget"/>
    </widget>
    <widget class="QMenu" name="menuReports">
     <property name="title">
-     <string>Reports</string>
+     <string>&amp;Reports</string>
     </property>
     <addaction name="actionReport_1"/>
     <addaction name="actionReport_2"/>
@@ -113,20 +114,32 @@
    <property name="text">
     <string>&amp;Accounts</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
   </action>
   <action name="action_ListOperations">
    <property name="text">
     <string>&amp;Operations</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="action_ListAgents">
    <property name="text">
-    <string>Agents</string>
+    <string>A&amp;gents</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
   <action name="action_ListCurrencies">
    <property name="text">
     <string>&amp;Currencies</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="actionReport_1">
@@ -143,6 +156,9 @@
    <property name="text">
     <string>&amp;Plan Operations</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
   </action>
   <action name="action_Home">
    <property name="text">
@@ -157,6 +173,14 @@
   <action name="actionTest_2">
    <property name="text">
     <string>test</string>
+   </property>
+  </action>
+  <action name="actionBudget">
+   <property name="text">
+    <string>Budget</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
    </property>
   </action>
  </widget>

@@ -36,9 +36,10 @@ public:
     bool    change_account_balance(account_summ &);
     bool    save_operation(operation_data &);
     int     new_plan_oper(operation_data &data);
+    bool    new_mon_oper(int p_id);
     operation_data get_operation(int);
     operation_data get_plan_oper_data(int);
-    bool find_oper_by_plan(int plan);
+    bool find_oper_by_plan(int plan, int mon, int year);
     QMap<int,QString> scod_list;
     QMap<QString,double> currency_list;
 };

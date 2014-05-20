@@ -17,6 +17,7 @@ public:
     explicit accountsView(QWidget *parent = 0);
     int value();
     void setValue(int);
+    void reload();
 
 signals:
 
