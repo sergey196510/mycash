@@ -56,7 +56,7 @@ int CorrectBalance::account()
     return ui->lineEdit->value();
 }
 
-QString CorrectBalance::date()
+QDate CorrectBalance::date()
 {
     return ui->dateEdit->value();
 }

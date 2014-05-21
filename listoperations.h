@@ -33,7 +33,7 @@ public:
     };
 
 public slots:
-    void fill_model(QString *dt1, QString *dt2, int id = 0);
+    void fill_model(QDate *dt1, QDate *dt2, int id = 0);
 
 private:
     Database *db;

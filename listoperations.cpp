@@ -2,7 +2,7 @@
 #include "ui_listoperations.h"
 #include "global.h"
 
-void ListOperationsModel::fill_model(QString *dt1, QString *dt2, int acc_id)
+void ListOperationsModel::fill_model(QDate *dt1, QDate *dt2, int acc_id)
 {
     QSqlQuery q1, q2;
     QString query;
@@ -27,8 +27,8 @@ void ListOperationsModel::fill_model(QString *dt1, QString *dt2, int acc_id)
     list = db->get_accounts_list();
 
     query = QString("SELECT id,dt,descr FROM oper WHERE dt >= '%1' AND dt <= '%2' ORDER BY dt")
-            .arg(*dt1)
-            .arg(*dt2);
+            .arg(dt1->toString("yyyy-MM-dd"))
+            .arg(dt2->toString("yyyy-MM-dd"));
     if (!q1.exec(query)) {
         qDebug() << q1.lastError().text();
         return;
@@ -37,26 +37,22 @@ void ListOperationsModel::fill_model(QString *dt1, QString *dt2, int acc_id)
         int oid = q1.value(0).toInt();
 
         q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = 1");
-//        q2.bindValue(":aid", acc_id);
         q2.bindValue(":oid", oid);
         if (!q2.exec()) {
             qDebug() << q1.lastError().text();
             return;
         }
-//        int ss = q2.size();
         if (q2.next()) {
             a1 = q2.value(0).toInt();
             s1 = q2.value(1).toDouble();
         }
 
         q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = 2");
-//        q2.bindValue(":aid", acc_id);
         q2.bindValue(":oid", oid);
         if (!q2.exec()) {
             qDebug() << q1.lastError().text();
             return;
         }
-//        ss = q2.size();
         if (q2.next()) {
             a2 = q2.value(0).toInt();
             s2 = q2.value(1).toDouble();
@@ -97,7 +93,6 @@ ListOperationsModel::~ListOperationsModel()
 
 QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 {
-//    QDate curr = QDate::currentDate();
     QVariant value = QStandardItemModel::data(index, role);
 
     switch (role) {
@@ -109,7 +104,6 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
             return default_locale->toString(value.toDouble()/var->Kurs(),'f',2);
         }
         else if (index.column() == col_Date) {
-//            QDate dt = value.toDate();
             return value.toDate().toString(Qt::SystemLocaleDate);
         }
         else
@@ -143,37 +137,15 @@ ListOperations::ListOperations(QWidget *parent) :
     ui(new Ui::ListOperations)
 {
     Globals var;
-    QString fdate, ldate;
+    QDate fdate, ldate;
 
     ui->setupUi(this);
 
-//    accts = new ListAccountsModel;
-//    accts->fill_model();
     ui->splitter->setStretchFactor(1,1);
-//    ui->accountsView->setModel(accts);
-//    ui->accountsView->expandAll();
-//    for (int i = 1; i < 6; i++)
-//        ui->accountsView->hideColumn(i);
-
-//    d.agent = 0;
 
     db = new Database;
 
-//    QTreeView *v = new QTreeView(ui->accountcomboBox);
-//    ListAccountsModel *m = new ListAccountsModel;
-//    m->fill_model();
-
-//    v->setModel(m);
-//    ui->accountcomboBox->setModel(m);
-//    ui->accountcomboBox->setView(v);
-//    ui->accountcomboBox->setModelColumn(0);
-
-//    list = db->get_currency_list();
-
-//    ui->accountcomboBox->load(1);
-//    ui->accountcomboBox->setValue(var.Account());
     ui->listAccounts->setValue(var.Account());
-//    reload_model();
     ui->fdate->setDate(QDate().currentDate().addDays(-29));
     fdate = ui->fdate->value();
     ldate = ui->ldate->value();
@@ -217,11 +189,6 @@ ListOperations::ListOperations(QWidget *parent) :
 
     change_current_account();
 
-//    ui->treeView->addAction(debt);
-//    ui->treeView->addAction(cred);
-//    ui->treeView->addAction(tran);
-//    ui->treeView->addAction(plan);
-//    ui->treeView->addAction(dele);
     ui->treeView->addActions(acts);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -230,7 +197,6 @@ ListOperations::ListOperations(QWidget *parent) :
     connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
     connect(plan, SIGNAL(triggered()), SLOT(plann_operation()));
     connect(dele, SIGNAL(triggered()), SLOT(del_operation()));
-//    connect(ui->accountcomboBox, SIGNAL(currentIndexChanged(int)), SLOT(reload_model()));
     connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(reload_model()));
     connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(reload_model()));
 
@@ -247,7 +213,6 @@ ListOperations::~ListOperations()
 void ListOperations::edit_operation(operation_data &d)
 {
     EditOperation eo(1, this);
-//    Globals var;
     QModelIndex idx = ui->treeView->currentIndex();
     operation_data data;
 
@@ -268,7 +233,6 @@ void ListOperations::debet_operation()
 
     a.set_account(ui->listAccounts->value());
     d.to.append(a);
-//    d.to.set_account(ui->listAccounts->value());
 
     edit_operation(d);
 }
@@ -294,7 +258,6 @@ void ListOperations::transfer_operation()
 int ListOperations::get_selected_id()
 {
     QModelIndexList list;
-//    int id;
 
     list = ui->treeView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
@@ -332,7 +295,6 @@ void ListOperations::del_operation()
 
 void ListOperations::plann_operation()
 {
-//    operation_data po;
     EditOperation pd(2, this);
     int id = get_selected_id();
 
@@ -341,18 +303,9 @@ void ListOperations::plann_operation()
 
     operation_data data = db->get_operation(id);
     data.day = QDate::currentDate().day();
-//    po.day = QDate::currentDate().day();
-//    po.month = 0;
-//    po.year = 0;
-//    po.from = data.from;
-//    po.to = data.to;
-//    po.summ = data.summ_from;
-//    po.descr = data.descr;
 
-//    pd.setValue(po);
     pd.setdata(data);
     if (pd.exec() == QDialog::Accepted) {
-//        po = pd.Value();
         data = pd.data();
         int plan = db->new_plan_oper(data);
         QSqlQuery q;
@@ -376,14 +329,12 @@ void ListOperations::change_current_account()
     QLocale *lc;
     QFont font;
     font.setBold(true);
-//    int id = ui->accountcomboBox->value();
     int id = ui->listAccounts->value();
     Account_Data data = db->get_account_data(id);
     double result = db->convert_currency(data.balance.value(), data.curr);
 
     lc = default_locale;
     ui->account_ostatok->setFont(font);
-//    ui->account_ostatok->setText(lc->toString(data.balance.value()/var.Kurs(),'f',2));
     ui->account_ostatok->setText(lc->toString(result,'f',2));
 
     var.setAccount(ui->listAccounts->value());
@@ -391,8 +342,7 @@ void ListOperations::change_current_account()
 
 void ListOperations::reload_model()
 {
-    QString fdate, ldate;
-//    int id = ui->accountcomboBox->value();
+    QDate fdate, ldate;
     int id = ui->listAccounts->value();
 
     fdate = ui->fdate->value();
@@ -411,7 +361,6 @@ void ListOperations::reload_model()
 
 void ListOperations::clear_model()
 {
-//    ui->accountcomboBox->setValue(0);
     ui->account_ostatok->setText("0");
     model->clear();
 }

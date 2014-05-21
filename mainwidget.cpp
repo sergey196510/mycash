@@ -26,7 +26,11 @@ void MainWidgetModel::fill_model()
         data = *i;
         if (data.month == 0 && data.year == 0) {
             int diff = data.day - curr.day();
-            if (db->find_oper_by_plan(data.id, curr.month(), curr.year()) == true) {
+            QDate dt(curr.year(), curr.month(), data.day);
+            if (data.date > dt) {
+                continue;
+            }
+            else if (db->find_oper_by_plan(data.id, curr.month(), curr.year()) == true) {
                 stat = committed;
                 continue;
             }

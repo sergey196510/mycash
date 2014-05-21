@@ -19,7 +19,7 @@ public:
     void setAccount(int);
     double balance();
     int account();
-    QString date();
+    QDate date();
 
 private:
     Globals var;

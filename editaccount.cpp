@@ -106,8 +106,6 @@ void EditAccount::okCheck()
 {
     QString str = ui->nameEdit->text();
 
-//    qDebug() << ui->balanceSpinBox->value();
-//    if (str.length() > 0 && nameFind(str) == true && ui->parentBox->value() > 0)
     if (str.length() > 0 && ui->accountWidget->value() > 0)
         ui->okButton->setEnabled(true);
     else
@@ -125,13 +123,6 @@ bool EditAccount::nameFind(QString name)
 
     return false;
 }
-
-/*
-bool EditAccount::hidden()
-{
-    return ui->hiddenBox->isChecked();
-}
-*/
 
 void EditAccount::parentCheck()
 {

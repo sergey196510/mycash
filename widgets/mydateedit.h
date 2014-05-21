@@ -23,7 +23,8 @@ private:
 public:
     MyDateEdit(QWidget *);
 	~MyDateEdit();
-	QString value() { return date().toString("yyyy-MM-dd"); }
+    QDate value() { return date(); }
+    QString toString() { return date().toString("yyyy-MM-dd"); }
 };
 
 #endif

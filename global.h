@@ -4,15 +4,8 @@
 #include <QtCore>
 #include <QFont>
 #include "widgets/mycurrency.h"
-//#include "database.h"
 
-//extern QString version;
-//extern int     current_account;
-//extern int     current_currency;
 extern QLocale *default_locale;
-//extern Database *db;
-//extern QLocale *english;
-//extern QFont   fnt;
 
 enum Direction {
     direction_from = 1,
@@ -93,7 +86,7 @@ struct Account_Data {
     int top;
     int system;
     QString descr;
-    QString dt;
+    QDate dt;
     Account_Data() {
         name = "";
         type = 0;
@@ -104,7 +97,7 @@ struct Account_Data {
         system = 0;
 //        balance = 0;
         descr = "";
-        dt = "";
+        dt = QDate::currentDate();
     }
 };
 
@@ -116,12 +109,12 @@ struct operation_data {
     account_summ from;
     QList<account_summ> to;
 //    int plan_id;
-    QString date;
+    QDate date;
     QString descr;
     operation_data() {
         id = day = month = year = 0;
         agent = 0;
-        date = "";
+        date = QDate::currentDate();
         descr = "";
     }
 };
@@ -144,23 +137,5 @@ public:
     void set_phone(QString s) { ph = s; }
     void set_contact(QString s) { cont = s; }
 };
-
-/*
-struct PlanOper_data {
-    int id;
-    int day;
-    int month;
-    int year;
-    int from;
-    int to;
-    MyCurrency summ;
-    QString descr;
-    PlanOper_data() {
-        id = day = month = year = from = to = 0;
-        summ = 0;
-        descr = "";
-    }
-};
-*/
 
 #endif
