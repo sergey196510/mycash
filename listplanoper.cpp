@@ -41,22 +41,19 @@ void ListPlanOperModel::fill_model(Database *db)
         insertRow(row);
 
         QDate dt(curr.year(), curr.month(), data.day);
-        if (data.date > dt) {
+//        if (data.date > dt) {
 //            continue;
-        }
-        else if (db->find_oper_by_plan(data.id, curr.month(), curr.year()) == true) {
-            int i;
-            for (i = 0; i < 9; i++)
+//        }
+        if (data.status == Plan_Status::committed) {
+            for (int i = 0; i < 9; i++)
                 setData(index(row,i), QColor(Qt::gray), Qt::TextColorRole);
         }
-        else if (data.day - curr.day() < 0) {
-            int i;
-            for (i = 0; i < 9; i++)
+        else if (data.status == Plan_Status::expired) {
+            for (int i = 0; i < 9; i++)
                 setData(index(row,i), QColor(Qt::red), Qt::BackgroundColorRole);
         }
-        else if (data.day - curr.day() < 3) {
-            int i;
-            for (i = 0; i < 9; i++)
+        else if (data.status == Plan_Status::minimum) {
+            for (int i = 0; i < 9; i++)
                 setData(index(row,i), QColor(Qt::yellow), Qt::BackgroundColorRole);
         }
         setData(index(row,0), data.id);

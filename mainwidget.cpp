@@ -10,7 +10,7 @@ void MainWidgetModel::fill_model()
     account_summ a;
     operation_data data;
     int row = 0;
-    int stat = actual;
+//    int stat = actual;
 
     clear();
 
@@ -24,21 +24,10 @@ void MainWidgetModel::fill_model()
     insertColumns(0,9);
     for (i = list.begin(); i != list.end(); i++) {
         data = *i;
+        data.status = Plan_Status::actual;
         if (data.month == 0 && data.year == 0) {
-            int diff = data.day - curr.day();
             QDate dt(curr.year(), curr.month(), data.day);
-            if (data.date > dt) {
-                continue;
-            }
-            else if (db->find_oper_by_plan(data.id, curr.month(), curr.year()) == true) {
-                stat = committed;
-                continue;
-            }
-            else if (diff < 3 && diff >= 0)
-                stat = minimum;
-            else if (diff < 0)
-                stat = expired;
-            else
+            if (data.date > dt || data.status == Plan_Status::actual)
                 continue;
         }
         insertRow(row);
@@ -51,16 +40,16 @@ void MainWidgetModel::fill_model()
         a = *j;
         setData(index(row,column_to),    accounts[a.account()]);
         setData(index(row,summ),  default_locale->toString(data.from.summ(),'f',2));
-        if (stat == actual)
+        if (data.status == Plan_Status::actual)
             setData(index(row,status), tr("Actual"));
-        else if (stat == committed)
+        else if (data.status == Plan_Status::committed)
             setData(index(row,status), tr("Committed"));
-        else if (stat == expired)
+        else if (data.status == Plan_Status::expired)
             setData(index(row,status), tr("Expired"));
-        else if (stat == minimum)
+        else if (data.status == Plan_Status::minimum)
             setData(index(row,status), tr("< 3 days"));
         else
-            setData(index(row,status), stat);
+            setData(index(row,status), data.status);
         setData(index(row,descr), data.descr);
         row++;
     }
@@ -134,7 +123,7 @@ MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MainWidget)
 {
-    summAccount active(Active_type), passive(Passive_type);
+    summAccount active(Account_Type::active), passive(Account_Type::passive);
 
     ui->setupUi(this);
 
@@ -170,7 +159,7 @@ MainWidget::~MainWidget()
 
 void MainWidget::reload_model()
 {
-    summAccount active(Active_type), passive(Passive_type);
+    summAccount active(Account_Type::active), passive(Account_Type::passive);
 
     model->fill_model();
     ui->treeView->hideColumn(0);
@@ -184,8 +173,8 @@ void MainWidget::reload_model()
 
 //    double active = db->get_account_summ(Active_type);
 //    double passive = db->get_account_summ(Passive_type);
-    double debet = db->get_operation_summ(Debet_type);
-    double credit = db->get_operation_summ(Credit_type);
+    double debet = db->get_operation_summ(Account_Type::debet);
+    double credit = db->get_operation_summ(Account_Type::credit);
 
     ui->active_value->setText(active.text() + " " + var.Symbol());
     ui->passive_value->setText(passive.text() + " " + var.Symbol());

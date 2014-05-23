@@ -31,12 +31,6 @@ public:
         status = 7,
         descr = 8
     };
-    enum Status {
-        actual = 1,
-        committed = 2,
-        minimum = 3,
-        expired = 4
-    };
 
 public slots:
     void fill_model();

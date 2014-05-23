@@ -7,17 +7,19 @@
 
 extern QLocale *default_locale;
 
-enum Direction {
-    direction_from = 1,
-    direction_to = 2
+class Direction {
+public:
+    static const int from;
+    static const int to;
 };
 
-enum Type {
-    Active_type  = 1,
-    Passive_type = 2,
-    Debet_type   = 3,
-    Credit_type  = 4,
-    Initial_type = 5
+class Account_Type {
+public:
+    static const int active;
+    static const int passive;
+    static const int debet;
+    static const int credit;
+    static const int initial;
 };
 
 struct Font {
@@ -60,6 +62,14 @@ public:
     bool database_Opened() { return database_opened; }
     void database_Open() { database_opened = true; }
     void database_Close() { database_opened = false; }
+};
+
+class Plan_Status {
+public:
+    static const int actual;
+    static const int committed;
+    static const int minimum;
+    static const int expired;
 };
 
 class account_summ {
@@ -111,6 +121,7 @@ struct operation_data {
 //    int plan_id;
     QDate date;
     QString descr;
+    int status;
     operation_data() {
         id = day = month = year = 0;
         agent = 0;

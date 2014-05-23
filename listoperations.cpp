@@ -36,8 +36,9 @@ void ListOperationsModel::fill_model(QDate *dt1, QDate *dt2, int acc_id)
     while (q1.next()) {
         int oid = q1.value(0).toInt();
 
-        q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = 1");
+        q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = :direct");
         q2.bindValue(":oid", oid);
+        q2.bindValue(":direct", Direction::from);
         if (!q2.exec()) {
             qDebug() << q1.lastError().text();
             return;
@@ -47,8 +48,9 @@ void ListOperationsModel::fill_model(QDate *dt1, QDate *dt2, int acc_id)
             s1 = q2.value(1).toDouble();
         }
 
-        q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = 2");
+        q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = :direct");
         q2.bindValue(":oid", oid);
+        q2.bindValue(":direct", Direction::to);
         if (!q2.exec()) {
             qDebug() << q1.lastError().text();
             return;

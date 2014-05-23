@@ -382,7 +382,7 @@ bool Database::change_account_balance(account_summ &acc)
 
     data = get_account_data(acc.account());
 
-    if (data.top == Active_type || data.top == Credit_type)
+    if (data.top == Account_Type::active || data.top == Account_Type::credit)
         flag = 1;
     else
         flag = -1;
@@ -411,13 +411,13 @@ bool Database::save_operation(operation_data &data)
         q.exec("ROLLBACK TRANSACTION");
         return false;
     }
-    if (new_account_oper("account_oper", oper_id, data.from, direction_from) == false) {
+    if (new_account_oper("account_oper", oper_id, data.from, Direction::from) == false) {
         q.exec("ROLLBACK TRANSACTION");
         return false;
     }
     for (i = data.to.begin(); i != data.to.end(); i++) {
         account_summ d = *i;
-        if (new_account_oper("account_oper", oper_id, d, direction_to) == false) {
+        if (new_account_oper("account_oper", oper_id, d, Direction::to) == false) {
             q.exec("ROLLBACK TRANSACTION");
             return false;
         }
@@ -505,14 +505,14 @@ int Database::new_plan_oper(operation_data &data)
 
     if (q.next()) {
         id = q.value(0).toInt();
-        if (!new_account_oper("plan_oper_acc", id, data.from, direction_from)) {
+        if (!new_account_oper("plan_oper_acc", id, data.from, Direction::from)) {
             qDebug() << q.lastError().text();
             q.exec("ROLLBACK");
             return 0;
         }
         for (i = data.to.begin(); i != data.to.end(); i++) {
             account_summ d = *i;
-            if (!new_account_oper("plan_oper_acc", id, d, direction_to)) {
+            if (!new_account_oper("plan_oper_acc", id, d, Direction::to)) {
                 qDebug() << q.lastError().text();
                 q.exec("ROLLBACK");
                 return 0;
@@ -587,6 +587,7 @@ operation_data Database::get_plan_oper_data(int id)
     QSqlQuery q;
     QMap<int,double> list;
     QMap<int,double>::iterator i;
+    QDate curr = QDate::currentDate();
 
     q.prepare("SELECT id, day, month, year, descr FROM plan_oper WHERE id = :id");
     q.bindValue(":id", id);
@@ -600,6 +601,22 @@ operation_data Database::get_plan_oper_data(int id)
         data.month = q.value(2).toInt();
         data.year = q.value(3).toInt();
         data.descr = q.value(7).toString();
+
+        int diff = data.day - curr.day();
+        QDate dt(curr.year(), curr.month(), data.day);
+        if (data.date > dt) {
+            data.status = Plan_Status::actual;
+        }
+        else if (find_oper_by_plan(data.id, curr.month(), curr.year()) == true) {
+            data.status = Plan_Status::committed;
+//            continue;
+        }
+        else if (diff < 3 && diff >= 0)
+            data.status = Plan_Status::minimum;
+        else if (diff < 0)
+            data.status = Plan_Status::expired;
+        else
+            data.status = Plan_Status::actual;
 
         list = get_plan_account_oper_list(q.value(0).toInt(), 1);
         if (!list.empty()) {

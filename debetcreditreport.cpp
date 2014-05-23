@@ -57,7 +57,7 @@ void DebetCreditReport::calc_report(int month, int year)
     ui->textEdit->append("Dohodi:");
 
     summ = 0;
-    list = db->get_opersummbyaccount_list(Debet_type, month, year);
+    list = db->get_opersummbyaccount_list(Account_Type::debet, month, year);
     for (i = list.begin(); i != list.end(); i++) {
         ui->textEdit->append(i.key() + ": " + default_locale->toString(i.value(),'f',2));
         summ += i.value();
@@ -68,7 +68,7 @@ void DebetCreditReport::calc_report(int month, int year)
     ui->textEdit->append("Rashodi:");
 
     summ = 0;
-    list = db->get_opersummbyaccount_list(Credit_type, month, year);
+    list = db->get_opersummbyaccount_list(Account_Type::credit, month, year);
     for (i = list.begin(); i != list.end(); i++) {
         ui->textEdit->append(i.key() + ": " + default_locale->toString(i.value(),'f',2));
         summ += i.value();
