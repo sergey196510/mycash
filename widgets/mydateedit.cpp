@@ -9,7 +9,7 @@ MyCalendarWidget::MyCalendarWidget(QWidget *d) :
     setFirstDayOfWeek(Qt::Monday);
 }
 
-MyDateEdit::MyDateEdit(QWidget *d = 0) :
+MyDateEdit::MyDateEdit(QWidget *d) :
 	QDateEdit(d)
 {
     cw = new MyCalendarWidget;

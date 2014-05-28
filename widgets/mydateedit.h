@@ -21,7 +21,7 @@ private:
     MyCalendarWidget *cw;
 
 public:
-    MyDateEdit(QWidget *);
+    MyDateEdit(QWidget *d = 0);
 	~MyDateEdit();
     QDate value() { return date(); }
     QString toString() { return date().toString("yyyy-MM-dd"); }

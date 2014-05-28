@@ -2,15 +2,13 @@
 #include "widgets/mydateedit.h"
 #include "ui_mainwidget.h"
 
-void MainWidgetModel::fill_model()
+void MainWidgetModel::fill_model(Database *db)
 {
-    QDate curr = QDate::currentDate();
     QList<operation_data>::iterator i;
     QList<account_summ>::iterator j;
     account_summ a;
     operation_data data;
     int row = 0;
-//    int stat = actual;
 
     clear();
 
@@ -24,12 +22,8 @@ void MainWidgetModel::fill_model()
     insertColumns(0,9);
     for (i = list.begin(); i != list.end(); i++) {
         data = *i;
-        data.status = Plan_Status::actual;
-        if (data.month == 0 && data.year == 0) {
-            QDate dt(curr.year(), curr.month(), data.day);
-            if (data.date > dt || data.status == Plan_Status::actual)
-                continue;
-        }
+        if (data.status == Plan_Status::actual)
+            continue;
         insertRow(row);
         setData(index(row,id),    data.id);
         setData(index(row,day),   data.day);
@@ -55,17 +49,17 @@ void MainWidgetModel::fill_model()
     }
 }
 
-MainWidgetModel::MainWidgetModel(QObject *parent) :
+MainWidgetModel::MainWidgetModel(Database *db, QObject *parent) :
     QStandardItemModel(parent)
 {
-    db = new Database;
+//    db = new Database;
     list = db->get_plan_oper_list();
 //    fill_model();
 }
 
 MainWidgetModel::~MainWidgetModel()
 {
-    delete db;
+//    delete db;
 }
 
 QVariant MainWidgetModel::headerData(int section,Qt::Orientation orientation, int role) const
@@ -119,7 +113,7 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
     return value;
 }
 
-MainWidget::MainWidget(QWidget *parent) :
+MainWidget::MainWidget(Database *d, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MainWidget)
 {
@@ -127,9 +121,10 @@ MainWidget::MainWidget(QWidget *parent) :
 
     ui->setupUi(this);
 
-    db = new Database;
-    model = new MainWidgetModel;
-    model->fill_model();
+//    db = new Database;
+    db = d;
+    model = new MainWidgetModel(db);
+    model->fill_model(db);
 
     ui->groupBox->setTitle(tr("Balance status"));
     ui->groupBox_2->setTitle(tr("Prosrochennie operations"));
@@ -153,7 +148,7 @@ MainWidget::MainWidget(QWidget *parent) :
 MainWidget::~MainWidget()
 {
     delete model;
-    delete db;
+//    delete db;
     delete ui;
 }
 
@@ -161,7 +156,7 @@ void MainWidget::reload_model()
 {
     summAccount active(Account_Type::active), passive(Account_Type::passive);
 
-    model->fill_model();
+    model->fill_model(db);
     ui->treeView->hideColumn(0);
     ui->treeView->header()->setResizeMode(model->day, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(model->month, QHeaderView::ResizeToContents);

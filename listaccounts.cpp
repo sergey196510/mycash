@@ -3,7 +3,7 @@
 #include "editaccount.h"
 #include "correctbalance.h"
 
-ListAccounts::ListAccounts(QWidget *parent) :
+ListAccounts::ListAccounts(Database *d, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListAccounts)
 {
@@ -15,7 +15,8 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
     ui->setupUi(this);
 
-    db = new Database;
+//    db = new Database;
+    db = d;
 
 //    type = ui->typeComboBox->value();
 
@@ -85,7 +86,7 @@ ListAccounts::ListAccounts(QWidget *parent) :
 
 ListAccounts::~ListAccounts()
 {
-    delete db;
+//    delete db;
     delete ui;
     delete model;
 }

@@ -16,7 +16,7 @@ class MainWidgetModel : public QStandardItemModel
     Q_OBJECT
 
 public:
-    MainWidgetModel(QObject *parent = 0);
+    MainWidgetModel(Database *db, QObject *parent = 0);
     ~MainWidgetModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
@@ -33,10 +33,10 @@ public:
     };
 
 public slots:
-    void fill_model();
+    void fill_model(Database *db);
 
 private:
-    Database *db;
+//    Database *db;
     QList<operation_data> list;
     QMap<int,QString> accounts;
     QStringList header_data;
@@ -51,7 +51,7 @@ class MainWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit MainWidget(QWidget *parent = 0);
+    explicit MainWidget(Database *d, QWidget *parent = 0);
     ~MainWidget();
 
 public slots:

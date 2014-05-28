@@ -254,7 +254,7 @@ void MyCash::opendb(QString dbname)
 
 void MyCash::list_home()
 {
-    MainWidget *mw = new MainWidget;
+    MainWidget *mw = new MainWidget(db);
 
     connect(ui->action_Open, SIGNAL(triggered()), mw, SLOT(reload_model()));
     connect(ui->action_Close, SIGNAL(triggered()), mw, SLOT(clear_model()));
@@ -266,7 +266,7 @@ void MyCash::list_home()
 
 void MyCash::list_accounts()
 {
-    ListAccounts *la = new ListAccounts;
+    ListAccounts *la = new ListAccounts(db);
 
     ui->mainToolBar->addActions(la->acts);
 
