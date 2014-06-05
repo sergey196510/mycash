@@ -12,7 +12,7 @@ namespace Ui {
 class ListPlanOper;
 }
 
-class ListPlanOperModel : public QStandardItemModel
+class ListPlanOperModel : public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -21,20 +21,23 @@ public:
     ~ListPlanOperModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
 
 public slots:
-    void fill_model(Database *db);
+    void change_data();
 
 private:
     Globals *var;
     QStringList header_data;
-    QMap<int,QString> list;
+    QList<operation_data> list;
+    QMap<int,QString> acc_list;
     QMap<QString,double> currency;
     QString symbol;
-//    Database *db;
+    Database *db;
 
 private slots:
-//    bool find_operations(int);
+    QList<operation_data> read_list();
 };
 
 class ListPlanOper : public QWidget
@@ -63,6 +66,9 @@ private slots:
     void commit_oper();
     void del_oper();
     void check_selected();
+
+signals:
+    void data_changed();
 };
 
 #endif // LISTPLANOPER_H
