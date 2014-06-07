@@ -10,18 +10,27 @@ namespace Ui {
 class ListCurrency;
 }
 
-class ListCurrencyModel : public QSqlQueryModel
+class ListCurrencyModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 private:
     QStringList header_data;
+    QList<Currency_Data> list;
+
+private slots:
+    QList<Currency_Data> read_list();
 
 public:
     explicit ListCurrencyModel(QObject *parent = 0);
     ~ListCurrencyModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
+
+public slots:
+    void changed_data();
 };
 
 class ListCurrency : public QWidget
@@ -39,7 +48,6 @@ public slots:
 private:
     Ui::ListCurrency *ui;
     ListCurrencyModel *model;
-    QString query;
     int get_selected_id();
     Globals var;
 
@@ -51,6 +59,9 @@ private slots:
     void delete_currency();
     void clear_currency();
     void check_select();
+
+signals:
+    void data_change();
 };
 
 #endif // LISTCURRENCY_H

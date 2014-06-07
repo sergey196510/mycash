@@ -149,4 +149,12 @@ public:
     void set_contact(QString s) { cont = s; }
 };
 
+struct Currency_Data {
+    int id;
+    QString name;
+    int icod;
+    QString scod;
+    double kurs;
+};
+
 #endif

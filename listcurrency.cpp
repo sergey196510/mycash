@@ -2,27 +2,75 @@
 #include "ui_listcurrency.h"
 
 ListCurrencyModel::ListCurrencyModel(QObject *parent) :
-    QSqlQueryModel(parent)
+    QAbstractTableModel(parent)
 {
     header_data << tr("") << tr("Name") << tr("Icod") << tr("Scod") << tr("Kurs");
+    list = read_list();
 }
 
 ListCurrencyModel::~ListCurrencyModel()
 {
 }
 
+QList<Currency_Data> ListCurrencyModel::read_list()
+{
+    QSqlQuery q;
+    QList<Currency_Data> list;
+    Currency_Data data;
+
+    q.prepare("SELECT id, name, icod, scod, kurs FROM currency ORDER BY name");
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return list;
+    }
+    while (q.next()) {
+        data.id = q.value(0).toInt();
+        data.name = q.value(1).toString();
+        data.icod = q.value(2).toInt();
+        data.scod = q.value(3).toString();
+        data.kurs = q.value(4).toDouble();
+        list.append(data);
+    }
+
+    return list;
+}
+
+int ListCurrencyModel::rowCount(const QModelIndex &parent) const
+{
+    return list.count();
+}
+
+int ListCurrencyModel::columnCount(const QModelIndex &parent) const
+{
+    return header_data.count();
+}
+
 QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
 {
-//    Globals var;
-    QVariant value = QSqlQueryModel::data(index, role);
-
     switch (role) {
         case Qt::DisplayRole:
-        if (index.column() == 4) {
-            return default_locale->toString(value.toDouble());
+        if (index.column() == 0) {
+            Currency_Data data = list.at(index.row());
+            return data.id;
+        }
+        if (index.column() == 1) {
+            Currency_Data data = list.at(index.row());
+            return data.name;
+        }
+        if (index.column() == 2) {
+            Currency_Data data = list.at(index.row());
+            return data.icod;
+        }
+        if (index.column() == 3) {
+            Currency_Data data = list.at(index.row());
+            return data.scod;
+        }
+        else if (index.column() == 4) {
+            Currency_Data data = list.at(index.row());
+            return default_locale->toString(data.kurs);
         }
         else
-            return value;
+            return QVariant();
 
         case Qt::TextAlignmentRole:
             if (index.column() == 4)
@@ -33,10 +81,10 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
 //        if (record(index.row()).value(0).toInt() == var.Currency()) {
 //            return QVariant(QColor(Qt::blue));
 //        }
-        return value;
+        return QVariant();
     }
 
-    return value;
+    return QVariant();
 }
 
 QVariant ListCurrencyModel::headerData(int section,Qt::Orientation orientation, int role) const
@@ -50,6 +98,13 @@ QVariant ListCurrencyModel::headerData(int section,Qt::Orientation orientation, 
         return QString("%1").arg(section+1);
 }
 
+void ListCurrencyModel::changed_data()
+{
+    list.clear();
+    list = read_list();
+    reset();
+}
+
 ListCurrency::ListCurrency(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListCurrency)
@@ -59,9 +114,8 @@ ListCurrency::ListCurrency(QWidget *parent) :
     ui->groupBox->setTitle(tr("Currency"));
 
     if (var.database_Opened()) {
-        query = "SELECT id, name, icod, scod, kurs FROM currency ORDER BY name";
         model = new ListCurrencyModel;
-        model->setQuery(query);
+        connect(this, SIGNAL(data_change()), model, SLOT(changed_data()));
         ui->treeView->setModel(model);
         ui->treeView->hideColumn(0);
     }
@@ -114,9 +168,7 @@ void ListCurrency::new_currency()
     q.bindValue(":kurs", ui->kursEdit->value());
     q.exec();
 
-    reload_model();
-//    ui->treeView->resizeRowsToContents();
-//    ui->treeView->resizeColumnsToContents();
+    emit data_change();
 }
 
 int ListCurrency::get_selected_id()
@@ -147,11 +199,11 @@ void ListCurrency::update_currency()
     q.bindValue(":kurs", ui->kursEdit->value());
     q.bindValue(":id", id);
     if (!q.exec()) {
-        qDebug() << "Update error";
+        qDebug() << q.lastError();
         return;
     }
 
-    reload_model();
+    emit data_change();
 }
 
 void ListCurrency::delete_currency()
@@ -183,14 +235,14 @@ void ListCurrency::delete_currency()
         return;
     }
 
-    reload_model();
+    emit data_change();
 }
 
 void ListCurrency::clear_currency()
 {
-    ui->nameEdit->setText("");
-    ui->symbolEdit->setText("");
-    ui->kursEdit->setValue(0);
+    ui->nameEdit->clear();
+    ui->symbolEdit->clear();
+    ui->kursEdit->clear();
 }
 
 void ListCurrency::check_select()
@@ -207,7 +259,7 @@ void ListCurrency::check_select()
     q.prepare("SELECT name, scod, kurs FROM currency WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec() || !q.next()) {
-        qDebug() << "Select error";
+        qDebug() << q.lastError();
         return;
     }
     ui->nameEdit->setText(q.value(0).toString());
@@ -221,10 +273,10 @@ void ListCurrency::check_select()
 
 void ListCurrency::reload_model()
 {
-    model->setQuery(query);
+    emit data_change();
 }
 
 void ListCurrency::clear_model()
 {
-    model->clear();
+//    model->clear();
 }
