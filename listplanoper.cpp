@@ -50,7 +50,7 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
         }
         else if (index.column() == 4) {
             operation_data data = list.at(index.row());
-            return acc_list[data.from.account()];
+            return acc_list[data.from.at(0).account()];
         }
         else if (index.column() == 5) {
             operation_data data = list.at(index.row());

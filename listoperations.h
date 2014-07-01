@@ -14,15 +14,19 @@ namespace Ui {
 class ListOperations;
 }
 
-class ListOperationsModel : public QStandardItemModel
+class ListOperationsModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit ListOperationsModel(QObject *parent = 0);
+    explicit ListOperationsModel(int account, QDate fdate, QDate ldate, QObject *parent = 0);
     ~ListOperationsModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+    int rowCount(const QModelIndex &parent) const { if (parent.isValid()) return 0; return list.size(); }
+    int columnCount(const QModelIndex &parent) const { if (parent.isValid()) return 0; return header_data.size(); }
+    QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    QModelIndex parent(const QModelIndex &child) const;
     enum {
         col_Id = 0,
         col_Date = 1,
@@ -33,13 +37,17 @@ public:
     };
 
 public slots:
-    void fill_model(QDate *dt1, QDate *dt2, int id = 0);
+//    void fill_model(QDate *dt1, QDate *dt2, int id = 0);
+    void reload_data(int account, QDate fdate, QDate ldate);
 
 private:
     Database *db;
     Globals *var;
     QStringList header_data;
-    QMap<int,QString> list;
+    QMap<int,QString> accounts_list;
+    QList<operation_data> list;
+    QList<operation_data> read_list(int account, QDate fdate, QDate ldate);
+    int current_account;
 };
 
 class ListOperations : public QWidget
@@ -72,13 +80,13 @@ private:
     void edit_operation(operation_data &);
 
 signals:
-    void call_reload_table();
+    void call_reload_table(int account, QDate fdate, QDate ldate);
 
 private slots:
     void debet_operation();
     void credit_operation();
     void transfer_operation();
-    void change_current_account();
+    void print_balance();
     void del_operation();
     void plann_operation();
     int get_selected_id();

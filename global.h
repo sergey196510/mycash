@@ -80,8 +80,8 @@ public:
         acc = 0;
         s = 0;
     };
-    int account() { return acc; }
-    double summ() { return s; }
+    int account() const { return acc; }
+    double summ() const { return s; }
     void set_account(int val) { acc = val; }
     void set_summ(double val) { s = val; }
 };
@@ -116,7 +116,7 @@ struct operation_data {
     int day,month,year;
     int agent;
     double kurs;
-    account_summ from;
+    QList<account_summ> from;
     QList<account_summ> to;
 //    int plan_id;
     QDate date;
@@ -126,22 +126,25 @@ struct operation_data {
         id = day = month = year = 0;
         agent = 0;
         date = QDate::currentDate();
-        descr = "";
+        descr.clear();
     }
 };
 
 class agent_data {
+    int ii;
     QString nm;
     QString ct;
     QString addr;
     QString ph;
     QString cont;
 public:
+    int id() { return ii; }
     QString name() { return nm; }
     QString city() { return ct; }
     QString address() { return addr; }
     QString phone() { return ph; }
     QString contact() { return cont; }
+    void set_id(int i) { ii = i; }
     void set_name(QString s) { nm = s; }
     void set_city(QString s) { ct = s; }
     void set_address(QString s) { addr = s; }

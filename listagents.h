@@ -11,16 +11,21 @@ namespace Ui {
 class ListAgents;
 }
 
-class ListAgentsModel : public QSqlQueryModel
+class ListAgentsModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 private:
     QStringList header_data;
+    QList<agent_data> list;
+    QList<agent_data> read_list();
 
 public:
     explicit ListAgentsModel(QObject *parent = 0);
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
 };
 
 class ListAgents : public QWidget

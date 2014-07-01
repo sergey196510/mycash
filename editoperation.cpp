@@ -139,23 +139,20 @@ operation_data EditOperation::data()
     operation_data d;
     account_summ a;
 
-//    QString from_sym = db->get_account_scod(ui->from_account->value());
-//    QString to_sym   = db->get_account_scod(ui->to_account->value());
-
     d.day = ui->dayBox->currentIndex();
     d.month = ui->monBox->currentIndex();
     d.year = ui->yearBox->value();
-    d.from.set_account(ui->fromWidget->value());
-//    d.to.set_account(ui->toWidget->value());
-//    d.to2.account = ui->to2Widget->value();
     d.agent = ui->agent_comboBox->value();
     d.kurs = ui->kursEdit->value();
-    d.from.set_summ(ui->fromSpinBox->value());
+
+    a.set_account(ui->fromWidget->value());
+    a.set_summ(ui->fromSpinBox->value());
+    d.from.append(a);
+
     a.set_account(ui->toWidget->value());
     a.set_summ(ui->toSpinBox->value());
     d.to.append(a);
-//    d.to.set_summ(ui->toSpinBox->value());
-//    d.to2.summ = ui->toSpinBox_2->value();
+
     d.date = ui->dateEdit->value();
     d.descr = ui->descrEdit->text();
 
@@ -166,32 +163,27 @@ void EditOperation::setdata(operation_data &d)
 {
     Account_Data data;
     QList<account_summ>::iterator i;
-    account_summ a;
 
     ui->dayBox->setCurrentIndex(d.day);
     ui->monBox->setCurrentIndex(d.month);
     ui->yearBox->setValue(d.year);
-    ui->fromWidget->setValue(d.from.account());
+
+    if (!d.from.empty()) {
+        i = d.from.begin();
+        account_summ a = *i;
+        ui->fromWidget->setValue(a.account());
+        ui->fromSpinBox->setValue(a.summ());
+    }
+
     if (!d.to.empty()) {
         i = d.to.begin();
-        a = *i;
+        account_summ a = *i;
+        ui->toWidget->setValue(a.account());
+        ui->toSpinBox->setValue(a.summ());
     }
-    ui->toWidget->setValue(a.account());
-//    ui->toWidget->setValue(d.to.account());
-
-//    ui->to_account_2->setValue(d.to2.account);
-//    if (d.to2.account() > 0) {
-//        data = db->get_account_data(d.to2.account);
-//        ui->to2Widget->setValue(d.to2.account);
-//        ui->toAccount2Line->setText(data.name);
-//    }
 
     ui->agent_comboBox->setValue(d.agent);
     ui->kursEdit->setValue(d.kurs);
-    ui->fromSpinBox->setValue(d.from.summ());
-    ui->toSpinBox->setValue(a.summ());
-//    ui->toSpinBox->setValue(d.to.summ());
-//    ui->toSpinBox_2->setValue(d.to2.summ);
     ui->descrEdit->setText(d.descr);
 
     ui->fromSpinBox->setEnabled(ui->fromWidget->value());

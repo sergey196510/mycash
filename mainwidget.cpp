@@ -29,11 +29,11 @@ void MainWidgetModel::fill_model(Database *db)
         setData(index(row,day),   data.day);
         setData(index(row,month), data.month);
         setData(index(row,year),  data.year);
-        setData(index(row,column_from),  accounts[data.from.account()]);
+        setData(index(row,column_from),  accounts[data.from.at(0).account()]);
         j = data.to.begin();
         a = *j;
         setData(index(row,column_to),    accounts[a.account()]);
-        setData(index(row,summ),  default_locale->toString(data.from.summ(),'f',2));
+        setData(index(row,summ),  default_locale->toString(data.from.at(0).summ(),'f',2));
         if (data.status == Plan_Status::actual)
             setData(index(row,status), tr("Actual"));
         else if (data.status == Plan_Status::committed)

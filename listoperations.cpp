@@ -2,125 +2,148 @@
 #include "ui_listoperations.h"
 #include "global.h"
 
-void ListOperationsModel::fill_model(QDate *dt1, QDate *dt2, int acc_id)
+ListOperationsModel::ListOperationsModel(int account, QDate fdate, QDate ldate, QObject *parent) :
+    QAbstractItemModel(parent)
 {
-    QSqlQuery q1, q2;
-    QString query;
-    int row = 0;
-    int a1, a2;
-    double s1, s2;
-
     header_data << "" << tr("Date") << tr("Account") << tr("Debet") << tr("Credit") << tr("Description");
-
-    clear();
-
-    insertColumns(0,6);
-
-    if (acc_id == 0)
-        return;
-
-    db = new Database;
-    var = new Globals;
-    if (!var->database_Opened())
-        return;
-
-    list = db->get_accounts_list();
-
-    query = QString("SELECT id,dt,descr FROM oper WHERE dt >= '%1' AND dt <= '%2' ORDER BY dt")
-            .arg(dt1->toString("yyyy-MM-dd"))
-            .arg(dt2->toString("yyyy-MM-dd"));
-    if (!q1.exec(query)) {
-        qDebug() << q1.lastError().text();
-        return;
-    }
-    while (q1.next()) {
-        int oid = q1.value(0).toInt();
-
-        q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = :direct");
-        q2.bindValue(":oid", oid);
-        q2.bindValue(":direct", Direction::from);
-        if (!q2.exec()) {
-            qDebug() << q1.lastError().text();
-            return;
-        }
-        if (q2.next()) {
-            a1 = q2.value(0).toInt();
-            s1 = q2.value(1).toDouble();
-        }
-
-        q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = :direct");
-        q2.bindValue(":oid", oid);
-        q2.bindValue(":direct", Direction::to);
-        if (!q2.exec()) {
-            qDebug() << q1.lastError().text();
-            return;
-        }
-        if (q2.next()) {
-            a2 = q2.value(0).toInt();
-            s2 = q2.value(1).toDouble();
-        }
-
-        if (a1 != acc_id && a2 != acc_id)
-            continue;
-
-        insertRow(row);
-        setData(index(row,col_Id), oid);
-
-        if (a1 == acc_id) {
-            setData(index(row,col_Account), list[a2]);
-            setData(index(row,col_Credit), s1);
-        }
-        else if (a2 == acc_id) {
-            setData(index(row,col_Account), list[a1]);
-            setData(index(row,col_Debet), s2);
-        }
-
-        setData(index(row,col_Date), q1.value(1).toString());
-        setData(index(row,col_Descr), q1.value(2).toString());
-
-        row++;
-    }
-}
-
-ListOperationsModel::ListOperationsModel(QObject *parent) :
-    QStandardItemModel(parent)
-{
+    list = read_list(account, fdate, ldate);
+    accounts_list = db->get_accounts_list();
 }
 
 ListOperationsModel::~ListOperationsModel()
 {
-    delete db;
+//    delete db;
     delete var;
+}
+
+QList<operation_data> ListOperationsModel::read_list(int account, QDate fdate, QDate ldate)
+{
+    QSqlQuery q1, q2;
+    QList<operation_data> list;
+    account_summ summ;
+    int a1, a2;
+    double s1, s2;
+
+    if (account == 0)
+        return list;
+
+    q1.prepare("SELECT id,dt,descr FROM oper WHERE dt >= :fdate AND dt <= :ldate ORDER BY dt");
+    q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = :direct");
+
+    q1.bindValue(":fdate", fdate.toString("yyyy-MM-dd"));
+    q1.bindValue(":ldate", ldate.toString("yyyy-MM-dd"));
+    if (!q1.exec()) {
+        qDebug() << q1.lastError();
+        return list;
+    }
+    while (q1.next()) {
+        operation_data data;
+        data.id = q1.value(0).toInt();
+        data.date = q1.value(1).toDate();
+        data.descr = q1.value(2).toString();
+
+        q2.bindValue(":oid", data.id);
+        q2.bindValue(":direction", Direction::from);
+        if (!q2.exec() || !q2.next()) {
+            qDebug() << q2.lastError();
+            return list;
+        }
+        a1 = q2.value(0).toInt();
+        s1 = q2.value(1).toDouble();
+
+        q2.bindValue(":oid", data.id);
+        q2.bindValue(":direction", Direction::to);
+        if (!q2.exec() || !q2.next()) {
+            qDebug() << q2.lastError();
+            return list;
+        }
+        a2 = q2.value(0).toInt();
+        s2 = q2.value(1).toDouble();
+
+        if (a1 != account && a2 != account)
+            continue;
+
+        summ.set_account(a1);
+        summ.set_summ(s1);
+        data.from.append(summ);
+        summ.set_account(a2);
+        summ.set_summ(s2);
+        data.to.append(summ);
+
+        list.append(data);
+    }
+
+    return list;
+}
+
+void ListOperationsModel::reload_data(int account, QDate fdate, QDate ldate)
+{
+    current_account = account;
+    list.clear();
+    list = read_list(account, fdate, ldate);
+    reset();
+//    qDebug() << list.count();
 }
 
 QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 {
-    QVariant value = QStandardItemModel::data(index, role);
+//    QVariant value = QStandardItemModel::data(index, role);
 
-    switch (role) {
-        case Qt::DisplayRole:
-        if (index.column() == col_Debet && value.toDouble() != 0) {
-            return default_locale->toString(value.toDouble()/var->Kurs(),'f',2);
+    if (index.row() < 0 || index.row() >= list.size())
+        return QVariant();
+
+    if (role == Qt::DisplayRole) {
+        operation_data data = list.at(index.row());
+        account_summ from = data.from.at(0);
+        account_summ to = data.to.at(0);
+        if (index.column() == col_Id) {
+            return data.id;
         }
-        if (index.column() == col_Credit && value.toDouble() != 0) {
-            return default_locale->toString(value.toDouble()/var->Kurs(),'f',2);
+        else if (index.column() == col_Account) {
+            qDebug() << current_account << from.account() << to.account();
+            if (from.account() == current_account) {
+                qDebug() << "from";
+                return accounts_list[to.account()];
+            }
+            else {
+                qDebug() << "to";
+                return accounts_list[from.account()];
+            }
+        }
+        else if (index.column() == col_Debet) {
+            if (from.account() != current_account)
+                return default_locale->toString(to.summ()/var->Kurs(),'f',2);
+            else
+                return QVariant();
+        }
+        else if (index.column() == col_Credit) {
+            if (to.account() != current_account)
+                return default_locale->toString(from.summ()/var->Kurs(),'f',2);
+            else
+                return QVariant();
         }
         else if (index.column() == col_Date) {
-            return value.toDate().toString(Qt::SystemLocaleDate);
+            return data.date.toString(Qt::SystemLocaleDate);
+        }
+        else if (index.column() == col_Descr) {
+            return data.descr;
         }
         else
-            return value;
-
-        case Qt::TextAlignmentRole:
-            if (index.column() == col_Debet)
-                return int(Qt::AlignRight | Qt::AlignVCenter);
-            if (index.column() == col_Credit)
-                return int(Qt::AlignRight | Qt::AlignVCenter);
-            if (index.column() == col_Date)
-                return int(Qt::AlignRight | Qt::AlignVCenter);
+            return QVariant();
     }
 
-    return value;
+    else if (role == Qt::TextAlignmentRole) {
+            if (index.column() == col_Debet)
+                return int(Qt::AlignRight | Qt::AlignVCenter);
+            else if (index.column() == col_Credit)
+                return int(Qt::AlignRight | Qt::AlignVCenter);
+            else if (index.column() == col_Date)
+                return int(Qt::AlignRight | Qt::AlignVCenter);
+            else
+                return QVariant();
+    }
+
+    return QVariant();
 }
 
 QVariant ListOperationsModel::headerData(int section,Qt::Orientation orientation, int role) const
@@ -132,6 +155,23 @@ QVariant ListOperationsModel::headerData(int section,Qt::Orientation orientation
     }
     else
         return QString("%1").arg(section+1);
+}
+
+QModelIndex ListOperationsModel::index(int row, int column, const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+
+    if (row >= list.size() || row < 0 || column >= header_data.size())
+        return QModelIndex();
+
+    operation_data pkt = list.at(row);
+    return createIndex(row, column, &pkt);
+}
+
+QModelIndex ListOperationsModel::parent(const QModelIndex &child) const
+{
+    Q_UNUSED(child);
+    return QModelIndex();
 }
 
 ListOperations::ListOperations(QWidget *parent) :
@@ -152,27 +192,27 @@ ListOperations::ListOperations(QWidget *parent) :
     fdate = ui->fdate->value();
     ldate = ui->ldate->value();
 
-    model = new ListOperationsModel();
-    model->fill_model(&fdate, &ldate, var.Account());
+    model = new ListOperationsModel(0, fdate, ldate);
+    connect(this, SIGNAL(call_reload_table(int, QDate, QDate)), model, SLOT(reload_data(int, QDate, QDate)));
 
     debt = new QAction(tr("Debet"), this);
-    debt->setShortcut(tr("Alt+N"));
+    debt->setShortcut(tr("Ctrl+N"));
     debt->setToolTip(tr("Debet operation"));
 
     cred = new QAction(tr("Credit"), this);
-    cred->setShortcut(tr("Alt+C"));
+    cred->setShortcut(tr("Ctrl+C"));
     cred->setToolTip(tr("Credit operation"));
 
     tran = new QAction(tr("Transfer"), this);
-    tran->setShortcut(tr("Alt+T"));
+    tran->setShortcut(tr("Ctrl+T"));
     tran->setToolTip(tr("Transfer operation"));
 
     plan = new QAction(tr("Planning operation"), this);
-    plan->setShortcut(tr("Alt+P"));
+    plan->setShortcut(tr("Ctrl+P"));
     plan->setToolTip(tr("Planning operation"));
 
     dele = new QAction(tr("Delete current operation"), this);
-    dele->setShortcut(tr("Alt+D"));
+    dele->setShortcut(tr("Ctrl+D"));
     dele->setText(tr("Delete operation"));
 
     acts.append(debt);
@@ -181,18 +221,20 @@ ListOperations::ListOperations(QWidget *parent) :
     acts.append(plan);
     acts.append(dele);
 
-    ui->treeView->setModel(model);
-    ui->treeView->hideColumn(0);
-    ui->treeView->setAlternatingRowColors(true);
-    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
-    for (int i = 1; i < 5; i++)
-        ui->treeView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
+    ui->tableView->setModel(model);
+    ui->tableView->hideColumn(0);
+    ui->tableView->setAlternatingRowColors(true);
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+//    for (int i = 1; i < 5; i++)
+//        ui->tableView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
-    change_current_account();
+    print_balance();
 
-    ui->treeView->addActions(acts);
-    ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
+    ui->tableView->addActions(acts);
+    ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     connect(debt, SIGNAL(triggered()), SLOT(debet_operation()));
     connect(cred, SIGNAL(triggered()), SLOT(credit_operation()));
@@ -202,8 +244,8 @@ ListOperations::ListOperations(QWidget *parent) :
     connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(reload_model()));
     connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(reload_model()));
 
-    connect(ui->listAccounts, SIGNAL(activated(QModelIndex)), SLOT(reload_model()));
-    connect(ui->listAccounts->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), SLOT(reload_model()));
+//    connect(ui->listAccounts, SIGNAL(activated(QModelIndex)), SLOT(reload_model()));
+    connect(ui->listAccounts->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), SLOT(reload_model()));
 }
 
 ListOperations::~ListOperations()
@@ -215,7 +257,7 @@ ListOperations::~ListOperations()
 void ListOperations::edit_operation(operation_data &d)
 {
     EditOperation eo(1, this);
-    QModelIndex idx = ui->treeView->currentIndex();
+    QModelIndex idx = ui->tableView->currentIndex();
     operation_data data;
 
     eo.setdata(d);
@@ -223,7 +265,7 @@ void ListOperations::edit_operation(operation_data &d)
         data = eo.data();
 
         db->save_operation(data);
-        ui->treeView->setCurrentIndex(idx);
+        ui->tableView->setCurrentIndex(idx);
         reload_model();
     }
 }
@@ -242,8 +284,10 @@ void ListOperations::debet_operation()
 void ListOperations::credit_operation()
 {
     operation_data d;
+    account_summ a;
 
-    d.from.set_account(ui->listAccounts->value());
+    a.set_account(ui->listAccounts->value());
+    d.from.append(a);
 
     edit_operation(d);
 }
@@ -251,8 +295,10 @@ void ListOperations::credit_operation()
 void ListOperations::transfer_operation()
 {
     operation_data d;
+    account_summ a;
 
-    d.from.set_account(ui->listAccounts->value());
+    a.set_account(ui->listAccounts->value());
+    d.from.append(a);
 
     edit_operation(d);
 }
@@ -261,7 +307,7 @@ int ListOperations::get_selected_id()
 {
     QModelIndexList list;
 
-    list = ui->treeView->selectionModel()->selectedIndexes();
+    list = ui->tableView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return 0;
@@ -325,19 +371,19 @@ void ListOperations::plann_operation()
     }
 }
 
-void ListOperations::change_current_account()
+void ListOperations::print_balance()
 {
     Globals var;
-    QLocale *lc;
+//    QLocale *lc;
     QFont font;
     font.setBold(true);
     int id = ui->listAccounts->value();
     Account_Data data = db->get_account_data(id);
     double result = db->convert_currency(data.balance.value(), data.curr);
 
-    lc = default_locale;
+//    lc = default_locale;
     ui->account_ostatok->setFont(font);
-    ui->account_ostatok->setText(lc->toString(result,'f',2));
+    ui->account_ostatok->setText(default_locale->toString(result,'f',2));
 
     var.setAccount(ui->listAccounts->value());
 }
@@ -350,19 +396,20 @@ void ListOperations::reload_model()
     fdate = ui->fdate->value();
     ldate = ui->ldate->value();
 
-    change_current_account();
+    print_balance();
 
-    model->fill_model(&fdate, &ldate, id);
-    ui->treeView->hideColumn(0);
-    ui->treeView->setAlternatingRowColors(true);
-    ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
-    for (int i = 1; i < 5; i++)
-        ui->treeView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
+//    ui->tableView->hideColumn(0);
+//    ui->tableView->setAlternatingRowColors(true);
+//    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+//    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+//    for (int i = 1; i < 5; i++)
+//        ui->tableView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
+
+    emit call_reload_table(id, fdate, ldate);
 }
 
 void ListOperations::clear_model()
 {
     ui->account_ostatok->setText("0");
-    model->clear();
+//    model->clear();
 }

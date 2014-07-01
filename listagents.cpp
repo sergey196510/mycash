@@ -2,9 +2,10 @@
 #include "ui_listagents.h"
 
 ListAgentsModel::ListAgentsModel(QObject *parent) :
-    QSqlQueryModel(parent)
+    QAbstractTableModel(parent)
 {
     header_data << tr("") << tr("Name") << tr("City") << tr("Address");
+    list = read_list();
 }
 
 QVariant ListAgentsModel::headerData(int section,Qt::Orientation orientation, int role) const
@@ -18,6 +19,64 @@ QVariant ListAgentsModel::headerData(int section,Qt::Orientation orientation, in
         return QString("%1").arg(section+1);
 }
 
+int ListAgentsModel::rowCount(const QModelIndex &parent) const
+{
+    if (parent.isValid())
+        return 0;
+    return list.size();
+}
+
+int ListAgentsModel::columnCount(const QModelIndex &parent) const
+{
+    if (parent.isValid())
+        return 0;
+    return header_data.size();
+}
+
+QVariant ListAgentsModel::data(const QModelIndex &index, int role) const
+{
+    if (index.row() < 0 || index.row() >= list.size())
+        return QVariant();
+
+    if (role == Qt::DisplayRole) {
+        agent_data data = list.at(index.row());
+        if (index.column() == 0)
+            return data.id();
+        else if (index.column() == 1)
+            return data.name();
+        else if (index.column() == 2)
+            return data.city();
+        else if (index.column() == 3)
+            return data.address();
+        else
+            return QVariant();
+    }
+    else
+        return QVariant();
+}
+
+QList<agent_data> ListAgentsModel::read_list()
+{
+    QSqlQuery q;
+    agent_data data;
+    QList<agent_data> list;
+
+    q.prepare("SELECT id,name,city,address FROM agent ORDER BY name");
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return list;
+    }
+    while (q.next()) {
+        data.set_id(q.value(0).toInt());
+        data.set_name(q.value(1).toString());
+        data.set_city(q.value(2).toString());
+        data.set_address(q.value(3).toString());
+        list.append(data);
+    }
+
+    return list;
+}
+
 ListAgents::ListAgents(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListAgents)
@@ -27,7 +86,7 @@ ListAgents::ListAgents(QWidget *parent) :
     if (var.database_Opened()) {
         query = "SELECT id,name,city,address FROM agent ORDER BY name";
         model = new ListAgentsModel;
-        model->setQuery(query);
+//        model->setQuery(query);
     }
 
     db = new Database;
@@ -183,19 +242,19 @@ void ListAgents::del_record()
 
 void ListAgents::clear_record()
 {
-    ui->nameEdit->setText("");
-    ui->cityEdit->setText("");
-    ui->addrEdit->setText("");
-    ui->phoneEdit->setText("");
-    ui->contactEdit->setText("");
+    ui->nameEdit->clear();
+    ui->cityEdit->clear();
+    ui->addrEdit->clear();
+    ui->phoneEdit->clear();
+    ui->contactEdit->clear();
 }
 
 void ListAgents::reload_model()
 {
-    model->setQuery(query);
+//    model->setQuery(query);
 }
 
 void ListAgents::clear_model()
 {
-    model->clear();
+//    model->clear();
 }

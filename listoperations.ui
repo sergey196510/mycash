@@ -71,7 +71,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="accountsView" name="listAccounts"/>
-     <widget class="QTreeView" name="treeView"/>
+     <widget class="QTableView" name="tableView"/>
     </widget>
    </item>
   </layout>
