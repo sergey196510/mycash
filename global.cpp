@@ -22,7 +22,7 @@ const int Account_Type::active = 1;
 const int Account_Type::passive = 2;
 const int Account_Type::debet = 3;
 const int Account_Type::credit = 4;
-const int Account_Type::initial = 5;
+const int Account_Type::initial = 6;
 
 const int Plan_Status::actual = 1;
 const int Plan_Status::committed = 2;

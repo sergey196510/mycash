@@ -99,11 +99,15 @@ QVariant ListPlanOperModel::headerData(int section,Qt::Orientation orientation, 
 
 int ListPlanOperModel::rowCount(const QModelIndex &parent) const
 {
+    if (parent.isValid())
+        return 0;
     return list.count();
 }
 
 int ListPlanOperModel::columnCount(const QModelIndex &parent) const
 {
+    if (parent.isValid())
+        return 0;
     return header_data.count();
 }
 

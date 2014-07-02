@@ -15,17 +15,10 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="myTreeView" name="treeView"/>
+    <widget class="QTableView" name="tableView"/>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>myTreeView</class>
-   <extends>QTreeView</extends>
-   <header location="global">mytreeview.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

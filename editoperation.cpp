@@ -146,11 +146,11 @@ operation_data EditOperation::data()
     d.kurs = ui->kursEdit->value();
 
     a.set_account(ui->fromWidget->value());
-    a.set_summ(ui->fromSpinBox->value());
+    a.set_balance(ui->fromSpinBox->value());
     d.from.append(a);
 
     a.set_account(ui->toWidget->value());
-    a.set_summ(ui->toSpinBox->value());
+    a.set_balance(ui->toSpinBox->value());
     d.to.append(a);
 
     d.date = ui->dateEdit->value();
@@ -172,14 +172,14 @@ void EditOperation::setdata(operation_data &d)
         i = d.from.begin();
         account_summ a = *i;
         ui->fromWidget->setValue(a.account());
-        ui->fromSpinBox->setValue(a.summ());
+        ui->fromSpinBox->setValue(a.balance().value());
     }
 
     if (!d.to.empty()) {
         i = d.to.begin();
         account_summ a = *i;
         ui->toWidget->setValue(a.account());
-        ui->toSpinBox->setValue(a.summ());
+        ui->toSpinBox->setValue(a.balance().value());
     }
 
     ui->agent_comboBox->setValue(d.agent);
@@ -193,7 +193,7 @@ void EditOperation::setdata(operation_data &d)
 void EditOperation::separate_account()
 {
     ListSeparateOper *lst = new ListSeparateOper;
-    QMap<int,double> acc_oper;
+    QList<account_summ> acc_oper;
 
     if (lst->exec() == QDialog::Accepted) {
         acc_oper = lst->data();

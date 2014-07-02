@@ -37,11 +37,15 @@ QList<Currency_Data> ListCurrencyModel::read_list()
 
 int ListCurrencyModel::rowCount(const QModelIndex &parent) const
 {
+    if (parent.isValid())
+        return 0;
     return list.count();
 }
 
 int ListCurrencyModel::columnCount(const QModelIndex &parent) const
 {
+    if (parent.isValid())
+        return 0;
     return header_data.count();
 }
 

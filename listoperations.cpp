@@ -64,10 +64,10 @@ QList<operation_data> ListOperationsModel::read_list(int account, QDate fdate, Q
             continue;
 
         summ.set_account(a1);
-        summ.set_summ(s1);
+        summ.set_balance(s1);
         data.from.append(summ);
         summ.set_account(a2);
-        summ.set_summ(s2);
+        summ.set_balance(s2);
         data.to.append(summ);
 
         list.append(data);
@@ -100,25 +100,25 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
             return data.id;
         }
         else if (index.column() == col_Account) {
-            qDebug() << current_account << from.account() << to.account();
+//            qDebug() << current_account << from.account() << to.account();
             if (from.account() == current_account) {
-                qDebug() << "from";
+//                qDebug() << "from";
                 return accounts_list[to.account()];
             }
             else {
-                qDebug() << "to";
+//                qDebug() << "to";
                 return accounts_list[from.account()];
             }
         }
         else if (index.column() == col_Debet) {
             if (from.account() != current_account)
-                return default_locale->toString(to.summ()/var->Kurs(),'f',2);
+                return default_locale->toString(to.balance().value()/var->Kurs(),'f',2);
             else
                 return QVariant();
         }
         else if (index.column() == col_Credit) {
             if (to.account() != current_account)
-                return default_locale->toString(from.summ()/var->Kurs(),'f',2);
+                return default_locale->toString(from.balance().value()/var->Kurs(),'f',2);
             else
                 return QVariant();
         }

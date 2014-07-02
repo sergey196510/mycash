@@ -1,6 +1,7 @@
 #include "listaccountsmodel.h"
 
-ViewCurrency::ViewCurrency(int column, QObject *parent)
+ViewCurrency::ViewCurrency(int column, QObject *parent) :
+    QItemDelegate(parent)
 {
     this->column = column;
 }

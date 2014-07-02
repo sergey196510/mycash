@@ -30,15 +30,15 @@ class ListSeparateOperModel : public QAbstractTableModel
 
 public:
     ListSeparateOperModel(QObject *parent = 0);
-    QMap<int,double> getData();
+    QList<account_summ> getData();
 
 private:
-    struct OperList {
-        int account;
-        double summ;
-    };
+//    struct OperList {
+//        int account;
+//        double summ;
+//    };
     QStringList header_data;
-    QList<OperList> list;
+    QList<account_summ> list;
     QMap<int,QString>  acc_list;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent) const;
@@ -57,7 +57,7 @@ class ListSeparateOper : public QDialog
 public:
     explicit ListSeparateOper(QWidget *parent = 0);
     ~ListSeparateOper();
-    QMap<int,double> data();
+    QList<account_summ> data();
 
 private:
     Ui::ListSeparateOper *ui;

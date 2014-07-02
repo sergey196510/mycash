@@ -74,16 +74,16 @@ public:
 
 class account_summ {
     int acc;
-    double s;
+    MyCurrency s;
 public:
     account_summ() {
         acc = 0;
         s = 0;
     };
     int account() const { return acc; }
-    double summ() const { return s; }
+    MyCurrency balance() const { return s; }
     void set_account(int val) { acc = val; }
-    void set_summ(double val) { s = val; }
+    void set_balance(MyCurrency val) { s = val.value(); }
 };
 
 struct Account_Data {
@@ -98,7 +98,7 @@ struct Account_Data {
     QString descr;
     QDate dt;
     Account_Data() {
-        name = "";
+        name.clear();
         type = 0;
         curr = 0;
         hidden = false;
@@ -106,7 +106,7 @@ struct Account_Data {
         top = 0;
         system = 0;
 //        balance = 0;
-        descr = "";
+        descr.clear();
         dt = QDate::currentDate();
     }
 };
@@ -131,20 +131,29 @@ struct operation_data {
 };
 
 class agent_data {
-    int ii;
+    int id;
     QString nm;
     QString ct;
     QString addr;
     QString ph;
     QString cont;
 public:
-    int id() { return ii; }
+    agent_data() {
+        id = 0;
+        nm.clear();
+        ct.clear();
+        addr.clear();
+        ph.clear();
+        cont.clear();
+    }
+
+    int Id() { return id; }
     QString name() { return nm; }
     QString city() { return ct; }
     QString address() { return addr; }
     QString phone() { return ph; }
     QString contact() { return cont; }
-    void set_id(int i) { ii = i; }
+    void set_id(int i) { id = i; }
     void set_name(QString s) { nm = s; }
     void set_city(QString s) { ct = s; }
     void set_address(QString s) { addr = s; }

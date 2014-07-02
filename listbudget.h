@@ -4,9 +4,17 @@
 #include "ui_listbudget.h"
 #include "QtSql"
 
-class ListBudgetModel : public QSqlQueryModel
+class ListBudgetModel : public QAbstractTableModel
 {
     Q_OBJECT
+
+public:
+    explicit ListBudgetModel(QObject *parent = 0);
+
+private:
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
 };
 
 class ListBudget : public QWidget
@@ -18,6 +26,7 @@ public:
 
 private:
     Ui::ListBudget ui;
+    ListBudgetModel *model;
 };
 
 #endif // LISTBUDGET_H

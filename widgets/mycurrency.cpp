@@ -1,5 +1,5 @@
 #include "widgets/mycurrency.h"
 
-MyCurrency::MyCurrency()
-{
-}
+//MyCurrency::MyCurrency()
+//{
+//}

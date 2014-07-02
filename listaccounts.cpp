@@ -180,11 +180,11 @@ void ListAccounts::new_account()
         oper.descr = tr("Primary balance");
 
         a.set_account(var.InitialAccount());
-        a.set_summ(data.balance.value());
+        a.set_balance(data.balance.value());
         oper.from.append(a);
 
         a.set_account(acc);
-        a.set_summ(data.balance.value());
+        a.set_balance(data.balance.value());
         oper.to.append(a);
 
         db->save_operation(oper);
@@ -269,19 +269,19 @@ void ListAccounts::correct_balance()
         od.descr = tr("correct");
         if (new_balance < current_balance) {
             a.set_account(id);
-            a.set_summ(current_balance-new_balance);
+            a.set_balance(current_balance-new_balance);
             od.from.append(a);
             a.set_account(cb->account());
-            a.set_summ(current_balance-new_balance);
+            a.set_balance(current_balance-new_balance);
             od.to.append(a);
             db->save_operation(od);
         }
         else {
             a.set_account(cb->account());
-            a.set_summ(new_balance-current_balance);
+            a.set_balance(new_balance-current_balance);
             od.from.append(a);
             a.set_account(id);
-            a.set_summ(new_balance-current_balance);
+            a.set_balance(new_balance-current_balance);
             od.to.append(a);
             db->save_operation(od);
         }

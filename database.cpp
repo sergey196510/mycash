@@ -304,7 +304,7 @@ bool Database::new_account_oper(QString table, const int o_id, account_summ &acc
             .arg(table)
             .arg(acc.account())
             .arg(o_id)
-            .arg(acc.summ())
+            .arg(acc.balance().value())
             .arg(direction);
     qDebug() << str;
     if (!q.exec(str)) {
@@ -339,7 +339,7 @@ bool Database::del_operation(int id)
     list = get_account_oper_list(id,1);
     for (i = list.begin(); i != list.end(); i++) {
         acc.set_account(i.key());
-        acc.set_summ(i.value());
+        acc.set_balance(i.value());
         if (change_account_balance(acc) == false) {
             q.exec("ROLLBACK");
             return false;
@@ -349,7 +349,7 @@ bool Database::del_operation(int id)
     list = get_account_oper_list(id,2);
     for (i = list.begin(); i != list.end(); i++) {
         acc.set_account(i.key());
-        acc.set_summ(-i.value());
+        acc.set_balance(-i.value());
         if (change_account_balance(acc) == false) {
             q.exec("ROLLBACK");
             return false;
@@ -387,7 +387,7 @@ bool Database::change_account_balance(account_summ &acc)
     else
         flag = -1;
 
-    summ = acc.summ() * flag;
+    summ = acc.balance().value() * flag;
 
     query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
     query.bindValue(":id", acc.account());
@@ -417,16 +417,6 @@ bool Database::save_operation(operation_data &data)
             q.exec("ROLLBACK TRANSACTION");
             return false;
         }
-    }
-    for (i = data.to.begin(); i != data.to.end(); i++) {
-        account_summ d = *i;
-        if (new_account_oper("account_oper", oper_id, d, Direction::to) == false) {
-            q.exec("ROLLBACK TRANSACTION");
-            return false;
-        }
-    }
-    for (i = data.from.begin(); i != data.from.end(); i++) {
-        account_summ d = *i;
         if (change_account_balance(d) == false) {
             q.exec("ROLLBACK TRANSACTION");
             return false;
@@ -434,6 +424,10 @@ bool Database::save_operation(operation_data &data)
     }
     for (i = data.to.begin(); i != data.to.end(); i++) {
         account_summ d = *i;
+        if (new_account_oper("account_oper", oper_id, d, Direction::to) == false) {
+            q.exec("ROLLBACK TRANSACTION");
+            return false;
+        }
         if (change_account_balance(d) == false) {
             q.exec("ROLLBACK TRANSACTION");
             return false;
@@ -464,7 +458,7 @@ operation_data Database::get_operation(int id)
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         d.set_account(i.key());
-        d.set_summ(i.value());
+        d.set_balance(i.value());
         data.from.append(d);
     }
 
@@ -472,7 +466,7 @@ operation_data Database::get_operation(int id)
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         d.set_account(i.key());
-        d.set_summ(i.value());
+        d.set_balance(i.value());
         data.to.append(d);
     }
 
@@ -628,7 +622,7 @@ operation_data Database::get_plan_oper_data(int id)
         for (i = list.begin(); i != list.end(); i++) {
             account_summ d;
             d.set_account(i.key());
-            d.set_summ(i.value());
+            d.set_balance(i.value());
             data.from.append(d);
         }
 
@@ -636,7 +630,7 @@ operation_data Database::get_plan_oper_data(int id)
         for (i = list.begin(); i != list.end(); i++) {
             account_summ d;
             d.set_account(i.key());
-            d.set_summ(i.value());
+            d.set_balance(i.value());
             data.to.append(d);
         }
     }

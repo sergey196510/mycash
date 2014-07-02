@@ -7,8 +7,8 @@ private:
     double val;
 
 public:
-    MyCurrency() { val = 0; }
-    MyCurrency(double i) { val = i; }
+//    MyCurrency() { val = 0; }
+    MyCurrency(double i = 0) { val = i; }
     double value() { return val; }
     void setValue(double i) { val = i; }
 };

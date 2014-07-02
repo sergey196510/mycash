@@ -33,7 +33,7 @@ void MainWidgetModel::fill_model(Database *db)
         j = data.to.begin();
         a = *j;
         setData(index(row,column_to),    accounts[a.account()]);
-        setData(index(row,summ),  default_locale->toString(data.from.at(0).summ(),'f',2));
+        setData(index(row,summ),  default_locale->toString(data.from.at(0).balance().value(),'f',2));
         if (data.status == Plan_Status::actual)
             setData(index(row,status), tr("Actual"));
         else if (data.status == Plan_Status::committed)

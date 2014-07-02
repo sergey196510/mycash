@@ -41,7 +41,7 @@ QVariant ListAgentsModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole) {
         agent_data data = list.at(index.row());
         if (index.column() == 0)
-            return data.id();
+            return data.Id();
         else if (index.column() == 1)
             return data.name();
         else if (index.column() == 2)
