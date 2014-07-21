@@ -1,4 +1,5 @@
 #include "database.h"
+#include "transaction.h"
 
 Database::Database()
 {
@@ -24,18 +25,24 @@ double Database::get_account_summ(int top)
 {
     QSqlQuery query;
     double summ = 0;
+    Transaction tr;
 
     if (!var.database_Opened())
         return summ;
 
+    tr.begin();
+
     query.prepare("SELECT id,ccod,balance FROM account WHERE top = :top AND hidden = 0");
     query.bindValue(":top", top);
-    if (!query.exec())
+    if (!query.exec()) {
+        tr.rollback();
         return 0;
+    }
     while (query.next()) {
         summ += convert_currency(query.value(2).toDouble(), query.value(1).toInt());
     }
 
+    tr.commit();
     return summ;
 }
 
@@ -333,42 +340,43 @@ bool Database::del_operation(int id)
     QMap<int,double> list;
     QMap<int,double>::iterator i;
     account_summ acc;
+    Transaction tr;
 
-    q.exec("BEGIN");
+    tr.begin();
 
-    list = get_account_oper_list(id,1);
+    list = get_account_oper_list(id,Direction::from);
     for (i = list.begin(); i != list.end(); i++) {
         acc.set_account(i.key());
         acc.set_balance(i.value());
         if (change_account_balance(acc) == false) {
-            q.exec("ROLLBACK");
+            tr.rollback();
             return false;
         }
     }
 
-    list = get_account_oper_list(id,2);
+    list = get_account_oper_list(id,Direction::to);
     for (i = list.begin(); i != list.end(); i++) {
         acc.set_account(i.key());
         acc.set_balance(-i.value());
         if (change_account_balance(acc) == false) {
-            q.exec("ROLLBACK");
+            tr.rollback();
             return false;
         }
     }
 
     if (del_account_oper(id) == false) {
-        q.exec("ROLLBACK");
+        tr.rollback();
         return false;
     }
 
     q.prepare("DELETE FROM oper WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec()) {
-        q.exec("ROLLBACK");
+        tr.rollback();
         return false;
     }
 
-    q.exec("COMMIT");
+    tr.commit();
 
     return true;
 }
@@ -382,7 +390,7 @@ bool Database::change_account_balance(account_summ &acc)
 
     data = get_account_data(acc.account());
 
-    if (data.top == Account_Type::active || data.top == Account_Type::credit)
+    if (data.top == Account_Type::active || data.top == Account_Type::debet)
         flag = 1;
     else
         flag = -1;
@@ -404,37 +412,39 @@ bool Database::save_operation(operation_data &data)
     QSqlQuery q;
     int oper_id;
     QList<account_summ>::iterator i;
+    Transaction tr;
 
-    q.exec("BEGIN TRANSACTION");
+    tr.begin();
 
     if ((oper_id = new_operation(data)) == 0) {
-        q.exec("ROLLBACK TRANSACTION");
+        tr.rollback();
         return false;
     }
     for (i = data.from.begin(); i != data.from.end(); i++) {
         account_summ d = *i;
         if (new_account_oper("account_oper", oper_id, d, Direction::from) == false) {
-            q.exec("ROLLBACK TRANSACTION");
+            tr.rollback();
             return false;
         }
+        d.set_balance(-d.balance().value()); // сменить знак
         if (change_account_balance(d) == false) {
-            q.exec("ROLLBACK TRANSACTION");
+            tr.rollback();
             return false;
         }
     }
     for (i = data.to.begin(); i != data.to.end(); i++) {
         account_summ d = *i;
         if (new_account_oper("account_oper", oper_id, d, Direction::to) == false) {
-            q.exec("ROLLBACK TRANSACTION");
+            tr.rollback();
             return false;
         }
         if (change_account_balance(d) == false) {
-            q.exec("ROLLBACK TRANSACTION");
+            tr.rollback();
             return false;
         }
     }
 
-    q.exec("COMMIT TRANSACTION");
+    tr.commit();
     return true;
 }
 

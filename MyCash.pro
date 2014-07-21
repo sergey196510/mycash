@@ -48,7 +48,8 @@ SOURCES += \
     settings.cpp \
     summaccount.cpp \
     mytreeview.cpp \
-    listbudget.cpp
+    listbudget.cpp \
+    transaction.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -85,7 +86,8 @@ HEADERS  += \
     settings.h \
     summaccount.h \
     mytreeview.h \
-    listbudget.h
+    listbudget.h \
+    transaction.h
 
 FORMS    += \
     debetcreditreport.ui \
