@@ -15,8 +15,12 @@ AccountOper2::AccountOper2(QWidget *parent) :
 void AccountOper2::select_account()
 {
     SelectAccount *acc = new SelectAccount(this);
+//    QCursor m;
+
+//    qDebug() << m.pos();
 
     acc->setValue(val);
+    acc->move(QCursor().pos());
     if (acc->exec() == QDialog::Accepted) {
         val = acc->value();
         this->setText(list[val]);
