@@ -166,22 +166,22 @@ void MainWidget::reload_model()
     ui->treeView->header()->setResizeMode(model->summ, QHeaderView::ResizeToContents);
     ui->treeView->header()->setResizeMode(model->status, QHeaderView::ResizeToContents);
 
-//    double active = db->get_account_summ(Active_type);
-//    double passive = db->get_account_summ(Passive_type);
-    double debet = db->get_operation_summ(Account_Type::debet);
-    double credit = db->get_operation_summ(Account_Type::credit);
+//    double active = db->get_account_summ(Account_Type::active);
+//    double passive = db->get_account_summ(Account_Type::passive);
+//    double debet = db->get_operation_summ(Account_Type::debet);
+//    double credit = db->get_operation_summ(Account_Type::credit);
 
     ui->active_value->setText(active.text() + " " + var.Symbol());
     ui->passive_value->setText(passive.text() + " " + var.Symbol());
-    ui->debet_value->setText(default_locale->toString(debet,'f',2) + " " + var.Symbol());
-    ui->credit_value->setText(default_locale->toString(credit,'f',2) + " " + var.Symbol());
+//    ui->debet_value->setText(default_locale->toString(debet,'f',2) + " " + var.Symbol());
+//    ui->credit_value->setText(default_locale->toString(credit,'f',2) + " " + var.Symbol());
 }
 
 void MainWidget::clear_model()
 {
     ui->active_value->setText("0");
     ui->passive_value->setText("0");
-    ui->debet_value->setText("0");
-    ui->credit_value->setText("0");
+//    ui->debet_value->setText("0");
+//    ui->credit_value->setText("0");
     model->clear();
 }
