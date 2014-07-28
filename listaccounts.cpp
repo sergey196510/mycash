@@ -9,7 +9,7 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
 {
 //    int type;
     QFont font, fnt;
-    summAccount active(1);
+    summAccount active(Account_Type::active);
 
     font.setBold(true);
 
@@ -144,26 +144,26 @@ void ListAccounts::new_account()
     if (ea->exec() == QDialog::Accepted) {
         data = ea->data();
         Account_Data parent = db->get_account_data(data.parent);
-        QSqlQuery q;
+        Transaction t;
 
 //        qDebug() << data.top << parent.top;
 
-        q.exec("BEGIN");
+        t.begin();
 
         if (data.name.length() == 0) {
-            q.exec("ROLLBACK");
+            t.rollback();
             return;
         }
 
         data.top = parent.top;
         acc = db->new_account(data);
         if (acc == 0) {
-            q.exec("ROLLBACK");
+            t.rollback();
             return;
         }
 
         if (data.balance.value() == 0) {
-            q.exec("COMMIT");
+            t.commit();
             reload_model();
             return;
         }
@@ -172,7 +172,7 @@ void ListAccounts::new_account()
             QMessageBox::critical(this, tr("Account"),
                                          tr("You can not create new account wich initial balance\n\
                                             You must set initial account over settings."));
-            q.exec("ROLLBACK");
+            t.rollback();
             return;
         }
 
@@ -188,7 +188,7 @@ void ListAccounts::new_account()
         oper.to.append(a);
 
         db->save_operation(oper);
-        q.exec("COMMIT");
+        t.commit();
 
         reload_model();
     }

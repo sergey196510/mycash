@@ -8,6 +8,7 @@
 #include "global.h"
 #include "listaccountsmodel.h"
 #include "summaccount.h"
+#include "transaction.h"
 
 namespace Ui {
 class ListAccounts;

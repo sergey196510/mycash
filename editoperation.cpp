@@ -192,9 +192,10 @@ void EditOperation::setdata(operation_data &d)
 
 void EditOperation::separate_account()
 {
-    ListSeparateOper *lst = new ListSeparateOper;
+    ListSeparateOper *lst = new ListSeparateOper(this);
     QList<account_summ> acc_oper;
 
+    lst->move(QCursor().pos());
     if (lst->exec() == QDialog::Accepted) {
         acc_oper = lst->data();
         qDebug() << "accept";

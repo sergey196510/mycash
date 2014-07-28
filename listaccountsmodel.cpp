@@ -45,6 +45,8 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
 //            double kurs = account_kurs / global_kurs;
 //            summ += q.value(2).toDouble() * kurs;
         }
+        else
+            continue;
         if (i == 0)
             insertColumns(0,6,idx);
         insertRow(i, idx);
@@ -98,6 +100,8 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
         if (q.value(5) == false) {
             summ += db->convert_currency(q.value(2).toDouble(), q.value(4).toInt());
         }
+        else
+            continue;
         insertRow(i);
         list_index[q.value(0).toInt()] = index(i,0,QModelIndex());
         for (int j = 0; j < 6; j++)

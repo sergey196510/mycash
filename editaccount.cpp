@@ -18,6 +18,8 @@ EditAccount::EditAccount(int type, QWidget *parent) :
     }
     ui->okButton->setEnabled(false);
 
+//    qDebug() << ui->accountWidget->value();
+
     if (type != 2) {
         connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(okCheck()));
         connect(ui->accountWidget, SIGNAL(changed_value()), SLOT(okCheck()));
@@ -100,11 +102,16 @@ void EditAccount::setData(Account_Data &data)
     ui->descrEdit->setText(data.descr);
     ui->hiddenBox->setChecked(data.hidden);
     ui->accountWidget->setValue(data.parent);
+    if (ui->accountWidget->value() != 1) {
+        ui->typeBox->setEnabled(false);
+    }
 }
 
 void EditAccount::okCheck()
 {
     QString str = ui->nameEdit->text();
+
+//    qDebug() << ui->accountWidget->value();
 
     if (str.length() > 0 && ui->accountWidget->value() > 0)
         ui->okButton->setEnabled(true);
@@ -127,8 +134,8 @@ bool EditAccount::nameFind(QString name)
 void EditAccount::parentCheck()
 {
     Account_Data data = db->get_account_data(ui->accountWidget->value());
-    qDebug() << data.top;
-    if (data.top == 1 || data.top == 2) {
+//    qDebug() << data.top;
+    if (data.top == 1) {
         ui->typeBox->setEnabled(true);
     }
     else

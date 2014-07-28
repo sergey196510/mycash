@@ -339,15 +339,17 @@ bool Database::del_operation(int id)
     QSqlQuery q;
     QMap<int,double> list;
     QMap<int,double>::iterator i;
-    account_summ acc;
+//    account_summ acc;
     Transaction tr;
 
     tr.begin();
 
     list = get_account_oper_list(id,Direction::from);
     for (i = list.begin(); i != list.end(); i++) {
+        account_summ acc;
         acc.set_account(i.key());
-        acc.set_balance(i.value());
+        Account_Data data = get_account_data(i.key());
+        acc.set_balance((data.top == Account_Type::passive || data.top == Account_Type::debet) ? -i.value() : i.value());
         if (change_account_balance(acc) == false) {
             tr.rollback();
             return false;
@@ -356,6 +358,7 @@ bool Database::del_operation(int id)
 
     list = get_account_oper_list(id,Direction::to);
     for (i = list.begin(); i != list.end(); i++) {
+        account_summ acc;
         acc.set_account(i.key());
         acc.set_balance(-i.value());
         if (change_account_balance(acc) == false) {
@@ -386,14 +389,14 @@ bool Database::change_account_balance(account_summ &acc)
     QSqlQuery query;
     double summ;
     Account_Data data;
-    int flag;
+    int flag = 1;
 
-    data = get_account_data(acc.account());
+//    data = get_account_data(acc.account());
 
-    if (data.top == Account_Type::active || data.top == Account_Type::debet)
-        flag = 1;
-    else
-        flag = -1;
+//    if (data.top == Account_Type::active || data.top == Account_Type::debet)
+//        flag = 1;
+//    else
+//        flag = -1;
 
     summ = acc.balance().value() * flag;
 
@@ -422,11 +425,15 @@ bool Database::save_operation(operation_data &data)
     }
     for (i = data.from.begin(); i != data.from.end(); i++) {
         account_summ d = *i;
+        Account_Data data = get_account_data(d.account());
         if (new_account_oper("account_oper", oper_id, d, Direction::from) == false) {
             tr.rollback();
             return false;
         }
-        d.set_balance(-d.balance().value()); // сменить знак
+        if (data.top == Account_Type::active ||
+                data.top == Account_Type::credit ||
+                data.top == Account_Type::initial)
+            d.set_balance(-d.balance().value()); // сменить знак
         if (change_account_balance(d) == false) {
             tr.rollback();
             return false;
@@ -434,10 +441,13 @@ bool Database::save_operation(operation_data &data)
     }
     for (i = data.to.begin(); i != data.to.end(); i++) {
         account_summ d = *i;
+//        Account_Data data = get_account_data(d.account());
         if (new_account_oper("account_oper", oper_id, d, Direction::to) == false) {
             tr.rollback();
             return false;
         }
+//        if (data.top == Account_Type::passive || data.top == Account_Type::credit)
+//            d.set_balance(-d.balance().value()); // сменить знак
         if (change_account_balance(d) == false) {
             tr.rollback();
             return false;

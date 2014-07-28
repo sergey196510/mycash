@@ -190,6 +190,7 @@ ListSeparateOper::ListSeparateOper(QWidget *parent) :
     ui(new Ui::ListSeparateOper)
 {
     ui->setupUi(this);
+    setWindowFlags(Qt::Window|Qt::FramelessWindowHint);
 
     model = new ListSeparateOperModel;
 
