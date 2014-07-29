@@ -14,6 +14,7 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
     font.setBold(true);
 
     ui->setupUi(this);
+    ui->splitter->setStretchFactor(2,1);
 
 //    db = new Database;
     db = d;
@@ -40,17 +41,22 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
     nacct = new QAction(tr("New"), this);
     nacct->setShortcut(tr("Alt+N"));
     nacct->setToolTip("New account");
+    connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
     chacc = new QAction(tr("Change"), this);
     chacc->setShortcut(tr("Alt+E"));
     chacc->setToolTip("Change account");
+    connect(chacc, SIGNAL(triggered()), SLOT(change_account()));
     cacct = new QAction(tr("Correct"), this);
     cacct->setShortcut(tr("Alt+C"));
     cacct->setToolTip("Correct balance");
+    connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
     dacct = new QAction(tr("Delete"), this);
     dacct->setShortcut(tr("Alt+D"));
     dacct->setToolTip("Delete this account");
+    connect(dacct, SIGNAL(triggered()), SLOT(del_account()));
     analis = new QAction(tr("Analis"), this);
     analis->setToolTip(tr("Analis linear approximate"));
+    connect(analis, SIGNAL(triggered()), SLOT(show_analis()));
 
     acts.append(nacct);
     acts.append(chacc);
@@ -63,16 +69,7 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
 
     ui->treeView->setAlternatingRowColors(true);
     
-    connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
-    connect(chacc, SIGNAL(triggered()), SLOT(change_account()));
-    connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
-    connect(dacct, SIGNAL(triggered()), SLOT(del_account()));
-    connect(analis, SIGNAL(triggered()), SLOT(show_analis()));
-
-//    connect(ui->newButton, SIGNAL(clicked()), SLOT(new_account()));
-//    connect(ui->editButton, SIGNAL(clicked()), SLOT(change_account()));
-//    connect(ui->correctButton, SIGNAL(clicked()), SLOT(correct_balance()));
-//    connect(ui->deleteButton, SIGNAL(clicked()), SLOT(del_account()));
+    connect(ui->treeView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), SLOT(select_account()));
 
     connect(this, SIGNAL(pressInsert()), SLOT(new_account()));
     connect(this, SIGNAL(pressEnter()), SLOT(change_account()));
@@ -347,4 +344,62 @@ void ListAccounts::show_analis()
     }
 
     w->exec();
+}
+
+//
+// Анализ временного ряда значений баланса на момент совершения операции прихода, расхода
+//
+void ListAccounts::select_account()
+{
+    QSqlQuery q, q2;
+    int id = get_selected_id();
+    Account_Data data;
+    QStack<double> stack;
+    QStack<double> summ;
+    QList<double> result;
+
+    if (id == 0)
+        return;
+
+    data = db->get_account_data(id);
+
+    ui->textEdit->clear();
+    ui->textEdit->append(QString("%1").arg(id));
+
+    // выборка значений операций по счету
+    q.prepare("SELECT id,dt FROM oper ORDER BY dt");
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return;
+    }
+    while (q.next()) {
+        q2.prepare("SELECT summ,direction FROM account_oper WHERE o_id = :oid AND a_id = :aid");
+        q2.bindValue(":oid", q.value(0).toInt());
+        q2.bindValue(":aid", id);
+        if (!q2.exec()) {
+            qDebug() << q2.lastError();
+            return;
+        }
+        while (q2.next()) {
+            double val;
+            if (q2.value(1).toInt() == 2)
+                val = -q2.value(0).toDouble();
+            else
+                val = q2.value(0).toDouble();
+            stack.push(val);
+        }
+    }
+
+    // расчет баланса по счету на момент совершения операции
+    // итоговые значения расположены в массиве result
+    double val = data.balance.value();
+    summ.push(val);
+    while (!stack.empty()) {
+        val += stack.pop();
+        summ.push(val);
+    }
+    while (!summ.empty())
+        result.append(summ.pop());
+
+    qDebug() << id << result;
 }

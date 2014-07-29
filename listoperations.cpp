@@ -198,27 +198,31 @@ ListOperations::ListOperations(QWidget *parent) :
     debt = new QAction(tr("Debet"), this);
     debt->setShortcut(tr("Ctrl+N"));
     debt->setToolTip(tr("Debet operation"));
+    connect(debt, SIGNAL(triggered()), SLOT(debet_operation()));
+    acts.append(debt);
 
     cred = new QAction(tr("Credit"), this);
     cred->setShortcut(tr("Ctrl+C"));
     cred->setToolTip(tr("Credit operation"));
+    connect(cred, SIGNAL(triggered()), SLOT(credit_operation()));
+    acts.append(cred);
 
     tran = new QAction(tr("Transfer"), this);
     tran->setShortcut(tr("Ctrl+T"));
     tran->setToolTip(tr("Transfer operation"));
+    connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
+    acts.append(tran);
 
     plan = new QAction(tr("Planning operation"), this);
     plan->setShortcut(tr("Ctrl+P"));
     plan->setToolTip(tr("Planning operation"));
+    connect(plan, SIGNAL(triggered()), SLOT(plann_operation()));
+    acts.append(plan);
 
     dele = new QAction(tr("Delete current operation"), this);
     dele->setShortcut(tr("Ctrl+D"));
     dele->setText(tr("Delete operation"));
-
-    acts.append(debt);
-    acts.append(cred);
-    acts.append(tran);
-    acts.append(plan);
+    connect(dele, SIGNAL(triggered()), SLOT(del_operation()));
     acts.append(dele);
 
     ui->tableView->setModel(model);
@@ -230,22 +234,18 @@ ListOperations::ListOperations(QWidget *parent) :
 //        ui->tableView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-
-    print_balance();
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     ui->tableView->addActions(acts);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    connect(debt, SIGNAL(triggered()), SLOT(debet_operation()));
-    connect(cred, SIGNAL(triggered()), SLOT(credit_operation()));
-    connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
-    connect(plan, SIGNAL(triggered()), SLOT(plann_operation()));
-    connect(dele, SIGNAL(triggered()), SLOT(del_operation()));
     connect(ui->fdate, SIGNAL(dateChanged(QDate)), SLOT(reload_model()));
     connect(ui->ldate, SIGNAL(dateChanged(QDate)), SLOT(reload_model()));
 
 //    connect(ui->listAccounts, SIGNAL(activated(QModelIndex)), SLOT(reload_model()));
     connect(ui->listAccounts->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), SLOT(reload_model()));
+
+    print_balance();
 }
 
 ListOperations::~ListOperations()

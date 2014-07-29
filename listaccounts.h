@@ -49,6 +49,7 @@ private slots:
 //    void check_type();
     int get_selected_id();
     void show_analis();
+    void select_account();
 
 private:
     Ui::ListAccounts *ui;

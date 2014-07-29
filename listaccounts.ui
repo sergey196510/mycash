@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>557</width>
-    <height>410</height>
+    <height>218</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,13 @@
     </layout>
    </item>
    <item>
-    <widget class="myTreeView" name="treeView"/>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="myTreeView" name="treeView"/>
+     <widget class="QTextEdit" name="textEdit"/>
+    </widget>
    </item>
   </layout>
  </widget>

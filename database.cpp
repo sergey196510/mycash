@@ -349,7 +349,7 @@ bool Database::del_operation(int id)
         account_summ acc;
         acc.set_account(i.key());
         Account_Data data = get_account_data(i.key());
-        acc.set_balance((data.top == Account_Type::passive || data.top == Account_Type::debet) ? -i.value() : i.value());
+        acc.set_balance((data.top == Account_Type::passive || data.top == Account_Type::debet || data.top == Account_Type::initial) ? -i.value() : i.value());
         if (change_account_balance(acc) == false) {
             tr.rollback();
             return false;
@@ -416,6 +416,7 @@ bool Database::save_operation(operation_data &data)
     int oper_id;
     QList<account_summ>::iterator i;
     Transaction tr;
+    double from = 0, to = 0;
 
     tr.begin();
 
@@ -431,27 +432,36 @@ bool Database::save_operation(operation_data &data)
             return false;
         }
         if (data.top == Account_Type::active ||
-                data.top == Account_Type::credit ||
+                data.top == Account_Type::credit)
+            d.set_balance(-d.balance().value()); // сменить знак
+        if (change_account_balance(d) == false) {
+            tr.rollback();
+            return false;
+        }
+        from += abs(d.balance().value());
+    }
+    for (i = data.to.begin(); i != data.to.end(); i++) {
+        account_summ d = *i;
+        Account_Data data = get_account_data(d.account());
+        if (new_account_oper("account_oper", oper_id, d, Direction::to) == false) {
+            tr.rollback();
+            return false;
+        }
+        if (data.top == Account_Type::passive ||
+                data.top == Account_Type::debet ||
                 data.top == Account_Type::initial)
             d.set_balance(-d.balance().value()); // сменить знак
         if (change_account_balance(d) == false) {
             tr.rollback();
             return false;
         }
+        to += abs(d.balance().value());
     }
-    for (i = data.to.begin(); i != data.to.end(); i++) {
-        account_summ d = *i;
-//        Account_Data data = get_account_data(d.account());
-        if (new_account_oper("account_oper", oper_id, d, Direction::to) == false) {
-            tr.rollback();
-            return false;
-        }
-//        if (data.top == Account_Type::passive || data.top == Account_Type::credit)
-//            d.set_balance(-d.balance().value()); // сменить знак
-        if (change_account_balance(d) == false) {
-            tr.rollback();
-            return false;
-        }
+
+    if (from != to) {
+        qDebug() << "from not equal to";
+        tr.rollback();
+        return false;
     }
 
     tr.commit();

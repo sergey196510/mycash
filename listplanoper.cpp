@@ -149,6 +149,7 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
 
     ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
     connect(comm, SIGNAL(triggered()), SLOT(commit_oper()));
