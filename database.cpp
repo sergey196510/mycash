@@ -302,17 +302,18 @@ int Database::new_operation(operation_data &data)
     return 0;
 }
 
-bool Database::new_account_oper(QString table, const int o_id, account_summ &acc, const int direction)
+bool Database::new_account_oper(QString table, const int o_id, account_summ &acc, const int direction, int agent)
 {
     QString str;
     QSqlQuery q;
 
-    str = QString("INSERT INTO %1(a_id, o_id, summ, direction) VALUES(%2, %3, %4, %5)")
+    str = QString("INSERT INTO %1(a_id, o_id, summ, direction, agent) VALUES(%2, %3, %4, %5, %6)")
             .arg(table)
             .arg(acc.account())
             .arg(o_id)
             .arg(acc.balance().value())
-            .arg(direction);
+            .arg(direction)
+            .arg(agent);
     qDebug() << str;
     if (!q.exec(str)) {
         qDebug() << q.lastError().text();
@@ -410,7 +411,7 @@ bool Database::change_account_balance(account_summ &acc)
     return true;
 }
 
-bool Database::save_operation(operation_data &data)
+bool Database::save_operation(operation_data &oper)
 {
     QSqlQuery q;
     int oper_id;
@@ -420,14 +421,16 @@ bool Database::save_operation(operation_data &data)
 
     tr.begin();
 
-    if ((oper_id = new_operation(data)) == 0) {
+    if ((oper_id = new_operation(oper)) == 0) {
         tr.rollback();
         return false;
     }
-    for (i = data.from.begin(); i != data.from.end(); i++) {
+    for (i = oper.from.begin(); i != oper.from.end(); i++) {
         account_summ d = *i;
         Account_Data data = get_account_data(d.account());
-        if (new_account_oper("account_oper", oper_id, d, Direction::from) == false) {
+        if (data.top == Account_Type::debet && oper.agent)
+            data.agent = oper.agent;
+        if (new_account_oper("account_oper", oper_id, d, Direction::from, data.agent) == false) {
             tr.rollback();
             return false;
         }
@@ -440,10 +443,12 @@ bool Database::save_operation(operation_data &data)
         }
         from += abs(d.balance().value());
     }
-    for (i = data.to.begin(); i != data.to.end(); i++) {
+    for (i = oper.to.begin(); i != oper.to.end(); i++) {
         account_summ d = *i;
         Account_Data data = get_account_data(d.account());
-        if (new_account_oper("account_oper", oper_id, d, Direction::to) == false) {
+        if (data.top == Account_Type::credit && oper.agent)
+            data.agent = oper.agent;
+        if (new_account_oper("account_oper", oper_id, d, Direction::to, data.agent) == false) {
             tr.rollback();
             return false;
         }
@@ -573,7 +578,7 @@ bool Database::new_mon_oper(int p_id)
     return true;
 }
 
-QList<operation_data> Database::get_plan_oper_list()
+QList<operation_data> Database::get_plan_oper_list(int status)
 {
     QList<operation_data> list;
     operation_data data;
@@ -585,7 +590,9 @@ QList<operation_data> Database::get_plan_oper_list()
         return list;
     }
     while (q.next()) {
-	data = get_plan_oper_data(q.value(0).toInt());
+        data = get_plan_oper_data(q.value(0).toInt());
+        if (status && (data.status == Plan_Status::actual || data.status == Plan_Status::committed))
+            continue;
         list.append(data);
     }
 
@@ -614,12 +621,13 @@ QMap<int,double> Database::get_plan_account_oper_list(int oper, int type)
 operation_data Database::get_plan_oper_data(int id)
 {
     operation_data data;
+    Account_Data from, to;
     QSqlQuery q;
     QMap<int,double> list;
     QMap<int,double>::iterator i;
     QDate curr = QDate::currentDate();
 
-    q.prepare("SELECT id, day, month, year, descr FROM plan_oper WHERE id = :id");
+    q.prepare("SELECT id, day, month, year, descr, auto FROM plan_oper WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec()) {
         qDebug() << "Select Error:" << q.lastError().text();
@@ -630,7 +638,8 @@ operation_data Database::get_plan_oper_data(int id)
         data.day = q.value(1).toInt();
         data.month = q.value(2).toInt();
         data.year = q.value(3).toInt();
-        data.descr = q.value(7).toString();
+        data.descr = q.value(4).toString();
+        data.auto_exec = q.value(5).toInt();
 
         int diff = data.day - curr.day();
         QDate dt(curr.year(), curr.month(), data.day);
@@ -648,21 +657,28 @@ operation_data Database::get_plan_oper_data(int id)
         else
             data.status = Plan_Status::actual;
 
-        list = get_plan_account_oper_list(q.value(0).toInt(), 1);
+        list = get_plan_account_oper_list(q.value(0).toInt(), Direction::from);
         for (i = list.begin(); i != list.end(); i++) {
             account_summ d;
+            from = get_account_data(i.key());
             d.set_account(i.key());
             d.set_balance(i.value());
             data.from.append(d);
         }
 
-        list = get_plan_account_oper_list(q.value(0).toInt(), 2);
+        double summ = 0;
+        list = get_plan_account_oper_list(q.value(0).toInt(), Direction::to);
         for (i = list.begin(); i != list.end(); i++) {
+            to = get_account_data(i.key());
             account_summ d;
             d.set_account(i.key());
             d.set_balance(i.value());
             data.to.append(d);
+            if (to.top == Account_Type::credit)
+                summ += i.value();
         }
+        if ((data.status == Plan_Status::minimum || data.status == Plan_Status::expired) && summ > from.balance.value())
+            data.descr += " [Nedostatochno sredstv]";
     }
 
     return data;
@@ -671,13 +687,12 @@ operation_data Database::get_plan_oper_data(int id)
 bool Database::find_oper_by_plan(int plan, int mon, int year)
 {
         QSqlQuery q;
-        QString query;
 
-        query = QString("SELECT count(id) FROM plan_oper_mon WHERE mon = '%1' AND year = %2 AND p_id = %3")
-                .arg(mon)
-                .arg(year)
-                .arg(plan);
-        if (!q.exec(query)) {
+        q.prepare("SELECT count(id) FROM plan_oper_mon WHERE mon = :mon AND year = :year AND p_id = :pid");
+        q.bindValue(":mon", mon);
+        q.bindValue(":year", year);
+        q.bindValue(":pid", plan);
+        if (!q.exec()) {
             qDebug() << q.lastError().text();
             return false;
         }

@@ -18,7 +18,7 @@ ListPlanOperModel::~ListPlanOperModel()
 
 QList<operation_data> ListPlanOperModel::read_list()
 {
-    QList<operation_data> list = db->get_plan_oper_list();
+    QList<operation_data> list = db->get_plan_oper_list(0);
     return list;
 }
 
@@ -64,6 +64,20 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
             QMap<int,double>::iterator i = oper.begin();
             return default_locale->toString(i.value()/var->Kurs(),'f',2);
         }
+        else if (index.column() == 7) {
+            operation_data data = list.at(index.row());
+            if (data.auto_exec == 1)
+                return tr("Y");
+        }
+//        else if (index.column() == 7) {
+//            operation_data data = list.at(index.row());
+//            if (data.status == Plan_Status::expired)
+//                return tr("Expired");
+//            else if (data.status == Plan_Status::minimum)
+//                return tr("<3 days");
+//            else
+//                return QVariant();
+//        }
         else if (index.column() == 8) {
             operation_data data = list.at(index.row());
             return data.descr;
@@ -114,7 +128,7 @@ int ListPlanOperModel::columnCount(const QModelIndex &parent) const
 void ListPlanOperModel::change_data()
 {
     list.clear();
-    list = db->get_plan_oper_list();
+    list = db->get_plan_oper_list(0);
     reset();
 }
 
@@ -147,6 +161,9 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->tableView->addActions(acts);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
+    ui->tableView->setAlternatingRowColors(true);
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
@@ -217,17 +234,30 @@ void ListPlanOper::del_oper()
 {
     QSqlQuery q;
     int id = get_selected_id();
+    Transaction tr;
 
     if (id == 0)
         return;
 
-    q.prepare("DELETE FROM plan_oper WHERE id = :id");
+    tr.begin();
+
+    q.prepare("DELETE FROM plan_oper_acc WHERE o_id = :id");
     q.bindValue(":id", id);
     if (!q.exec()) {
+        tr.rollback();
         qDebug() << "Error DELETE:" << q.lastError().text();
         return;
     }
 
+    q.prepare("DELETE FROM plan_oper WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        tr.rollback();
+        qDebug() << "Error DELETE:" << q.lastError().text();
+        return;
+    }
+
+    tr.commit();
     emit data_changed();
 }
 

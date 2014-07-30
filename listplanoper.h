@@ -7,6 +7,7 @@
 #include "database.h"
 #include "global.h"
 #include "editoperation.h"
+#include "transaction.h"
 
 namespace Ui {
 class ListPlanOper;

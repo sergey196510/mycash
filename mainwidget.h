@@ -11,7 +11,7 @@ namespace Ui {
 class MainWidget;
 }
 
-class MainWidgetModel : public QStandardItemModel
+class MainWidgetModel : public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -33,14 +33,16 @@ public:
     };
 
 public slots:
-    void fill_model(Database *db);
+//    void fill_model(Database *db);
 
 private:
-//    Database *db;
+    Database *db;
     QList<operation_data> list;
-    QMap<int,QString> accounts;
+    QMap<int,QString> acc_list;
     QStringList header_data;
-    Globals var;
+    Globals *var;
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
 
 private slots:
 //    bool get_operations(int);

@@ -95,6 +95,7 @@ struct Account_Data {
     int parent;
     int top;
     int system;
+    int agent;
     QString descr;
     QDate dt;
     Account_Data() {
@@ -105,6 +106,7 @@ struct Account_Data {
         parent = 0;
         top = 0;
         system = 0;
+        agent = 0;
 //        balance = 0;
         descr.clear();
         dt = QDate::currentDate();
@@ -122,9 +124,11 @@ struct operation_data {
     QDate date;
     QString descr;
     int status;
+    int auto_exec;
     operation_data() {
         id = day = month = year = 0;
         agent = 0;
+        auto_exec = 0;
         date = QDate::currentDate();
         descr.clear();
     }
@@ -167,6 +171,13 @@ struct Currency_Data {
     int icod;
     QString scod;
     double kurs;
+};
+
+struct Budget_Data {
+    int id;
+    int mon;
+    int account;
+    MyCurrency summ;
 };
 
 #endif
