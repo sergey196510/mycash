@@ -15,6 +15,7 @@ public:
 
 private:
     QList<Budget_Data> list;
+    QMap<int,QString> accounts_list;
     QStringList header_data;
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
