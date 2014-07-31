@@ -42,18 +42,22 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
     nacct->setShortcut(tr("Alt+N"));
     nacct->setToolTip("New account");
     connect(nacct, SIGNAL(triggered()), SLOT(new_account()));
+
     chacc = new QAction(tr("Change"), this);
     chacc->setShortcut(tr("Alt+E"));
     chacc->setToolTip("Change account");
     connect(chacc, SIGNAL(triggered()), SLOT(change_account()));
+
     cacct = new QAction(tr("Correct"), this);
     cacct->setShortcut(tr("Alt+C"));
     cacct->setToolTip("Correct balance");
     connect(cacct, SIGNAL(triggered()), SLOT(correct_balance()));
+
     dacct = new QAction(tr("Delete"), this);
     dacct->setShortcut(tr("Alt+D"));
     dacct->setToolTip("Delete this account");
     connect(dacct, SIGNAL(triggered()), SLOT(del_account()));
+
     analis = new QAction(tr("Analis"), this);
     analis->setToolTip(tr("Analis linear approximate"));
     connect(analis, SIGNAL(triggered()), SLOT(show_analis()));

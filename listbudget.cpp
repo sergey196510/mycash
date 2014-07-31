@@ -89,10 +89,48 @@ ListBudget::ListBudget(QWidget *parent) :
     model = new ListBudgetModel;
     ui.tableView->setModel(model);
 
+    ui.tableView->hideColumn(0);
     ui.tableView->setAlternatingRowColors(true);
     ui.tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui.tableView->setSelectionMode(QAbstractItemView::SingleSelection);
     ui.tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui.tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui.tableView->horizontalHeader()->setStretchLastSection(true);
+
+    QAction *nb = new QAction(tr("New budget"), this);
+    nb->setToolTip(tr("New budget line"));
+    connect(nb, SIGNAL(triggered()), SLOT(new_budget()));
+
+    acts.append(nb);
+    ui.tableView->addActions(acts);
+
+    ui.tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
+}
+
+void ListBudget::new_budget()
+{
+    EditBudget eb;
+    Budget_Data data;
+
+    if (eb.exec() != QDialog::Accepted)
+        return;
+
+    data = eb.data();
+    insert_record(data);
+}
+
+bool ListBudget::insert_record(Budget_Data &data)
+{
+    QSqlQuery q;
+
+    q.prepare("INSERT INTO budget_plan(mon,a_id,summ) VALUES(:mon,:acc,:summ)");
+    q.bindValue(":mon", data.mon);
+    q.bindValue(":acc", data.account);
+    q.bindValue(":summ", data.summ.value());
+    if (!q.exec()) {
+        q.lastError();
+        return false;
+    }
+
+    return true;
 }

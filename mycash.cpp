@@ -331,6 +331,8 @@ void MyCash::list_budget()
 {
     ListBudget *lb = new ListBudget;
 
+    ui->mainToolBar->addActions(lb->acts);
+
     setCentralWidget(lb);
 }
 

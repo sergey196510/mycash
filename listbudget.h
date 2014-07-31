@@ -4,6 +4,7 @@
 #include "ui_listbudget.h"
 #include "QtSql"
 #include "global.h"
+#include "editbudget.h"
 
 class ListBudgetModel : public QAbstractTableModel
 {
@@ -28,10 +29,15 @@ class ListBudget : public QWidget
 
 public:
     explicit ListBudget(QWidget *parent = 0);
+    QList<QAction*> acts;
 
 private:
     Ui::ListBudget ui;
     ListBudgetModel *model;
+    bool insert_record(Budget_Data &data);
+
+private slots:
+    void new_budget();
 };
 
 #endif // LISTBUDGET_H
