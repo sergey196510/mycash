@@ -358,9 +358,10 @@ void ListAccounts::select_account()
     QSqlQuery q, q2;
     int id = get_selected_id();
     Account_Data data;
-    QStack<double> stack;
-    QStack<double> summ;
-    QList<double> result;
+    QList<SbD> stack;
+    QList<SbD> summ;
+//    QList<SbD> result;
+    QMap<QDate,double> result;
 
     if (id == 0)
         return;
@@ -377,7 +378,7 @@ void ListAccounts::select_account()
         return;
     }
     while (q.next()) {
-        q2.prepare("SELECT summ,direction FROM account_oper WHERE o_id = :oid AND a_id = :aid");
+        q2.prepare("SELECT summ, direction FROM account_oper WHERE o_id = :oid AND a_id = :aid");
         q2.bindValue(":oid", q.value(0).toInt());
         q2.bindValue(":aid", id);
         if (!q2.exec()) {
@@ -385,25 +386,38 @@ void ListAccounts::select_account()
             return;
         }
         while (q2.next()) {
-            double val;
+            SbD val;
             if (q2.value(1).toInt() == 2)
-                val = -q2.value(0).toDouble();
+                val.value = -q2.value(0).toDouble();
             else
-                val = q2.value(0).toDouble();
-            stack.push(val);
+                val.value = q2.value(0).toDouble();
+            val.dt = q.value(1).toDate();
+//            qDebug() << val.dt << val.value;
+            stack.append(val);
         }
     }
 
     // расчет баланса по счету на момент совершения операции
     // итоговые значения расположены в массиве result
-    double val = data.balance.value();
-    summ.push(val);
-    while (!stack.empty()) {
-        val += stack.pop();
-        summ.push(val);
+    SbD val;
+    val.value = data.balance.value();
+    val.dt = QDate::currentDate();
+    qDebug() << val.dt << val.value;
+    summ.append(val);
+    for (int j = stack.size()-1; j >= 0; j--) {
+        SbD v = stack.at(j);
+        val.value += v.value;
+        val.dt = v.dt;
+//        qDebug() << val.dt << val.value;
+        summ.append(val);
     }
-    while (!summ.empty())
-        result.append(summ.pop());
 
-    qDebug() << id << result;
+    for (int j = summ.size()-1; j > 0; j--) {
+//        SbD v;
+//        val = summ.at(j);
+        val.dt = summ.at(j).dt;
+        val.value = summ.at(j-1).value;
+        result[val.dt] = val.value;
+    }
+    qDebug() << result;
 }

@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <QWidget>
 #include "QtSql"
+#include <QDate>
 #include "database.h"
 #include "global.h"
 #include "listaccountsmodel.h"
@@ -13,6 +14,11 @@
 namespace Ui {
 class ListAccounts;
 }
+
+struct SbD {
+    double value;
+    QDate dt;
+};
 
 class ListAccounts : public QWidget
 {
