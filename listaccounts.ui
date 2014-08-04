@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>557</width>
-    <height>218</height>
+    <width>701</width>
+    <height>398</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="myTreeView" name="treeView"/>
-     <widget class="QTextEdit" name="textEdit"/>
+     <widget class="AccountGraph" name="widget" native="true"/>
     </widget>
    </item>
   </layout>
@@ -61,6 +61,12 @@
    <class>myTreeView</class>
    <extends>QTreeView</extends>
    <header location="global">mytreeview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountGraph</class>
+   <extends>QWidget</extends>
+   <header location="global">accountgraph.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

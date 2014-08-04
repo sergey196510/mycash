@@ -61,6 +61,7 @@ void graphWidget::paintEvent(QPaintEvent *pe)
 
     painter.end();
 
-    QPainter widgetPainter(this);
-    widgetPainter.drawImage(0,0,image);
+    painter.begin(this);
+    painter.drawImage(0,0,image);
+    painter.end();
 }

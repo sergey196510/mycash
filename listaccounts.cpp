@@ -14,6 +14,7 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
     font.setBold(true);
 
     ui->setupUi(this);
+    ui->verticalLayout->setStretch(1,1);
     ui->splitter->setStretchFactor(2,1);
 
 //    db = new Database;
@@ -134,7 +135,7 @@ void ListAccounts::new_account()
     EditAccount *ea = new EditAccount(1, this);
     int id = get_selected_id();
     Account_Data data;
-    operation_data oper;
+    Operation_Data oper;
     account_summ a;
     int acc;
 
@@ -264,7 +265,7 @@ void ListAccounts::correct_balance()
         double current_balance = data.balance.value();
         double new_balance = cb->balance();
 
-        operation_data od;
+        Operation_Data od;
         od.date = cb->date();
         od.agent = 0;
         od.descr = tr("correct");
@@ -368,8 +369,8 @@ void ListAccounts::select_account()
 
     data = db->get_account_data(id);
 
-    ui->textEdit->clear();
-    ui->textEdit->append(QString("%1").arg(id));
+//    ui->textEdit->clear();
+//    ui->textEdit->append(QString("%1").arg(id));
 
     // выборка значений операций по счету
     q.prepare("SELECT id,dt FROM oper ORDER BY dt");

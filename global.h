@@ -70,6 +70,7 @@ public:
     static const int committed;
     static const int minimum;
     static const int expired;
+    static const int cancelled;
 };
 
 class account_summ {
@@ -113,7 +114,7 @@ struct Account_Data {
     }
 };
 
-struct operation_data {
+struct Operation_Data {
     int id;
     int day,month,year;
     int agent;
@@ -125,7 +126,7 @@ struct operation_data {
     QString descr;
     int status;
     int auto_exec;
-    operation_data() {
+    Operation_Data() {
         id = day = month = year = 0;
         agent = 0;
         auto_exec = 0;

@@ -16,10 +16,10 @@ ListOperationsModel::~ListOperationsModel()
     delete var;
 }
 
-QList<operation_data> ListOperationsModel::read_list(int account, QDate fdate, QDate ldate)
+QList<Operation_Data> ListOperationsModel::read_list(int account, QDate fdate, QDate ldate)
 {
     QSqlQuery q1, q2;
-    QList<operation_data> list;
+    QList<Operation_Data> list;
     account_summ summ;
     int a1, a2;
     double s1, s2;
@@ -37,7 +37,7 @@ QList<operation_data> ListOperationsModel::read_list(int account, QDate fdate, Q
         return list;
     }
     while (q1.next()) {
-        operation_data data;
+        Operation_Data data;
         data.id = q1.value(0).toInt();
         data.date = q1.value(1).toDate();
         data.descr = q1.value(2).toString();
@@ -93,7 +93,7 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::DisplayRole) {
-        operation_data data = list.at(index.row());
+        Operation_Data data = list.at(index.row());
         account_summ from = data.from.at(0);
         account_summ to = data.to.at(0);
         if (index.column() == col_Id) {
@@ -164,7 +164,7 @@ QModelIndex ListOperationsModel::index(int row, int column, const QModelIndex &p
     if (row >= list.size() || row < 0 || column >= header_data.size())
         return QModelIndex();
 
-    operation_data pkt = list.at(row);
+    Operation_Data pkt = list.at(row);
     return createIndex(row, column, &pkt);
 }
 
@@ -254,11 +254,11 @@ ListOperations::~ListOperations()
     delete db;
 }
 
-void ListOperations::edit_operation(operation_data &d)
+void ListOperations::edit_operation(Operation_Data &d)
 {
     EditOperation eo(1, this);
     QModelIndex idx = ui->tableView->currentIndex();
-    operation_data data;
+    Operation_Data data;
 
     eo.setdata(d);
     if (eo.exec() == QDialog::Accepted) {
@@ -272,7 +272,7 @@ void ListOperations::edit_operation(operation_data &d)
 
 void ListOperations::debet_operation()
 {
-    operation_data d;
+    Operation_Data d;
     account_summ a;
 
     a.set_account(ui->listAccounts->value());
@@ -283,7 +283,7 @@ void ListOperations::debet_operation()
 
 void ListOperations::credit_operation()
 {
-    operation_data d;
+    Operation_Data d;
     account_summ a;
 
     a.set_account(ui->listAccounts->value());
@@ -294,7 +294,7 @@ void ListOperations::credit_operation()
 
 void ListOperations::transfer_operation()
 {
-    operation_data d;
+    Operation_Data d;
     account_summ a;
 
     a.set_account(ui->listAccounts->value());
@@ -319,7 +319,7 @@ int ListOperations::get_selected_id()
 void ListOperations::del_operation()
 {
     QSqlQuery q;
-    operation_data data;
+    Operation_Data data;
     int id = get_selected_id();
 
     if (id == 0)
@@ -349,7 +349,7 @@ void ListOperations::plann_operation()
     if (id == 0)
         return;
 
-    operation_data data = db->get_operation(id);
+    Operation_Data data = db->get_operation(id);
     data.day = QDate::currentDate().day();
 
     pd.setdata(data);

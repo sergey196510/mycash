@@ -18,8 +18,8 @@ class EditOperation : public QDialog
 public:
     explicit EditOperation(int type, QWidget *parent = 0);
     ~EditOperation();
-    operation_data data();
-    void setdata(operation_data &);
+    Operation_Data data();
+    void setdata(Operation_Data &);
     
 private:
     Ui::EditOperation *ui;

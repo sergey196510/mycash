@@ -134,9 +134,9 @@ void EditOperation::check_balance(QString value)
         ui->warning->hide();
 }
 
-operation_data EditOperation::data()
+Operation_Data EditOperation::data()
 {
-    operation_data d;
+    Operation_Data d;
     account_summ a;
 
     d.day = ui->dayBox->currentIndex();
@@ -159,7 +159,7 @@ operation_data EditOperation::data()
     return d;
 }
 
-void EditOperation::setdata(operation_data &d)
+void EditOperation::setdata(Operation_Data &d)
 {
     Account_Data data;
     QList<account_summ>::iterator i;

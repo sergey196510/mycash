@@ -37,7 +37,7 @@ public slots:
 
 private:
     Database *db;
-    QList<operation_data> list;
+    QList<Operation_Data> list;
     QMap<int,QString> acc_list;
     QStringList header_data;
     Globals *var;

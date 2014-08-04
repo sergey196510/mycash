@@ -28,6 +28,7 @@ const int Plan_Status::actual = 1;
 const int Plan_Status::committed = 2;
 const int Plan_Status::minimum = 3;
 const int Plan_Status::expired = 4;
+const int Plan_Status::cancelled = 5;
 
 double Globals::kurs = 1;
 QString Globals::symbol = "";

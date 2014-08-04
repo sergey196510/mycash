@@ -22,7 +22,7 @@ CREATE TABLE oper(id integer primary key autoincrement, dt date, descr text);
 CREATE TABLE account_oper(id integer primary key autoincrement, a_id int, o_id int, summ real, direction int default 0, agent int default 0);
 CREATE TABLE plan_oper(id integer primary key autoincrement, day int, month int, year int, auto int default 0, dt date, descr text);
 CREATE TABLE plan_oper_acc(id integer primary key autoincrement, a_id int, o_id int, summ real, direction int default 0, agent int default 0);
-CREATE TABLE plan_oper_mon(id integer primary key autoincrement, mon int, year int, p_id int, dt date);
+CREATE TABLE plan_oper_mon(id integer primary key autoincrement, mon int, year int, p_id int, dt date, status int default 0);
 CREATE TABLE budget_plan(id integer primary key autoincrement, mon int, a_id int, summ real);
 CREATE TABLE budget_fact(id integer primary key autoincrement, year int, mon int, a_id int, summ real);
 INSERT INTO "sqlite_sequence" VALUES('account_type',4);

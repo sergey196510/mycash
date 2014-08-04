@@ -33,45 +33,45 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 0) {
-            operation_data data = list.at(index.row());
+            Operation_Data data = list.at(index.row());
             return data.id;
         }
         else if (index.column() == 1) {
-            operation_data data = list.at(index.row());
+            Operation_Data data = list.at(index.row());
             return data.day;
         }
         else if (index.column() == 2) {
-            operation_data data = list.at(index.row());
+            Operation_Data data = list.at(index.row());
             if (data.month)
                 return data.month;
             else
                 return "";
         }
         else if (index.column() == 3) {
-            operation_data data = list.at(index.row());
+            Operation_Data data = list.at(index.row());
             if (data.year)
                 return data.year;
             else
                 return "";
         }
         else if (index.column() == 4) {
-            operation_data data = list.at(index.row());
+            Operation_Data data = list.at(index.row());
             return acc_list[data.from.at(0).account()];
         }
         else if (index.column() == 5) {
-            operation_data data = list.at(index.row());
+            Operation_Data data = list.at(index.row());
             QMap<int,double> oper = db->get_plan_account_oper_list(data.id,2);
             QMap<int,double>::iterator i = oper.begin();
             return acc_list[i.key()];
         }
         else if (index.column() == 6) {
-            operation_data data = list.at(index.row());
+            Operation_Data data = list.at(index.row());
             QMap<int,double> oper = db->get_plan_account_oper_list(data.id,2);
             QMap<int,double>::iterator i = oper.begin();
             return default_locale->toString(i.value()/var->Kurs(),'f',2);
         }
         else if (index.column() == 7) {
-            operation_data data = list.at(index.row());
+            Operation_Data data = list.at(index.row());
             if (data.status == Plan_Status::expired)
                 return tr("Expired");
             else if (data.status == Plan_Status::minimum)
@@ -80,7 +80,7 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
                 return QVariant();
         }
         else if (index.column() == 8) {
-            operation_data data = list.at(index.row());
+            Operation_Data data = list.at(index.row());
             return data.descr;
         }
         else
@@ -95,6 +95,13 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
                 return int(Qt::AlignRight | Qt::AlignVCenter);
             if (index.column() == 6)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
+
+    case Qt::BackgroundColorRole:
+        Operation_Data data = list.at(index.row());
+        if (data.status == Plan_Status::minimum)
+            return QVariant(QColor(Qt::yellow));
+        if (data.status == Plan_Status::expired)
+            return QVariant(QColor(Qt::red));
 
     }
 

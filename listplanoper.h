@@ -31,14 +31,14 @@ public slots:
 private:
     Globals *var;
     QStringList header_data;
-    QList<operation_data> list;
+    QList<Operation_Data> list;
     QMap<int,QString> acc_list;
     QMap<QString,double> currency;
     QString symbol;
     Database *db;
 
 private slots:
-    QList<operation_data> read_list();
+    QList<Operation_Data> read_list();
 };
 
 class ListPlanOper : public QWidget
@@ -48,7 +48,7 @@ class ListPlanOper : public QWidget
 public:
     explicit ListPlanOper(QWidget *parent = 0);
     ~ListPlanOper();
-    QAction *tran, *comm, *delo;
+    QAction *tran, *comm, *delo, *can;
     QList<QAction *> acts;
 
 public slots:
@@ -66,6 +66,7 @@ private slots:
     int get_selected_id();
     void commit_oper();
     void del_oper();
+    void cancel_oper();
     void check_selected();
 
 signals:

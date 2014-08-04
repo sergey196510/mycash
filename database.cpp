@@ -284,7 +284,7 @@ int Database::new_agent(agent_data &data) {
     return 0;
 }
 
-int Database::new_operation(operation_data &data)
+int Database::new_operation(Operation_Data &data)
 {
     QSqlQuery query;
 
@@ -411,7 +411,7 @@ bool Database::change_account_balance(account_summ &acc)
     return true;
 }
 
-bool Database::save_operation(operation_data &oper)
+bool Database::save_operation(Operation_Data &oper)
 {
     QSqlQuery q;
     int oper_id;
@@ -473,10 +473,10 @@ bool Database::save_operation(operation_data &oper)
     return true;
 }
 
-operation_data Database::get_operation(int id)
+Operation_Data Database::get_operation(int id)
 {
     QSqlQuery q;
-    operation_data data;
+    Operation_Data data;
     QMap<int,double> list;
     QMap<int,double>::iterator i;
 
@@ -508,7 +508,7 @@ operation_data Database::get_operation(int id)
     return data;
 }
 
-int Database::new_plan_oper(operation_data &data)
+int Database::new_plan_oper(Operation_Data &data)
 {
     QSqlQuery q;
     int id = 0;
@@ -559,16 +559,17 @@ int Database::new_plan_oper(operation_data &data)
     return id;
 }
 
-bool Database::new_mon_oper(int p_id)
+bool Database::new_mon_oper(int p_id, int status)
 {
     QSqlQuery q;
     QDate curr = QDate::currentDate();
 
-    q.prepare("INSERT INTO plan_oper_mon(mon, year, p_id, dt) VALUES(:mon, :year, :p_id, :dt)");
+    q.prepare("INSERT INTO plan_oper_mon(mon, year, p_id, dt, status) VALUES(:mon, :year, :p_id, :dt, :status)");
     q.bindValue(":mon", curr.month());
     q.bindValue(":year", curr.year());
     q.bindValue(":p_id", p_id);
     q.bindValue(":dt", curr.toString("yyyy-MM-dd"));
+    q.bindValue(":status", status);
     if (!q.exec()) {
         qDebug() << q.lastError().text();
         q.exec("ROLLBACK");
@@ -578,22 +579,22 @@ bool Database::new_mon_oper(int p_id)
     return true;
 }
 
-QList<operation_data> Database::get_plan_oper_list(int status)
+QList<Operation_Data> Database::get_plan_oper_list(int status)
 {
-    QList<operation_data> list;
-    operation_data data;
+    QList<Operation_Data> list;
+    Operation_Data oper;
     QSqlQuery q;
 
-    q.prepare("SELECT id FROM plan_oper ORDER BY day");
+    q.prepare("SELECT id,dt FROM plan_oper ORDER BY day");
     if (!q.exec()) {
         qDebug() << "Select Error:" << q.lastError().text();
         return list;
     }
     while (q.next()) {
-        data = get_plan_oper_data(q.value(0).toInt());
-        if (status && (data.status == Plan_Status::actual || data.status == Plan_Status::committed))
+        oper = get_plan_oper_data(q.value(0).toInt(), q.value(1).toDate());
+        if (status && (oper.status == Plan_Status::actual || oper.status == Plan_Status::committed || oper.status == Plan_Status::cancelled))
             continue;
-        list.append(data);
+        list.append(oper);
     }
 
     return list;
@@ -618,14 +619,15 @@ QMap<int,double> Database::get_plan_account_oper_list(int oper, int type)
     return list;
 }
 
-operation_data Database::get_plan_oper_data(int id)
+Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
 {
-    operation_data data;
-    Account_Data from, to;
     QSqlQuery q;
+    Account_Data acc;
     QMap<int,double> list;
     QMap<int,double>::iterator i;
     QDate curr = QDate::currentDate();
+    double summ_from = 0, summ_to = 0;
+    Operation_Data data;
 
     q.prepare("SELECT id, day, month, year, descr, auto FROM plan_oper WHERE id = :id");
     q.bindValue(":id", id);
@@ -640,15 +642,15 @@ operation_data Database::get_plan_oper_data(int id)
         data.year = q.value(3).toInt();
         data.descr = q.value(4).toString();
         data.auto_exec = q.value(5).toInt();
+        data.date = oper_date;
 
         int diff = data.day - curr.day();
         QDate dt(curr.year(), curr.month(), data.day);
         if (data.date > dt) {
             data.status = Plan_Status::actual;
         }
-        else if (find_oper_by_plan(data.id, curr.month(), curr.year()) == true) {
-            data.status = Plan_Status::committed;
-//            continue;
+        else if (int stat = find_oper_by_plan(data.id, curr.month(), curr.year())) {
+            data.status = stat;
         }
         else if (diff < 3 && diff >= 0)
             data.status = Plan_Status::minimum;
@@ -660,35 +662,36 @@ operation_data Database::get_plan_oper_data(int id)
         list = get_plan_account_oper_list(q.value(0).toInt(), Direction::from);
         for (i = list.begin(); i != list.end(); i++) {
             account_summ d;
-            from = get_account_data(i.key());
+            acc = get_account_data(i.key());
             d.set_account(i.key());
             d.set_balance(i.value());
             data.from.append(d);
+            if (acc.top == Account_Type::active)
+                summ_from += i.value();
         }
 
-        double summ = 0;
         list = get_plan_account_oper_list(q.value(0).toInt(), Direction::to);
         for (i = list.begin(); i != list.end(); i++) {
-            to = get_account_data(i.key());
+            acc = get_account_data(i.key());
             account_summ d;
             d.set_account(i.key());
             d.set_balance(i.value());
             data.to.append(d);
-            if (to.top == Account_Type::credit)
-                summ += i.value();
+            if (acc.top == Account_Type::credit)
+                summ_to += i.value();
         }
-        if ((data.status == Plan_Status::minimum || data.status == Plan_Status::expired) && summ > from.balance.value())
+        if ((data.status == Plan_Status::minimum || data.status == Plan_Status::expired) && summ_from > summ_to)
             data.descr += " [Nedostatochno sredstv]";
     }
 
     return data;
 }
 
-bool Database::find_oper_by_plan(int plan, int mon, int year)
+int Database::find_oper_by_plan(int plan, int mon, int year)
 {
         QSqlQuery q;
 
-        q.prepare("SELECT count(id) FROM plan_oper_mon WHERE mon = :mon AND year = :year AND p_id = :pid");
+        q.prepare("SELECT status FROM plan_oper_mon WHERE mon = :mon AND year = :year AND p_id = :pid");
         q.bindValue(":mon", mon);
         q.bindValue(":year", year);
         q.bindValue(":pid", plan);
@@ -696,8 +699,11 @@ bool Database::find_oper_by_plan(int plan, int mon, int year)
             qDebug() << q.lastError().text();
             return false;
         }
-        if (!q.next() || q.value(0).toInt() == 0)
-            return false;
-
-        return true;
+        if (!q.next())
+            return 0;
+        if (q.value(0).toInt() == 1)
+            return Plan_Status::committed;
+        if (q.value(0).toInt() == 2)
+            return Plan_Status::cancelled;
+        return 0;
 }
