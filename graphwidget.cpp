@@ -28,7 +28,7 @@ graphWidget::~graphWidget()
     delete db;
 }
 
-void graphWidget::paintEvent(QPaintEvent *pe)
+void graphWidget::paintEvent(QPaintEvent *)
 {
     double x = 0, y = 0;
     QMap<QString,double>::iterator i;

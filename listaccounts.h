@@ -15,11 +15,6 @@ namespace Ui {
 class ListAccounts;
 }
 
-struct SbD {
-    double value;
-    QDate dt;
-};
-
 class ListAccounts : public QWidget
 {
     Q_OBJECT
@@ -44,6 +39,7 @@ signals:
     void pressEnter();
     void pressInsert();
     void pressDelete();
+    void select_account(int id);
 
 private slots:
 //    void fill_model();

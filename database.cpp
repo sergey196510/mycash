@@ -622,7 +622,7 @@ QMap<int,double> Database::get_plan_account_oper_list(int oper, int type)
 Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
 {
     QSqlQuery q;
-    Account_Data acc;
+    Account_Data acc_from, acc_to;
     QMap<int,double> list;
     QMap<int,double>::iterator i;
     QDate curr = QDate::currentDate();
@@ -662,25 +662,25 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
         list = get_plan_account_oper_list(q.value(0).toInt(), Direction::from);
         for (i = list.begin(); i != list.end(); i++) {
             account_summ d;
-            acc = get_account_data(i.key());
+            acc_from = get_account_data(i.key());
             d.set_account(i.key());
             d.set_balance(i.value());
             data.from.append(d);
-            if (acc.top == Account_Type::active)
-                summ_from += i.value();
+            if (acc_from.top == Account_Type::active)
+                summ_from += acc_from.balance.value();
         }
 
         list = get_plan_account_oper_list(q.value(0).toInt(), Direction::to);
         for (i = list.begin(); i != list.end(); i++) {
-            acc = get_account_data(i.key());
+            acc_to = get_account_data(i.key());
             account_summ d;
             d.set_account(i.key());
             d.set_balance(i.value());
             data.to.append(d);
-            if (acc.top == Account_Type::credit)
+            if (acc_to.top == Account_Type::credit)
                 summ_to += i.value();
         }
-        if ((data.status == Plan_Status::minimum || data.status == Plan_Status::expired) && summ_from > summ_to)
+        if ((data.status == Plan_Status::minimum || data.status == Plan_Status::expired) && summ_from < summ_to)
             data.descr += " [Nedostatochno sredstv]";
     }
 

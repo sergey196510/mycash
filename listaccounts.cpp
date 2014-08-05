@@ -80,6 +80,8 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
     connect(this, SIGNAL(pressEnter()), SLOT(change_account()));
     connect(this, SIGNAL(pressDelete()), SLOT(del_account()));
 
+    connect(this, SIGNAL(select_account(int)), ui->widget, SLOT(calc_array(int)));
+
 //    connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
 
     ui->act_summ->setText(active.text());
@@ -356,69 +358,6 @@ void ListAccounts::show_analis()
 //
 void ListAccounts::select_account()
 {
-    QSqlQuery q, q2;
     int id = get_selected_id();
-    Account_Data data;
-    QList<SbD> stack;
-    QList<SbD> summ;
-//    QList<SbD> result;
-    QMap<QDate,double> result;
-
-    if (id == 0)
-        return;
-
-    data = db->get_account_data(id);
-
-//    ui->textEdit->clear();
-//    ui->textEdit->append(QString("%1").arg(id));
-
-    // выборка значений операций по счету
-    q.prepare("SELECT id,dt FROM oper ORDER BY dt");
-    if (!q.exec()) {
-        qDebug() << q.lastError();
-        return;
-    }
-    while (q.next()) {
-        q2.prepare("SELECT summ, direction FROM account_oper WHERE o_id = :oid AND a_id = :aid");
-        q2.bindValue(":oid", q.value(0).toInt());
-        q2.bindValue(":aid", id);
-        if (!q2.exec()) {
-            qDebug() << q2.lastError();
-            return;
-        }
-        while (q2.next()) {
-            SbD val;
-            if (q2.value(1).toInt() == 2)
-                val.value = -q2.value(0).toDouble();
-            else
-                val.value = q2.value(0).toDouble();
-            val.dt = q.value(1).toDate();
-//            qDebug() << val.dt << val.value;
-            stack.append(val);
-        }
-    }
-
-    // расчет баланса по счету на момент совершения операции
-    // итоговые значения расположены в массиве result
-    SbD val;
-    val.value = data.balance.value();
-    val.dt = QDate::currentDate();
-    qDebug() << val.dt << val.value;
-    summ.append(val);
-    for (int j = stack.size()-1; j >= 0; j--) {
-        SbD v = stack.at(j);
-        val.value += v.value;
-        val.dt = v.dt;
-//        qDebug() << val.dt << val.value;
-        summ.append(val);
-    }
-
-    for (int j = summ.size()-1; j > 0; j--) {
-//        SbD v;
-//        val = summ.at(j);
-        val.dt = summ.at(j).dt;
-        val.value = summ.at(j-1).value;
-        result[val.dt] = val.value;
-    }
-    qDebug() << result;
+    emit select_account(id);
 }

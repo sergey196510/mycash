@@ -160,7 +160,7 @@ bool ListSeparateOperModel::insertRows(int row, int count, const QModelIndex &pa
     return true;
 }
 
-bool ListSeparateOperModel::removeRows(int row, int count, const QModelIndex &parent)
+bool ListSeparateOperModel::removeRows(int row, int count, const QModelIndex &)
 {
     beginRemoveRows(QModelIndex(), row, 1);
 

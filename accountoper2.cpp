@@ -34,7 +34,7 @@ void AccountOper2::setValue(int i)
     this->setText(list[val]);
 }
 
-void AccountOper2::mousePressEvent(QMouseEvent *event)
+void AccountOper2::mousePressEvent(QMouseEvent *)
 {
     select_account();
 }
