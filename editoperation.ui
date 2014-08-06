@@ -47,6 +47,13 @@
       <widget class="QSpinBox" name="yearBox"/>
      </item>
      <item>
+      <widget class="QCheckBox" name="autoBox">
+       <property name="text">
+        <string>Auto</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

@@ -48,7 +48,7 @@ class ListPlanOper : public QWidget
 public:
     explicit ListPlanOper(QWidget *parent = 0);
     ~ListPlanOper();
-    QAction *tran, *comm, *delo, *can;
+    QAction *tran, *comm, *delo, *upd, *can;
     QList<QAction *> acts;
 
 public slots:
@@ -65,6 +65,7 @@ private slots:
     void new_oper();
     int get_selected_id();
     void commit_oper();
+    void update_oper();
     void del_oper();
     void cancel_oper();
     void check_selected();

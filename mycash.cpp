@@ -244,8 +244,8 @@ void MyCash::opendb(QString dbname)
     }
     else {
         var.database_Open();
-//        check_plan_oper();
         db = new Database;
+        check_plan_oper();
     }
 
     emit call_mark();
@@ -378,24 +378,20 @@ void MyCash::report2()
 // проверка выполнения плановых операций в тек месяце
 void MyCash::check_plan_oper()
 {
-    QSqlQuery q;
-    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
-    int count = 0;
+//    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
+    QList<Operation_Data> list = db->get_plan_oper_list(0);
+    QList<Operation_Data>::iterator i;
 
-    qDebug() << mon << year;
+//    qDebug() << mon << year;
 
-    q.prepare("SELECT count(id) FROM plan_account_moper WHERE mon = :mon AND year = :year");
-    q.bindValue(":mon", mon);
-    q.bindValue(":year", year);
-    if (!q.exec() || !q.next()) {
-        qDebug() << q.lastError().text();
-        return;
-    }
-    count = q.value(0).toInt();
-    if (count == 0) {
-        qDebug() << count;
-    }
-    else {
-        qDebug() << count;
+    for (i = list.begin(); i != list.end(); i++) {
+        Operation_Data data = *i;
+        if (data.auto_exec == 0)
+            continue;
+        if (data.status != Plan_Status::expired)
+            continue;
+        db->save_operation(data);
+        db->new_mon_oper(data.id,1);
+        qDebug() << data.id;
     }
 }

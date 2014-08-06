@@ -135,16 +135,43 @@ QString Database::get_account_scod(int id)
     return 0;
 }
 
+QString Database::get_parent_account(int id)
+{
+    QString name;
+    QSqlQuery q;
+
+    q.prepare("SELECT id,name,parent FROM account WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return QVariant().toString();
+    }
+    if (q.next()) {
+        QString s = q.value(1).toString();
+        QString str;
+        if (q.value(2).toInt() > 0) {
+            str = get_parent_account(q.value(2).toInt()) + ":";
+        }
+        return str + s;
+    }
+    return QVariant().toString();
+}
+
 QMap<int,QString> Database::get_accounts_list()
 {
     QMap<int,QString> list;
     QSqlQuery q;
 
-    q.prepare("SELECT id,name FROM account");
+    q.prepare("SELECT id,name,parent FROM account");
     if (!q.exec())
         return list;
     while (q.next()) {
-        list[q.value(0).toInt()] = q.value(1).toString();
+        QString s = q.value(1).toString();
+        QString str;
+        if (q.value(2).toInt() > 0) {
+            str = get_parent_account(q.value(2).toInt()) + ":";
+        }
+        list[q.value(0).toInt()] = str + s;
     }
 
     return list;
@@ -516,12 +543,13 @@ int Database::new_plan_oper(Operation_Data &data)
 
     q.exec("BEGIN");
 
-    q.prepare("INSERT INTO plan_oper(day, month, year, descr, dt) VALUES(:day, :month, :year, :descr, :dt)");
+    q.prepare("INSERT INTO plan_oper(day, month, year, descr, dt, auto) VALUES(:day, :month, :year, :descr, :dt, :auto)");
     q.bindValue(":day", data.day);
     q.bindValue(":month", data.month);
     q.bindValue(":year", data.year);
     q.bindValue(":descr", data.descr);
     q.bindValue(":dt", data.date.toString("yyyy-MM-dd"));
+    q.bindValue(":auto", data.auto_exec);
     if (!q.exec()) {
         qDebug() << "Error Insert:" << q.lastError().text();
         q.exec("ROLLBACK");

@@ -18,10 +18,6 @@ int main(int argc, char *argv[])
     a.installTranslator(&translator);
 
     default_locale = new QLocale();
-//    english = new QLocale(QLocale::Ukrainian);
-
-//    qDebug() << default_locale->currencySymbol(default_locale->CurrencyDisplayName);
-//    qDebug() << default_locale->currencySymbol(default_locale->CurrencyIsoCode);
 
     MyCash w;
 

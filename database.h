@@ -21,6 +21,7 @@ public:
     QString get_agent_name(int);
 //    QString get_currency_scod(int);
     QMap<int,QString> get_accounts_list();
+    QString get_parent_account(int id);
     QMap<int,QString> get_scod_list();
     QMap<QString,double> get_currency_list();
     QMap<QString,double> get_opersummbyaccount_list(int type,int month,int year);

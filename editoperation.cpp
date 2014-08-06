@@ -144,6 +144,7 @@ Operation_Data EditOperation::data()
     d.year = ui->yearBox->value();
     d.agent = ui->agent_comboBox->value();
     d.kurs = ui->kursEdit->value();
+    d.auto_exec = ui->autoBox->isChecked();
 
     a.set_account(ui->fromWidget->value());
     a.set_balance(ui->fromSpinBox->value());
@@ -167,6 +168,7 @@ void EditOperation::setdata(Operation_Data &d)
     ui->dayBox->setCurrentIndex(d.day);
     ui->monBox->setCurrentIndex(d.month);
     ui->yearBox->setValue(d.year);
+    ui->autoBox->setChecked(d.auto_exec);
 
     if (!d.from.empty()) {
         i = d.from.begin();

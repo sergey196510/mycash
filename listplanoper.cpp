@@ -173,18 +173,27 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
 
     tran = new QAction(tr("New plan operation"), this);
     acts.append(tran);
+    connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
 
     comm = new QAction(tr("Commit this operation"), this);
     acts.append(comm);
     comm->setEnabled(false);
+    connect(comm, SIGNAL(triggered()), SLOT(commit_oper()));
+
+    upd = new QAction(tr("Update this operation"), this);
+    acts.append(upd);
+    upd->setEnabled(false);
+    connect(upd, SIGNAL(triggered()), SLOT(update_oper()));
 
     delo = new QAction(tr("Delete selected operation"), this);
     delo->setEnabled(false);
     acts.append(delo);
+    connect(delo, SIGNAL(triggered()), SLOT(del_oper()));
 
     can = new QAction(tr("Cancel selected operation"), this);
     can->setEnabled(false);
     acts.append(can);
+    connect(can, SIGNAL(triggered()), SLOT(cancel_oper()));
 
     ui->tableView->addActions(acts);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -196,10 +205,6 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
-    connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
-    connect(comm, SIGNAL(triggered()), SLOT(commit_oper()));
-    connect(delo, SIGNAL(triggered()), SLOT(del_oper()));
-    connect(can, SIGNAL(triggered()), SLOT(cancel_oper()));
     connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), SLOT(check_selected()));
 }
 
@@ -259,6 +264,23 @@ void ListPlanOper::commit_oper()
     emit data_changed();
 }
 
+void ListPlanOper::update_oper()
+{
+    Operation_Data pod;
+    Operation_Data od;
+    EditOperation *eo = new EditOperation(1, this);
+    int id = get_selected_id();
+
+    if (id == 0)
+        return;
+
+    pod = db->get_plan_oper_data(id, QDate::currentDate());
+
+    eo->setdata(pod);
+    if (eo->exec() == QDialog::Rejected)
+        return;
+}
+
 void ListPlanOper::del_oper()
 {
     QSqlQuery q;
@@ -308,6 +330,7 @@ void ListPlanOper::check_selected()
 {
     int id = get_selected_id();
     comm->setEnabled(id);
+    upd->setEnabled(id);
     delo->setEnabled(id);
     can->setEnabled(id);
 }

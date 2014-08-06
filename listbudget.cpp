@@ -1,10 +1,11 @@
 #include "listbudget.h"
 
-ListBudgetModel::ListBudgetModel(QObject *parent) :
+ListBudgetModel::ListBudgetModel(Database *db, QObject *parent) :
     QAbstractTableModel(parent)
 {
     header_data << "" << tr("Month") << tr("Account") << tr("Summ") << tr("Description");
     list = read_list();
+    accounts_list = db->get_accounts_list();
 }
 
 int ListBudgetModel::rowCount(const QModelIndex &parent) const
@@ -48,7 +49,7 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
         }
         if (index.column() == 2) {
             Budget_Data data = list.at(index.row());
-            return data.account;
+            return accounts_list[data.account];
         }
         if (index.column() == 3) {
             Budget_Data data = list.at(index.row());
@@ -86,7 +87,9 @@ ListBudget::ListBudget(QWidget *parent) :
 {
     ui.setupUi(this);
 
-    model = new ListBudgetModel;
+    db = new Database;
+
+    model = new ListBudgetModel(db);
     ui.tableView->setModel(model);
 
     ui.tableView->hideColumn(0);
@@ -105,6 +108,12 @@ ListBudget::ListBudget(QWidget *parent) :
     ui.tableView->addActions(acts);
 
     ui.tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
+}
+
+ListBudget::~ListBudget()
+{
+    delete model;
+    delete db;
 }
 
 void ListBudget::new_budget()
