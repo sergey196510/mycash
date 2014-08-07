@@ -7,29 +7,55 @@ AccountDelegate::AccountDelegate(int column, QObject *parent) :
     this->column = column;
 }
 
-void AccountDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
+//void AccountDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+//{
 //    if (index.column() == column) {
 //        int value = index.model()->data(index,Qt::DisplayRole).toInt();
 //        QString text = QString("%1").arg(value);
 //        drawDisplay(painter, option, option.rect, text);
 //    }
 //    else
-        QItemDelegate::paint(painter, option, index);
-}
+//        QItemDelegate::paint(painter, option, index);
+//}
 
 QWidget *AccountDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (index.column() == column) {
         int value = index.model()->data(index,Qt::DisplayRole).toInt();
-//        int value = index.model()->itemData(index);
         AccountOper2 *oper = new AccountOper2(parent);
         oper->setValue(value);
-//        connect(oper, SIGNAL())
         return oper;
     }
     else
         return QItemDelegate::createEditor(parent, option, index);
+}
+
+void AccountDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    if (index.column() == column) {
+        int value = index.model()->data(index,Qt::EditRole).toInt();
+        AccountOper2 *oper = static_cast<AccountOper2*>(editor);
+        oper->setValue(value);
+    }
+    else
+        QItemDelegate::setEditorData(editor, index);
+}
+
+void AccountDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+{
+    if (index.column() == column) {
+        AccountOper2 *oper = static_cast<AccountOper2*>(editor);
+        int value = oper->value();
+        model->setData(index,value);
+        account_summ acc;
+    }
+    else
+        QItemDelegate::setEditorData(editor, index);
+}
+
+void AccountDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    editor->setGeometry(option.rect);
 }
 
 ListSeparateOperModel::ListSeparateOperModel(QObject *parent) :
@@ -112,6 +138,7 @@ Qt::ItemFlags ListSeparateOperModel::flags(const QModelIndex &index) const
      return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
+/*
 bool ListSeparateOperModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     account_summ data;
@@ -146,7 +173,9 @@ bool ListSeparateOperModel::setData(const QModelIndex &index, const QVariant &va
      }
      return false;
 }
+*/
 
+/*
 bool ListSeparateOperModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     account_summ data;
@@ -170,6 +199,7 @@ bool ListSeparateOperModel::removeRows(int row, int count, const QModelIndex &)
     endRemoveRows();
     return true;
 }
+*/
 
 QList<account_summ> ListSeparateOperModel::getData()
 {

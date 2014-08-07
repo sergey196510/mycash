@@ -16,9 +16,12 @@ class AccountDelegate : public QItemDelegate
 
 public:
     AccountDelegate(int column, QObject *parent = 0);
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+//    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void commitAndCloseEditor();
+//    void commitAndCloseEditor();
+    void setEditorData(QWidget *editor, const QModelIndex &index) const;
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private:
     int column;
@@ -45,9 +48,9 @@ private:
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role);
-    bool insertRows(int row, int count, const QModelIndex &parent);
-    bool removeRows(int row, int count, const QModelIndex &parent);
+//    bool setData(const QModelIndex &index, const QVariant &value, int role);
+//    bool insertRows(int row, int count, const QModelIndex &parent);
+//    bool removeRows(int row, int count, const QModelIndex &parent);
 };
 
 class ListSeparateOper : public QDialog
