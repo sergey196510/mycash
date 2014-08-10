@@ -268,7 +268,7 @@ void ListPlanOper::update_oper()
 {
     Operation_Data pod;
     Operation_Data od;
-    EditOperation *eo = new EditOperation(1, this);
+    EditOperation *eo = new EditOperation(2, this);
     int id = get_selected_id();
 
     if (id == 0)
