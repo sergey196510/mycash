@@ -284,26 +284,13 @@ void ListPlanOper::update_oper()
     tr.begin();
 
     od = eo->data();
+    delete eo;
 
-    q.prepare("DELETE FROM plan_oper_acc WHERE o_id = :id");
-    q.bindValue(":id", id);
-    if (!q.exec()) {
-        tr.rollback();
-        qDebug() << "Error DELETE:" << q.lastError().text();
-        return;
+    od.id = id;
+    if (db->update_plan_oper(od)) {
+        tr.commit();
+        emit data_changed();
     }
-
-    q.prepare("DELETE FROM plan_oper WHERE id = :id");
-    q.bindValue(":id", id);
-    if (!q.exec()) {
-        tr.rollback();
-        qDebug() << "Error DELETE:" << q.lastError().text();
-        return;
-    }
-
-    db->new_plan_oper(od);
-    tr.commit();
-    emit data_changed();
 }
 
 void ListPlanOper::del_oper()

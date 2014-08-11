@@ -37,6 +37,7 @@ public:
     bool    change_account_balance(account_summ &);
     bool    save_operation(Operation_Data &);
     int     new_plan_oper(Operation_Data &data);
+    bool    update_plan_oper(Operation_Data &data);
     bool    new_mon_oper(int p_id, int status);
     Operation_Data get_operation(int);
     Operation_Data get_plan_oper_data(int,QDate dt);

@@ -540,8 +540,9 @@ int Database::new_plan_oper(Operation_Data &data)
     QSqlQuery q;
     int id = 0;
     QList<account_summ>::iterator i;
+    Transaction tr;
 
-    q.exec("BEGIN");
+    tr.begin();
 
     q.prepare("INSERT INTO plan_oper(day, month, year, descr, dt, auto) VALUES(:day, :month, :year, :descr, :dt, :auto)");
     q.bindValue(":day", data.day);
@@ -552,14 +553,14 @@ int Database::new_plan_oper(Operation_Data &data)
     q.bindValue(":auto", data.auto_exec);
     if (!q.exec()) {
         qDebug() << "Error Insert:" << q.lastError().text();
-        q.exec("ROLLBACK");
+        tr.rollback();
         return 0;
     }
 
     q.prepare("SELECT MAX(id) FROM plan_oper");
     if (!q.exec()) {
         qDebug() << q.lastError().text();
-        q.exec("ROLLBACK");
+        tr.rollback();
         return 0;
     }
 
@@ -569,7 +570,7 @@ int Database::new_plan_oper(Operation_Data &data)
             account_summ d = *i;
             if (!new_account_oper("plan_oper_acc", id, d, Direction::from)) {
                 qDebug() << q.lastError().text();
-                q.exec("ROLLBACK");
+                tr.rollback();
                 return 0;
             }
         }
@@ -577,14 +578,64 @@ int Database::new_plan_oper(Operation_Data &data)
             account_summ d = *i;
             if (!new_account_oper("plan_oper_acc", id, d, Direction::to)) {
                 qDebug() << q.lastError().text();
-                q.exec("ROLLBACK");
+                tr.rollback();
                 return 0;
             }
         }
     }
 
-    q.exec("COMMIT");
+    tr.commit();
     return id;
+}
+
+bool Database::update_plan_oper(Operation_Data &data)
+{
+    QSqlQuery q;
+    QList<account_summ>::iterator i;
+    Transaction tr;
+
+    tr.begin();
+
+    q.prepare("DELETE FROM plan_oper_acc WHERE o_id = :id");
+    q.bindValue(":id", data.id);
+    if (!q.exec()) {
+        tr.rollback();
+        qDebug() << "Error DELETE:" << q.lastError().text();
+        return false;
+    }
+
+    q.prepare("UPDATE plan_oper SET day=:day, month=:month, year=:year, descr=:descr, auto=:auto WHERE id=:id");
+    q.bindValue(":day", data.day);
+    q.bindValue(":month", data.month);
+    q.bindValue(":year", data.year);
+    q.bindValue(":descr", data.descr);
+    q.bindValue(":auto", data.auto_exec);
+    q.bindValue(":id", data.id);
+    if (!q.exec()) {
+        qDebug() << "Error update:" << q.lastError().text();
+        tr.rollback();
+        return false;
+    }
+
+    for (i = data.from.begin(); i != data.from.end(); i++) {
+        account_summ d = *i;
+        if (!new_account_oper("plan_oper_acc", data.id, d, Direction::from)) {
+            qDebug() << q.lastError().text();
+            tr.rollback();
+            return false;
+        }
+    }
+    for (i = data.to.begin(); i != data.to.end(); i++) {
+        account_summ d = *i;
+        if (!new_account_oper("plan_oper_acc", data.id, d, Direction::to)) {
+            qDebug() << q.lastError().text();
+            tr.rollback();
+            return false;
+        }
+    }
+
+    tr.commit();
+    return true;
 }
 
 bool Database::new_mon_oper(int p_id, int status)
