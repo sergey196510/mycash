@@ -21,7 +21,7 @@ int accountsView::value()
         return 0;
     }
 
-     return list.at(5).data(Qt::DisplayRole).toInt();
+     return list.at(6).data(Qt::DisplayRole).toInt();
 }
 
 void accountsView::setValue(int idx)
@@ -47,6 +47,6 @@ void accountsView::reload()
 {
     model->fill_model();
     expandAll();
-    for (int i = 1; i < 6; i++)
+    for (int i = 1; i < 7; i++)
         hideColumn(i);
 }

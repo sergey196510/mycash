@@ -10,7 +10,7 @@ class ViewCurrency : public QItemDelegate
 
 public:
     ViewCurrency(int column, QObject *parent = 0);
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+//    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private:
     int column;
@@ -27,7 +27,9 @@ private:
 //    QMap<int,QString> list;
     QMap<int,QModelIndex> list_index;
 //    QMap<QString,double> list_curs;
+    QList<Operation_Data> plan_list;
     Globals var;
+    double get_reserv(int id);
 
 public:
     explicit ListAccountsModel(QObject *parent = 0);

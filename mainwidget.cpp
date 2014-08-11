@@ -138,6 +138,7 @@ MainWidget::MainWidget(Database *d, QWidget *parent) :
 
     ui->active_value->setText(active.text());
     ui->passive_value->setText(passive.text());
+    ui->saldo_value->setText(QString("%1").arg(active.Value()-passive.Value()));
 
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(0);

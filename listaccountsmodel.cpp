@@ -1,11 +1,12 @@
 #include "listaccountsmodel.h"
 
-ViewCurrency::ViewCurrency(int column, QObject *parent) :
+ViewCurrency::ViewCurrency(int col, QObject *parent) :
     QItemDelegate(parent)
 {
-    this->column = column;
+    this->column = col;
 }
 
+/*
 void ViewCurrency::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (index.column() == column) {
@@ -19,6 +20,26 @@ void ViewCurrency::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     }
     else
         QItemDelegate::paint(painter, option, index);
+}
+*/
+
+double ListAccountsModel::get_reserv(int id)
+{
+    Account_Data acc = db->get_account_data(id);
+    QList<Operation_Data>::iterator i;
+    Operation_Data oper;
+    double summ = 0;
+
+    if (acc.top != Account_Type::active)
+        return 0;
+
+    for (i = plan_list.begin(); i != plan_list.end(); i++) {
+        oper = *i;
+        if (oper.from.at(0).account() == id)
+            summ += oper.from.at(0).balance().value();
+    }
+
+    return summ;
 }
 
 double ListAccountsModel::get_list(int parent, QModelIndex idx)
@@ -48,16 +69,17 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
         else
             continue;
         if (i == 0)
-            insertColumns(0,6,idx);
+            insertColumns(0,7,idx);
         insertRow(i, idx);
         list_index[q.value(0).toInt()] = index(i,0,idx);
 //        qDebug() << q.value(0).toInt() << index(i,0,idx);
         setData(index(i,0,idx), q.value(1).toString());
         setData(index(i,1,idx), q.value(2).toDouble());
-        setData(index(i,2,idx), q.value(4).toInt());
-        setData(index(i,4,idx), q.value(3).toString());
-        setData(index(i,3,idx), q.value(5).toBool());
-        setData(index(i,5,idx), q.value(0).toInt());
+        setData(index(i,2,idx), get_reserv(q.value(0).toInt()));
+        setData(index(i,3,idx), q.value(4).toInt());
+        setData(index(i,4,idx), q.value(5).toBool());
+        setData(index(i,5,idx), q.value(3).toString());
+        setData(index(i,6,idx), q.value(0).toInt());
         summ2 = get_list(q.value(0).toInt(), index(i,0,idx));
         setData(index(i,1,idx), summ2+q.value(2).toDouble());
         summ += summ2;
@@ -75,7 +97,7 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
     double summ, summ2;
     QModelIndex idx;
     QFont fnt;
-    header_data << tr("Name") << tr("Balance") << tr("Currency") << "Hidden" << tr("Description") << "" << "";
+    header_data << tr("Name") << tr("Balance") << ("Reserved") << tr("Currency") << "Hidden" << tr("Description") << "" << "";
 
     clear();
 
@@ -86,7 +108,7 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
 //    list_curs = db->get_currency_list();
     fnt.setBold(true);
 
-    insertColumns(0,6);
+    insertColumns(0,7);
 
     int i = 0;
     summ = 0;
@@ -104,15 +126,15 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
             continue;
         insertRow(i);
         list_index[q.value(0).toInt()] = index(i,0,QModelIndex());
-        for (int j = 0; j < 6; j++)
+        for (int j = 0; j < 7; j++)
 //            setData(index(i,j), QColor(Qt::gray), Qt::BackgroundColorRole);
             setData(index(i,0,QModelIndex()), QFont(fnt), Qt::FontRole);
         setData(index(i,0,QModelIndex()), q.value(1).toString());
         setData(index(i,1,QModelIndex()), q.value(2).toDouble());
-        setData(index(i,2,QModelIndex()), q.value(4).toInt());
-        setData(index(i,4,QModelIndex()), q.value(3).toString());
-        setData(index(i,3,QModelIndex()), q.value(5).toBool());
-        setData(index(i,5,QModelIndex()), q.value(0).toInt());
+        setData(index(i,3,QModelIndex()), q.value(4).toInt());
+        setData(index(i,4,QModelIndex()), q.value(5).toBool());
+        setData(index(i,5,QModelIndex()), q.value(3).toString());
+        setData(index(i,6,QModelIndex()), q.value(0).toInt());
         summ2 = get_list(q.value(0).toInt(), index(i,0,QModelIndex()));
         setData(index(i,1), summ2+q.value(2).toDouble());
         summ += summ2;
@@ -126,6 +148,7 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
     QStandardItemModel(parent)
 {
     db = new Database;
+    plan_list = db->get_plan_oper_list(1);
 }
 
 ListAccountsModel::~ListAccountsModel()
@@ -144,21 +167,28 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
         case Qt::DisplayRole:
-//        if (index.column() == 1) {
-//            return default_locale->toString(value.toDouble(),'f',2);
-//        }
-        if (index.column() == 2) {
+        if (index.column() == 1) {
+            return default_locale->toString(value.toDouble(),'f',2);
+        }
+        else if (index.column() == 2)
+            if (value.toDouble())
+                return default_locale->toString(value.toDouble(),'f',2);
+            else
+                return QVariant();
+        else if (index.column() == 3) {
 //            return db->get_currency_scod(value.toInt());
             return db->scod_list[value.toInt()];
         }
-        else if (index.column() == 3) {
-            return (value.toBool() == false) ? "" : tr("H");
+        else if (index.column() == 4) {
+            return (value.toBool() == false) ? QVariant() : tr("H");
         }
         else
             return value;
 
         case Qt::TextAlignmentRole:
             if (index.column() == 1)
+                return int(Qt::AlignRight | Qt::AlignVCenter);
+            if (index.column() == 2)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
     case Qt::TextColorRole:

@@ -381,6 +381,7 @@ void MyCash::check_plan_oper()
 //    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
     QList<Operation_Data> list = db->get_plan_oper_list(0);
     QList<Operation_Data>::iterator i;
+    Account_Data from, to;
 
 //    qDebug() << mon << year;
 
@@ -390,6 +391,16 @@ void MyCash::check_plan_oper()
             continue;
         if (data.status != Plan_Status::expired)
             continue;
+        from = db->get_account_data(data.from.at(0).account());
+        to = db->get_account_data(data.from.at(0).account());
+        if (from.balance.value() < data.to.at(0).balance().value()) {
+            QMessageBox::warning(0,
+                                 tr("Plan operation"),
+                                 tr("Plan operation\nFrom: %1 To: %2\nNedostatocjno sredstv")
+                                 .arg(from.name)
+                                 .arg(to.name));
+            continue;
+        }
         db->save_operation(data);
         db->new_mon_oper(data.id,1);
         qDebug() << data.id;

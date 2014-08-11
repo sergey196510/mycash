@@ -14,6 +14,7 @@ public:
     summAccount() { value = 0; }
     summAccount(int);
     QString text();
+    double Value();
 };
 
 #endif // SUMMACCOUNT_H

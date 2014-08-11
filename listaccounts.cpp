@@ -31,7 +31,7 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
     ui->treeView->setItemDelegate(new ViewCurrency(1));
     ui->treeView->setModel(model);
 //    ui->treeView->hideColumn(4);
-    ui->treeView->hideColumn(5);
+    ui->treeView->hideColumn(6);
     for (int i = 0; i < 5; i++)
         ui->treeView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
 
@@ -240,7 +240,7 @@ int ListAccounts::get_selected_id()
         return 0;
     }
 
-     return list.at(5).data(Qt::DisplayRole).toInt();
+     return list.at(6).data(Qt::DisplayRole).toInt();
 }
 
 void ListAccounts::correct_balance()

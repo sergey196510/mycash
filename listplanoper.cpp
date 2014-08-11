@@ -266,10 +266,11 @@ void ListPlanOper::commit_oper()
 
 void ListPlanOper::update_oper()
 {
-    Operation_Data pod;
-    Operation_Data od;
+    QSqlQuery q;
+    Operation_Data pod, od;
     EditOperation *eo = new EditOperation(2, this);
     int id = get_selected_id();
+    Transaction tr;
 
     if (id == 0)
         return;
@@ -279,6 +280,30 @@ void ListPlanOper::update_oper()
     eo->setdata(pod);
     if (eo->exec() == QDialog::Rejected)
         return;
+
+    tr.begin();
+
+    od = eo->data();
+
+    q.prepare("DELETE FROM plan_oper_acc WHERE o_id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        tr.rollback();
+        qDebug() << "Error DELETE:" << q.lastError().text();
+        return;
+    }
+
+    q.prepare("DELETE FROM plan_oper WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        tr.rollback();
+        qDebug() << "Error DELETE:" << q.lastError().text();
+        return;
+    }
+
+    db->new_plan_oper(od);
+    tr.commit();
+    emit data_changed();
 }
 
 void ListPlanOper::del_oper()
