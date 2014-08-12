@@ -21,9 +21,9 @@ double Database::convert_currency(double val, int icod)
     return val * kurs;
 }
 
-double Database::get_account_summ(int top)
+double Database::get_account_summ(int id)
 {
-    QSqlQuery query;
+    QSqlQuery q;
     double summ = 0;
     Transaction tr;
 
@@ -32,14 +32,23 @@ double Database::get_account_summ(int top)
 
     tr.begin();
 
-    query.prepare("SELECT id,ccod,balance FROM account WHERE top = :top AND hidden = 0");
-    query.bindValue(":top", top);
-    if (!query.exec()) {
+    q.prepare("SELECT id,ccod,balance FROM account WHERE id = :id AND hidden = 0");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
         tr.rollback();
         return 0;
     }
-    while (query.next()) {
-        summ += convert_currency(query.value(2).toDouble(), query.value(1).toInt());
+    if (q.next())
+        summ += q.value(2).toDouble();
+
+    q.prepare("SELECT id,ccod,balance FROM account WHERE parent = :parent AND hidden = 0");
+    q.bindValue(":parent", id);
+    if (!q.exec()) {
+        tr.rollback();
+        return 0;
+    }
+    while (q.next()) {
+        summ += get_account_summ(q.value(0).toInt());
     }
 
     tr.commit();

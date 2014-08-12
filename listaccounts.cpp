@@ -30,6 +30,7 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
 
     ui->treeView->setItemDelegate(new ViewCurrency(1));
     ui->treeView->setModel(model);
+    ui->treeView->expandAll();
 //    ui->treeView->hideColumn(4);
     ui->treeView->hideColumn(6);
     for (int i = 0; i < 5; i++)
@@ -126,8 +127,8 @@ void ListAccounts::reload_model()
     model->fill_model();
     ui->treeView->expandAll();
     ui->act_summ->setText(active.text());
-    ui->treeView->hideColumn(5);
-    for (int i = 0; i < 5; i++)
+    ui->treeView->hideColumn(6);
+    for (int i = 0; i < 6; i++)
         ui->treeView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
 }
 

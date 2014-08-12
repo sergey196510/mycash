@@ -378,12 +378,13 @@ void ListOperations::print_balance()
     QFont font;
     font.setBold(true);
     int id = ui->listAccounts->value();
-    Account_Data data = db->get_account_data(id);
-    double result = db->convert_currency(data.balance.value(), data.curr);
+    double result = 0;
 
-//    lc = default_locale;
     ui->account_ostatok->setFont(font);
-    ui->account_ostatok->setText(default_locale->toString(result,'f',2));
+    if (id)
+        ui->account_ostatok->setText(default_locale->toString(db->get_account_summ(id),'f',2));
+    else
+        ui->account_ostatok->clear();
 
     var.setAccount(ui->listAccounts->value());
 }

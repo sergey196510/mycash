@@ -129,6 +129,7 @@ MainWidget::MainWidget(Database *d, QWidget *parent) :
     summAccount active(Account_Type::active), passive(Account_Type::passive);
 
     ui->setupUi(this);
+    double saldo;
 
     db = d;
     model = new MainWidgetModel(db);
@@ -136,9 +137,10 @@ MainWidget::MainWidget(Database *d, QWidget *parent) :
     ui->groupBox->setTitle(tr("Balance status"));
     ui->groupBox_2->setTitle(tr("Prosrochennie operations"));
 
-    ui->active_value->setText(active.text());
-    ui->passive_value->setText(passive.text());
-    ui->saldo_value->setText(QString("%1").arg(active.Value()-passive.Value()));
+    ui->active_value->setText(active.text() + " " + var.Symbol());
+    ui->passive_value->setText(passive.text() + " " + var.Symbol());
+    saldo = active.Value()-passive.Value();
+    ui->saldo_value->setText(QString("%1 %2").arg(default_locale->toString(saldo,'f',2)).arg(var.Symbol()));
 
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(0);
@@ -156,9 +158,12 @@ MainWidget::~MainWidget()
 void MainWidget::reload_model()
 {
     summAccount active(Account_Type::active), passive(Account_Type::passive);
+    double saldo;
 
     ui->active_value->setText(active.text() + " " + var.Symbol());
     ui->passive_value->setText(passive.text() + " " + var.Symbol());
+    saldo = active.Value()-passive.Value();
+    ui->saldo_value->setText(QString("%1 %2").arg(default_locale->toString(saldo,'f',2)).arg(var.Symbol()));
 }
 
 void MainWidget::clear_model()

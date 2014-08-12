@@ -48,7 +48,7 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
 //    int id;
     int i = 0;
 //    int row = 0;
-    double summ = 0, summ2 = 0;
+    double summ = 0, summ2 = 0, reserv = 0;
 
     q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = :parent ORDER BY name");
     q.bindValue(":parent", parent);
@@ -71,17 +71,24 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
         if (i == 0)
             insertColumns(0,7,idx);
         insertRow(i, idx);
+        reserv = get_reserv(q.value(0).toInt());
         list_index[q.value(0).toInt()] = index(i,0,idx);
 //        qDebug() << q.value(0).toInt() << index(i,0,idx);
         setData(index(i,0,idx), q.value(1).toString());
         setData(index(i,1,idx), q.value(2).toDouble());
-        setData(index(i,2,idx), get_reserv(q.value(0).toInt()));
+        setData(index(i,2,idx), reserv);
         setData(index(i,3,idx), q.value(4).toInt());
         setData(index(i,4,idx), q.value(5).toBool());
         setData(index(i,5,idx), q.value(3).toString());
         setData(index(i,6,idx), q.value(0).toInt());
         summ2 = get_list(q.value(0).toInt(), index(i,0,idx));
         setData(index(i,1,idx), summ2+q.value(2).toDouble());
+        if (reserv && reserv > q.value(2).toDouble()) {
+            for (int j = 0; j < 7; j++) {
+                setData(index(i,j,idx), QColor(Qt::red), Qt::BackgroundColorRole);
+                setData(index(i,j,idx), QColor(Qt::white), Qt::TextColorRole);
+            }
+        }
         summ += summ2;
         i++;
     }
@@ -97,7 +104,7 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
     double summ, summ2;
     QModelIndex idx;
     QFont fnt;
-    header_data << tr("Name") << tr("Balance") << ("Reserved") << tr("Currency") << "Hidden" << tr("Description") << "" << "";
+    header_data << tr("Name") << tr("Balance") << ("Reserved") << tr("C") << tr("H") << tr("Description") << "" << "";
 
     clear();
 
@@ -126,9 +133,9 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
             continue;
         insertRow(i);
         list_index[q.value(0).toInt()] = index(i,0,QModelIndex());
-        for (int j = 0; j < 7; j++)
+//        for (int j = 0; j < 7; j++)
 //            setData(index(i,j), QColor(Qt::gray), Qt::BackgroundColorRole);
-            setData(index(i,0,QModelIndex()), QFont(fnt), Qt::FontRole);
+        setData(index(i,0,QModelIndex()), QFont(fnt), Qt::FontRole);
         setData(index(i,0,QModelIndex()), q.value(1).toString());
         setData(index(i,1,QModelIndex()), q.value(2).toDouble());
         setData(index(i,3,QModelIndex()), q.value(4).toInt());
