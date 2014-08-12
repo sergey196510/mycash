@@ -28,7 +28,6 @@ private:
     Database *db;
     QList<SbD> list;
     bool isFree;
-    double average;
 
 signals:
 

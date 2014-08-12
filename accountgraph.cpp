@@ -70,17 +70,17 @@ void AccountGraph::calc_array(int id)
         summ.append(val);
     }
 
-    int days = 0;
-    double all = 0;
+//    int days = 0;
+//    double all = 0;
     for (int j = summ.size()-1; j > 0; j--) {
         val.dt = summ.at(j).dt;
         val.value = summ.at(j-1).value;
         result[val.dt] = val.value;
-        days++;
-        all += val.value;
+//        days++;
+//        all += val.value;
     }
-    average = all/days;
-    qDebug() << average;
+//    average = all/days;
+//    qDebug() << average;
 
     QDate ldate = QDate::currentDate();
     QDate pdate = ldate.addDays(-29);
@@ -146,9 +146,12 @@ void AccountGraph::paintEvent(QPaintEvent *)
     x = 5;
     int j = 0;
     QPoint a[30];
+    double summ = 0;
+    double average = 0;
     painter.setPen(QPen(Qt::gray, 0, Qt::DotLine));
     for (i = list.begin(); i != list.end(); i++) {
         SbD val = *i;
+        summ += val.value;
         y = (val.value * (height-20) / max) + 10;
         x = (j * (width-20)/30)+10;
         painter.drawLine(QPointF(x,height-5), QPointF(x,5));
@@ -160,8 +163,9 @@ void AccountGraph::paintEvent(QPaintEvent *)
     painter.drawPolyline(a,30);
 
     painter.setPen(QPen(Qt::red, 0, Qt::SolidLine));
+    average = summ/30;
     y = (average*(height-20)/max)+10;
-    painter.drawLine(QPointF(10,height-10), QPointF(width-10,y));
+    painter.drawLine(a[0], QPointF(width-10,height-y));
 
 //    painter.drawText(10,10,"ttt");
 
