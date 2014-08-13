@@ -60,7 +60,7 @@ void AccountGraph::calc_array(int id)
     // расчет баланса по счету на момент совершения операции
     // итоговые значения расположены в массиве result
     SbD val;
-    val.value = data.balance.value();
+    val.value = data.balance;
     val.dt = QDate::currentDate();
     summ.append(val);
     for (int j = stack.size()-1; j >= 0; j--) {

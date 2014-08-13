@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = MyCash
 TEMPLATE = app
 
+QMAKE_CXXFLAGS_RELEASE += -MP4
 
 SOURCES += \
     widgets/accountcombobox.cpp \
@@ -22,7 +23,6 @@ SOURCES += \
     widgets/okpushbutton.cpp \
     widgets/cancelpushbutton.cpp \
     widgets/mydateedit.cpp \
-    widgets/mycurrency.cpp \
     accountoper2.cpp \
     accountsview.cpp \
     database.cpp \
@@ -62,7 +62,6 @@ HEADERS  += \
     widgets/currencyedit.h \
     widgets/okpushbutton.h \
     widgets/cancelpushbutton.h \
-    widgets/mycurrency.h \
     accountoper2.h \
     accountsview.h \
     database.h \

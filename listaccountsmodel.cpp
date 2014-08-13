@@ -36,7 +36,7 @@ double ListAccountsModel::get_reserv(int id)
     for (i = plan_list.begin(); i != plan_list.end(); i++) {
         oper = *i;
         if (oper.from.at(0).account() == id)
-            summ += oper.from.at(0).balance().value();
+            summ += oper.from.at(0).balance();
     }
 
     return summ;
@@ -88,6 +88,10 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
                 setData(index(i,j,idx), QColor(Qt::red), Qt::BackgroundColorRole);
                 setData(index(i,j,idx), QColor(Qt::white), Qt::TextColorRole);
             }
+            setData(index(i,0,idx), tr("Plan operation\nNedostatochno sredstv\nTrebuetsa %1; v nalichii %2")
+                    .arg(default_locale->toString(reserv,'f',2))
+                    .arg(default_locale->toString(q.value(2).toDouble(),'f',2)),
+                    Qt::ToolTipRole);
         }
         summ += summ2;
         i++;

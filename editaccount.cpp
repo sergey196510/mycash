@@ -84,7 +84,7 @@ Account_Data EditAccount::data()
     d.name = ui->nameEdit->text();
     d.type = ui->typeBox->value();
     d.curr = ui->currencyBox->value();
-    d.balance.setValue(ui->balanceSpinBox->value());
+    d.balance = ui->balanceSpinBox->value();
     d.descr = ui->descrEdit->text();
     d.hidden = ui->hiddenBox->isChecked();
     d.parent = ui->accountWidget->value();
@@ -98,7 +98,7 @@ void EditAccount::setData(Account_Data &data)
     ui->nameEdit->setText(data.name);
     ui->typeBox->setValue(data.type);
     ui->currencyBox->setValue(data.curr);
-    ui->balanceSpinBox->setValue(data.balance.value());
+    ui->balanceSpinBox->setValue(data.balance);
     ui->descrEdit->setText(data.descr);
     ui->hiddenBox->setChecked(data.hidden);
     ui->accountWidget->setValue(data.parent);

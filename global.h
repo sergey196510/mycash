@@ -3,7 +3,6 @@
 
 #include <QtCore>
 #include <QFont>
-#include "widgets/mycurrency.h"
 
 extern QLocale *default_locale;
 
@@ -75,23 +74,23 @@ public:
 
 class account_summ {
     int acc;
-    MyCurrency s;
+    double s;
 public:
     account_summ() {
         acc = 0;
         s = 0;
     };
     int account() const { return acc; }
-    MyCurrency balance() const { return s; }
+    double balance() const { return s; }
     void set_account(int val) { acc = val; }
-    void set_balance(MyCurrency val) { s = val.value(); }
+    void set_balance(double val) { s = val; }
 };
 
 struct Account_Data {
     QString name;
     int type;
     int curr;
-    MyCurrency balance;
+    double balance;
     bool hidden;
     int parent;
     int top;
@@ -108,7 +107,7 @@ struct Account_Data {
         top = 0;
         system = 0;
         agent = 0;
-//        balance = 0;
+        balance = 0;
         descr.clear();
         dt = QDate::currentDate();
     }
@@ -178,7 +177,7 @@ struct Budget_Data {
     int id;
     int mon;
     int account;
-    MyCurrency summ;
+    double summ;
 };
 
 #endif

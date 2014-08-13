@@ -113,7 +113,7 @@ QVariant ListSeparateOperModel::data(const QModelIndex &index, int role) const
         if (index.column() == 0)
             return acc_list[data.account()];
         else if (index.column() == 1)
-            return data.balance().value();
+            return data.balance();
     }
 //    else
     return QVariant();

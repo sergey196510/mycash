@@ -167,7 +167,7 @@ void ListAccounts::new_account()
             return;
         }
 
-        if (data.balance.value() == 0) {
+        if (data.balance == 0) {
             t.commit();
             reload_model();
             return;
@@ -185,11 +185,11 @@ void ListAccounts::new_account()
         oper.descr = tr("Primary balance");
 
         a.set_account(var.InitialAccount());
-        a.set_balance(data.balance.value());
+        a.set_balance(data.balance);
         oper.from.append(a);
 
         a.set_account(acc);
-        a.set_balance(data.balance.value());
+        a.set_balance(data.balance);
         oper.to.append(a);
 
         db->save_operation(oper);
@@ -263,9 +263,9 @@ void ListAccounts::correct_balance()
 	return;
     }
 
-    cb->setBalance(data.balance.value());
+    cb->setBalance(data.balance);
     if (cb->exec() == QDialog::Accepted) {
-        double current_balance = data.balance.value();
+        double current_balance = data.balance;
         double new_balance = cb->balance();
 
         Operation_Data od;

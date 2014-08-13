@@ -45,7 +45,7 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
         }
         if (index.column() == 1) {
             Budget_Data data = list.at(index.row());
-            return data.mon;
+            return QDate::shortMonthName(data.mon);
         }
         if (index.column() == 2) {
             Budget_Data data = list.at(index.row());
@@ -53,7 +53,7 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
         }
         if (index.column() == 3) {
             Budget_Data data = list.at(index.row());
-            return data.summ.value();
+            return data.summ;
         }
     }
 
@@ -135,7 +135,7 @@ bool ListBudget::insert_record(Budget_Data &data)
     q.prepare("INSERT INTO budget_plan(mon,a_id,summ) VALUES(:mon,:acc,:summ)");
     q.bindValue(":mon", data.mon);
     q.bindValue(":acc", data.account);
-    q.bindValue(":summ", data.summ.value());
+    q.bindValue(":summ", data.summ);
     if (!q.exec()) {
         q.lastError();
         return false;

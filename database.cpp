@@ -219,7 +219,7 @@ Account_Data Database::get_account_data(int id)
     if (q.next()) {
         data.name = q.value(0).toString();
         data.type = q.value(1).toInt();
-        data.balance.setValue(q.value(2).toDouble());
+        data.balance = q.value(2).toDouble();
         data.descr = q.value(3).toString();
         data.curr = q.value(4).toInt();
         data.hidden = q.value(5).toInt();
@@ -347,7 +347,7 @@ bool Database::new_account_oper(QString table, const int o_id, account_summ &acc
             .arg(table)
             .arg(acc.account())
             .arg(o_id)
-            .arg(acc.balance().value())
+            .arg(acc.balance())
             .arg(direction)
             .arg(agent);
     qDebug() << str;
@@ -435,7 +435,7 @@ bool Database::change_account_balance(account_summ &acc)
 //    else
 //        flag = -1;
 
-    summ = acc.balance().value() * flag;
+    summ = acc.balance() * flag;
 
     query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
     query.bindValue(":id", acc.account());
@@ -472,12 +472,12 @@ bool Database::save_operation(Operation_Data &oper)
         }
         if (data.top == Account_Type::active ||
                 data.top == Account_Type::credit)
-            d.set_balance(-d.balance().value()); // сменить знак
+            d.set_balance(-d.balance()); // сменить знак
         if (change_account_balance(d) == false) {
             tr.rollback();
             return false;
         }
-        from += abs(d.balance().value());
+        from += abs(d.balance());
     }
     for (i = oper.to.begin(); i != oper.to.end(); i++) {
         account_summ d = *i;
@@ -491,12 +491,12 @@ bool Database::save_operation(Operation_Data &oper)
         if (data.top == Account_Type::passive ||
                 data.top == Account_Type::debet ||
                 data.top == Account_Type::initial)
-            d.set_balance(-d.balance().value()); // сменить знак
+            d.set_balance(-d.balance()); // сменить знак
         if (change_account_balance(d) == false) {
             tr.rollback();
             return false;
         }
-        to += abs(d.balance().value());
+        to += abs(d.balance());
     }
 
     if (from != to) {
@@ -755,7 +755,7 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
             d.set_balance(i.value());
             data.from.append(d);
             if (acc_from.top == Account_Type::active)
-                summ_from += acc_from.balance.value();
+                summ_from += acc_from.balance;
         }
 
         list = get_plan_account_oper_list(q.value(0).toInt(), Direction::to);

@@ -8,20 +8,10 @@ DebetCreditReport::DebetCreditReport(QWidget *parent) :
     QStringList months;
     ui->setupUi(this);
 
-    months <<
-              "Any" <<
-              QDate::longMonthName(1) <<
-              QDate::longMonthName(2) <<
-              QDate::longMonthName(3) <<
-              QDate::longMonthName(4) <<
-              QDate::longMonthName(5) <<
-              QDate::longMonthName(6) <<
-              QDate::longMonthName(7) <<
-              QDate::longMonthName(8) <<
-              QDate::longMonthName(9) <<
-              QDate::longMonthName(10) <<
-              QDate::longMonthName(11) <<
-              QDate::longMonthName(12);
+    months << "";
+    for (int i = 1; i <= 12; i++)
+        months << QDate::shortMonthName(i);
+//    qDebug() <<months;
 
     db = new Database;
 

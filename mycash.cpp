@@ -387,16 +387,16 @@ void MyCash::check_plan_oper()
 
     for (i = list.begin(); i != list.end(); i++) {
         Operation_Data data = *i;
-        if (data.auto_exec == 0)
+          if (data.auto_exec == 0)
             continue;
         if (data.status != Plan_Status::expired)
             continue;
         from = db->get_account_data(data.from.at(0).account());
-        to = db->get_account_data(data.from.at(0).account());
-        if (from.balance.value() < data.to.at(0).balance().value()) {
+        to = db->get_account_data(data.to.at(0).account());
+        if (from.top == Account_Type::active && from.balance < data.to.at(0).balance()) {
             QMessageBox::warning(0,
                                  tr("Plan operation"),
-                                 tr("Plan operation\nFrom: %1 To: %2\nNedostatocjno sredstv")
+                                 tr("Plan operation\nFrom: %1, To: %2\nNedostatocjno sredstv")
                                  .arg(from.name)
                                  .arg(to.name));
             continue;
