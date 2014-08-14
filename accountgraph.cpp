@@ -125,8 +125,10 @@ void AccountGraph::paintEvent(QPaintEvent *)
 
     width = image.width();
     height = image.height();
-    if (height > width/2)
+    if (height > width/2+30)
         height = width/2;
+    else
+        height = image.height()-30;
 
     painter.initFrom(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -136,11 +138,17 @@ void AccountGraph::paintEvent(QPaintEvent *)
     painter.setPen(QPen(Qt::gray, 0, Qt::SolidLine));
     painter.drawRect(QRect(5,5,width-10,height-10));
 
+    SbD f, l;
     for (i = list.begin(); i != list.end(); i++) {
         SbD val = *i;
+        if (!f.value && val.value)
+            f = val;
+        l = val;
         if (val.value > max)
             max = val.value;
     }
+//    qDebug() << f.dt << f.value;
+//    qDebug() << l.dt << l.value;
 
 //    qreal step = (width-20)/30;
     x = 5;
@@ -159,6 +167,7 @@ void AccountGraph::paintEvent(QPaintEvent *)
         a[j] = QPoint(x,height-y);
         j++;
     }
+
     painter.setPen(QPen(Qt::blue, 0, Qt::SolidLine));
     painter.drawPolyline(a,30);
 
@@ -167,7 +176,10 @@ void AccountGraph::paintEvent(QPaintEvent *)
     y = (average*(height-20)/max)+10;
     painter.drawLine(a[0], QPointF(width-10,height-y));
 
-//    painter.drawText(10,10,"ttt");
+    painter.setPen(QPen(Qt::black, 0, Qt::SolidLine));
+    painter.drawText(10,height+20, tr("saldo from: %1 to: %2")
+                     .arg(default_locale->toCurrencyString(f.value))
+                     .arg(default_locale->toCurrencyString(l.value)));
 
     painter.end();
 

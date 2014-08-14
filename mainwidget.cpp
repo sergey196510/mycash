@@ -137,10 +137,10 @@ MainWidget::MainWidget(Database *d, QWidget *parent) :
     ui->groupBox->setTitle(tr("Balance status"));
     ui->groupBox_2->setTitle(tr("Prosrochennie operations"));
 
-    ui->active_value->setText(active.text() + " " + var.Symbol());
-    ui->passive_value->setText(passive.text() + " " + var.Symbol());
+    ui->active_value->setText(default_locale->toCurrencyString(active.Value()));
+    ui->passive_value->setText(default_locale->toCurrencyString(passive.Value()));
     saldo = active.Value()-passive.Value();
-    ui->saldo_value->setText(QString("%1 %2").arg(default_locale->toString(saldo,'f',2)).arg(var.Symbol()));
+    ui->saldo_value->setText(default_locale->toCurrencyString(saldo));
 
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(0);

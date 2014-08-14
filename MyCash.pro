@@ -112,5 +112,10 @@ FORMS    += \
     listbudget.ui \
     editbudget.ui
 
+TRANSLATIONS += \
+    mycash_ru.ts
+
+CODECFORSRC = UTF-8
+
 RESOURCES += \
     icons.qrc

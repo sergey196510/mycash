@@ -11,10 +11,10 @@ int main(int argc, char *argv[])
 
     splash.show();
 
-    tr.load("mycash_" + QLocale::system().name(), ".");
+    tr.load(":mycash_"+QLocale::system().name());
     a.installTranslator(&tr);
 
-    translator.load("qt_ru", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    translator.load("qt_"+QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     a.installTranslator(&translator);
 
     default_locale = new QLocale();

@@ -381,7 +381,7 @@ void ListOperations::print_balance()
 
     ui->account_ostatok->setFont(font);
     if (id)
-        ui->account_ostatok->setText(default_locale->toString(db->get_account_summ(id),'f',2));
+        ui->account_ostatok->setText(default_locale->toCurrencyString(db->get_account_summ(id)));
     else
         ui->account_ostatok->clear();
 

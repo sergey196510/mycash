@@ -5,41 +5,48 @@
     <name>AccountComboBox</name>
     <message>
         <source>Account not present</source>
-        <translation type="obsolete">Счет не указан</translation>
+        <translation>Счет не указан</translation>
+    </message>
+</context>
+<context>
+    <name>AccountGraph</name>
+    <message>
+        <source>saldo from: %1 to: %2</source>
+        <translation>Сальдо: начальное: %1 конечное: %2</translation>
     </message>
 </context>
 <context>
     <name>AgentComboBox</name>
     <message>
         <source>Agent not present</source>
-        <translation type="obsolete">Агент не указан</translation>
+        <translation>Агент не указан</translation>
     </message>
 </context>
 <context>
     <name>CorrectBalance</name>
     <message>
         <source>Parent Account:</source>
-        <translation type="unfinished">Родительский счет</translation>
+        <translation>Родительский счет</translation>
     </message>
     <message>
         <source>Last summ:</source>
-        <translation type="unfinished">Окончательная сумма</translation>
+        <translation>Окончательная сумма</translation>
     </message>
     <message>
         <source>Date:</source>
-        <translation type="unfinished">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -54,57 +61,134 @@
     </message>
 </context>
 <context>
+    <name>DebetCreditReport</name>
+    <message>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Recalc</source>
+        <translation>Пересчет</translation>
+    </message>
+</context>
+<context>
     <name>EditAccount</name>
     <message>
         <source>Account</source>
-        <translation type="unfinished">Счет</translation>
+        <translation>Счет</translation>
     </message>
     <message>
         <source>Account name:</source>
-        <translation type="unfinished">Наименование счета</translation>
+        <translation>Наименование счета</translation>
     </message>
     <message>
         <source>Balance:</source>
-        <translation type="unfinished">Баланс</translation>
+        <translation>Баланс</translation>
     </message>
     <message>
         <source>Account type:</source>
-        <translation type="unfinished">Тип счета</translation>
+        <translation>Тип счета</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished">Примечание</translation>
+        <translation>Примечание</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>Parent account:</source>
-        <translation type="unfinished"></translation>
+        <translation>Родительский счет</translation>
     </message>
     <message>
         <source>Date:</source>
-        <translation type="unfinished">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>Currency:</source>
-        <translation type="unfinished">Валюта</translation>
+        <translation>Валюта</translation>
     </message>
     <message>
         <source>Hidden</source>
-        <translation type="unfinished">Скрытый</translation>
+        <translation>Скрытый</translation>
+    </message>
+</context>
+<context>
+    <name>EditAgent</name>
+    <message>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation>Наименование</translation>
+    </message>
+    <message>
+        <source>City:</source>
+        <translation>Город</translation>
+    </message>
+    <message>
+        <source>Address:</source>
+        <translation>Адрес</translation>
+    </message>
+    <message>
+        <source>Phone:</source>
+        <translation>Телефон:</translation>
+    </message>
+    <message>
+        <source>Contact:</source>
+        <translation>Контакт:</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+</context>
+<context>
+    <name>EditBudget</name>
+    <message>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation>Счет</translation>
+    </message>
+    <message>
+        <source>Summ</source>
+        <translation>Сумма</translation>
+    </message>
+    <message>
+        <source>Other credits</source>
+        <translation>Другие расходы</translation>
+    </message>
+    <message>
+        <source>Month</source>
+        <translation>Месяц</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
     </message>
 </context>
 <context>
     <name>EditOperation</name>
     <message>
         <source>Operation</source>
-        <translation type="unfinished">Операция</translation>
+        <translation>Операция</translation>
     </message>
     <message>
         <source>To account:</source>
@@ -120,50 +204,90 @@
     </message>
     <message>
         <source>Date:</source>
-        <translation type="unfinished">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished">Примечание</translation>
+        <translation>Примечание</translation>
     </message>
     <message>
         <source>Agent:</source>
-        <translation type="unfinished">Агент</translation>
+        <translation>Агент</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>From Account</source>
-        <translation type="unfinished">Со счета</translation>
+        <translation>Со счета</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>To Account</source>
-        <translation type="unfinished">На счет</translation>
+        <translation>На счет</translation>
     </message>
     <message>
         <source>Kurs:</source>
-        <translation type="unfinished">Курс</translation>
+        <translation type="obsolete">Курс</translation>
     </message>
     <message>
         <source>Nedostatochno sredstv na schete</source>
-        <translation type="unfinished">Недостаточно средств на счете</translation>
+        <translation type="obsolete">Недостаточно средств на счете</translation>
+    </message>
+    <message>
+        <source>Day:</source>
+        <translation>День:</translation>
+    </message>
+    <message>
+        <source>Month:</source>
+        <translation>Месяц:</translation>
+    </message>
+    <message>
+        <source>Year:</source>
+        <translation>Год:</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation>Авто</translation>
+    </message>
+    <message>
+        <source>Separate</source>
+        <translation>Разделить</translation>
+    </message>
+    <message>
+        <source>there isn&apos;t enough means on the account</source>
+        <translation>Недостаточно средств на счете</translation>
+    </message>
+    <message>
+        <source>Rate</source>
+        <translation>Диапазон</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add new agent&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Добавить нового агента&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>Новый</translation>
+    </message>
+    <message>
+        <source>Agent</source>
+        <translation>Агент</translation>
     </message>
 </context>
 <context>
     <name>ListAccounts</name>
     <message>
         <source>Active summ:</source>
-        <translation type="unfinished">Сумма активов</translation>
+        <translation>Сумма активов</translation>
     </message>
     <message>
         <source>Name</source>
@@ -183,278 +307,326 @@
     </message>
     <message>
         <source>New account</source>
-        <translation type="unfinished">Новый счет</translation>
+        <translation type="obsolete">Новый счет</translation>
     </message>
     <message>
         <source>Correct balance</source>
-        <translation type="unfinished">Корректировка баланса</translation>
-    </message>
-    <message>
-        <source>Delete this account</source>
-        <translation type="unfinished">Удалить этот счет</translation>
-    </message>
-    <message>
-        <source>Correct</source>
         <translation type="obsolete">Корректировка баланса</translation>
     </message>
     <message>
+        <source>Delete this account</source>
+        <translation type="obsolete">Удалить этот счет</translation>
+    </message>
+    <message>
+        <source>Correct</source>
+        <translation>Корректировка баланса</translation>
+    </message>
+    <message>
         <source>Alt+N</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Change account</source>
-        <translation type="unfinished">Изменить счет</translation>
+        <translation type="obsolete">Изменить счет</translation>
     </message>
     <message>
         <source>Alt+E</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Alt+C</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Alt+D</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Account</source>
-        <translation type="unfinished">Счет</translation>
+        <translation>Счет</translation>
     </message>
     <message>
         <source>You can not create new account wich initial balance
                                             You must set initial account over settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы не можете создать новый счет с начальным балансом
+Вы должны установить начальный аланс через установки</translation>
     </message>
     <message>
         <source>Primary balance</source>
-        <translation type="unfinished">Начальный баланс</translation>
+        <translation>Начальный баланс</translation>
     </message>
     <message>
         <source>You can correct balans only active or passive accounts</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете корректировать баланс только на счете актив или пассив</translation>
     </message>
     <message>
         <source>correct</source>
-        <translation type="unfinished"></translation>
+        <translation>Корректировка</translation>
     </message>
     <message>
         <source>You want to delete account?</source>
-        <translation type="unfinished">Вы действительно хотите удалить счет?</translation>
+        <translation>Вы действительно хотите удалить счет?</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <source>New Alt+N</source>
-        <translation type="unfinished"></translation>
+        <source>New</source>
+        <translation>Новый</translation>
     </message>
     <message>
-        <source>Edit account Alt+E</source>
-        <translation type="unfinished"></translation>
+        <source>Change</source>
+        <translation>Изменить</translation>
     </message>
     <message>
-        <source>Correct balance Alt+C</source>
-        <translation type="unfinished"></translation>
+        <source>Delete</source>
+        <translation>Удалить</translation>
     </message>
     <message>
-        <source>Delete Alt+D</source>
-        <translation type="unfinished"></translation>
+        <source>Analis</source>
+        <translation>Анализ</translation>
+    </message>
+    <message>
+        <source>Analis linear approximate</source>
+        <translation>Линейная аппроксимация</translation>
+    </message>
+    <message>
+        <source>You can&apos;t delete system account</source>
+        <translation>Вы не можете удалить системный счет</translation>
     </message>
 </context>
 <context>
     <name>ListAccountsModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Наименование</translation>
+        <translation>Наименование</translation>
     </message>
     <message>
         <source>Balance</source>
-        <translation type="unfinished">Баланс</translation>
+        <translation>Баланс</translation>
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished">Валюта</translation>
+        <translation type="obsolete">Валюта</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Примечание</translation>
+        <translation>Примечание</translation>
     </message>
     <message>
         <source>H</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Plan operation
+Nedostatochno sredstv
+Trebuetsa %1; v nalichii %2</source>
+        <translation>Плановая операция
+Недостатолчно средств
+Требуется: %1; в наличии: %2</translation>
+    </message>
+    <message>
+        <source>C</source>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>ListAgents</name>
     <message>
         <source>Agent</source>
-        <translation type="unfinished">Агент</translation>
+        <translation>Агент</translation>
     </message>
     <message>
         <source>City:</source>
-        <translation type="unfinished">Город</translation>
+        <translation>Город</translation>
     </message>
     <message>
         <source>Telephone:</source>
-        <translation type="unfinished">Телефон</translation>
+        <translation>Телефон</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Наименование</translation>
+        <translation>Наименование</translation>
     </message>
     <message>
         <source>Address:</source>
-        <translation type="unfinished">Адрес</translation>
+        <translation>Адрес</translation>
     </message>
     <message>
         <source>Contact:</source>
-        <translation type="unfinished">Контакт:</translation>
+        <translation>Контакт:</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">Новый</translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Изменить</translation>
+        <translation>Изменить</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Operation cancellation</source>
-        <translation type="unfinished">Операция прервана</translation>
+        <translation>Операция прервана</translation>
     </message>
     <message>
         <source>Nothing selected</source>
-        <translation type="unfinished">Ничего не выбрано</translation>
+        <translation>Ничего не выбрано</translation>
     </message>
     <message>
         <source>You want delete agent %1?</source>
-        <translation type="unfinished">Вы действительно хотите удалить агента %1?</translation>
+        <translation>Вы действительно хотите удалить агента %1?</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>ListAgentsModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Наименование</translation>
+        <translation>Наименование</translation>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished">Город</translation>
+        <translation>Город</translation>
     </message>
     <message>
         <source>Address</source>
-        <translation type="unfinished">Адрес</translation>
+        <translation>Адрес</translation>
     </message>
 </context>
 <context>
     <name>ListBudget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source>New budget</source>
+        <translation>Новый бюджет</translation>
+    </message>
+    <message>
+        <source>New budget line</source>
+        <translation>Новая строка бюджета</translation>
+    </message>
+</context>
+<context>
+    <name>ListBudgetModel</name>
+    <message>
+        <source>Month</source>
+        <translation>Месяц</translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation>Счет</translation>
+    </message>
+    <message>
+        <source>Summ</source>
+        <translation>Сумма</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Примечание</translation>
     </message>
 </context>
 <context>
     <name>ListCurrency</name>
     <message>
         <source>Currency</source>
-        <translation type="unfinished">Валюта</translation>
+        <translation>Валюта</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Наименование</translation>
+        <translation>Наименование</translation>
     </message>
     <message>
         <source>Symbol:</source>
-        <translation type="unfinished">Символьный код</translation>
+        <translation>Символьный код</translation>
     </message>
     <message>
         <source>Kurs:</source>
-        <translation type="unfinished">Курс</translation>
+        <translation>Курс</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">Новый</translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Изменить</translation>
+        <translation>Изменить</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Operation cancellation</source>
-        <translation type="unfinished">Операция прервана</translation>
+        <translation>Операция прервана</translation>
     </message>
     <message>
         <source>Nothing selected</source>
-        <translation type="unfinished">Ничего не выбрано</translation>
+        <translation>Ничего не выбрано</translation>
     </message>
     <message>
         <source>Exist accounts whith this currencies
 You really want to delete this?</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>ListCurrencyModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Наименование</translation>
+        <translation>Наименование</translation>
     </message>
     <message>
         <source>Icod</source>
-        <translation type="unfinished">Числовой код</translation>
+        <translation>Числовой код</translation>
     </message>
     <message>
         <source>Scod</source>
-        <translation type="unfinished">Символьный код</translation>
+        <translation>Символьный код</translation>
     </message>
     <message>
         <source>Kurs</source>
-        <translation type="unfinished">Курс</translation>
+        <translation>Курс</translation>
     </message>
 </context>
 <context>
     <name>ListOperations</name>
     <message>
         <source>Current account:</source>
-        <translation type="unfinished">Текущий счет</translation>
+        <translation type="obsolete">Текущий счет</translation>
     </message>
     <message>
         <source>Ostatok:</source>
-        <translation type="unfinished">Остаток</translation>
+        <translation type="obsolete">Остаток</translation>
     </message>
     <message>
         <source>Select account:</source>
@@ -462,7 +634,7 @@ You really want to delete this?</source>
     </message>
     <message>
         <source>Date:</source>
-        <translation type="unfinished">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>From Account</source>
@@ -486,15 +658,15 @@ You really want to delete this?</source>
     </message>
     <message>
         <source>Debet</source>
-        <translation type="unfinished">Зачисление</translation>
+        <translation>Зачисление</translation>
     </message>
     <message>
         <source>Credit</source>
-        <translation type="unfinished">Списание</translation>
+        <translation>Списание</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="unfinished">Перевод</translation>
+        <translation>Перевод</translation>
     </message>
     <message>
         <source>Select font</source>
@@ -502,444 +674,581 @@ You really want to delete this?</source>
     </message>
     <message>
         <source>Planning operation</source>
-        <translation type="unfinished">Плановые операции</translation>
+        <translation>Плановые операции</translation>
     </message>
     <message>
         <source>Delete current operation</source>
-        <translation type="unfinished">Удалить текущую операцию</translation>
+        <translation>Удалить текущую операцию</translation>
     </message>
     <message>
         <source>Operation cancellation</source>
-        <translation type="unfinished">Операция прервана</translation>
+        <translation>Операция прервана</translation>
     </message>
     <message>
         <source>Nothing selected</source>
-        <translation type="unfinished">Ничего не выбрано</translation>
+        <translation>Ничего не выбрано</translation>
     </message>
     <message>
         <source>Operation</source>
-        <translation type="unfinished">Операция</translation>
+        <translation>Операция</translation>
     </message>
     <message>
         <source>You want to delete operation?
 Nadeusj, vi ponimaete chto delaeye,
 tak kak v etom sluchae budut izmeneni balansi accounts</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы ходите удалить операцию?</translation>
     </message>
     <message>
         <source>Error in delere record</source>
-        <translation type="unfinished">Ошибка при удалении записи</translation>
+        <translation type="obsolete">Ошибка при удалении записи</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Balance:</source>
+        <translation>Баланс</translation>
+    </message>
+    <message>
+        <source>Ctrl+N</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Debet operation</source>
+        <translation>Операция начисления</translation>
+    </message>
+    <message>
+        <source>Ctrl+C</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Credit operation</source>
+        <translation>Операция списания</translation>
+    </message>
+    <message>
+        <source>Ctrl+T</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Transfer operation</source>
+        <translation>Операция перевода</translation>
+    </message>
+    <message>
+        <source>Ctrl+P</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+D</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Delete operation</source>
+        <translation>Операция удаления</translation>
     </message>
 </context>
 <context>
     <name>ListOperationsModel</name>
     <message>
         <source>Date</source>
-        <translation type="unfinished">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>Account</source>
-        <translation type="unfinished">Счет</translation>
+        <translation>Счет</translation>
     </message>
     <message>
         <source>Debet</source>
-        <translation type="unfinished">Зачисление</translation>
+        <translation>Зачисление</translation>
     </message>
     <message>
         <source>Credit</source>
-        <translation type="unfinished">Списание</translation>
+        <translation>Списание</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Примечание</translation>
+        <translation>Примечание</translation>
     </message>
 </context>
 <context>
     <name>ListPlanOper</name>
     <message>
         <source>New plan operation</source>
-        <translation type="unfinished">Новая плановая операция</translation>
+        <translation>Новая плановая операция</translation>
     </message>
     <message>
         <source>Commit this operation</source>
-        <translation type="unfinished">Выполнить эту операцию</translation>
+        <translation>Выполнить эту операцию</translation>
     </message>
     <message>
         <source>Delete selected operation</source>
-        <translation type="unfinished">Удалить выбранную операцию</translation>
+        <translation>Удалить выбранную операцию</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Update this operation</source>
+        <translation>Изменить эту операция</translation>
+    </message>
+    <message>
+        <source>Cancel selected operation</source>
+        <translation>Удалить выбранную операцию</translation>
     </message>
 </context>
 <context>
     <name>ListPlanOperModel</name>
     <message>
         <source>Day</source>
-        <translation type="unfinished">День</translation>
+        <translation>День</translation>
     </message>
     <message>
         <source>Month</source>
-        <translation type="unfinished">Месяц</translation>
+        <translation>Месяц</translation>
     </message>
     <message>
         <source>Year</source>
-        <translation type="unfinished">Год</translation>
+        <translation>Год</translation>
     </message>
     <message>
         <source>From Account</source>
-        <translation type="unfinished">Со счета</translation>
+        <translation>Со счета</translation>
     </message>
     <message>
         <source>To Account</source>
-        <translation type="unfinished">На счет</translation>
+        <translation>На счет</translation>
     </message>
     <message>
         <source>Summ</source>
-        <translation type="unfinished">Сумма</translation>
+        <translation>Сумма</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Примечание</translation>
+        <translation>Примечание</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation>Авто</translation>
+    </message>
+    <message>
+        <source>Y</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>ListSeparateOper</name>
+    <message>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+</context>
+<context>
+    <name>ListSeparateOperModel</name>
+    <message>
+        <source>Account</source>
+        <translation>Счет</translation>
+    </message>
+    <message>
+        <source>Summ</source>
+        <translation>Сумма</translation>
     </message>
 </context>
 <context>
     <name>MainWidget</name>
     <message>
         <source>Balance status</source>
-        <translation type="unfinished"></translation>
+        <translation>Балансовый статус</translation>
     </message>
     <message>
         <source>Prosrochennie operations</source>
-        <translation type="unfinished">Просроченные операции</translation>
+        <translation>Просроченные операции</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Passives:</source>
-        <translation type="unfinished">Пассив</translation>
+        <translation>Пассив</translation>
     </message>
     <message>
         <source>Actives:</source>
-        <translation type="unfinished">Актив</translation>
+        <translation>Актив</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Debet:</source>
-        <translation type="unfinished">Доход</translation>
+        <translation type="obsolete">Доход</translation>
     </message>
     <message>
         <source>Credit:</source>
-        <translation type="unfinished">Расход</translation>
+        <translation type="obsolete">Расход</translation>
+    </message>
+    <message>
+        <source>Saldo:</source>
+        <translation>Сальдо</translation>
     </message>
 </context>
 <context>
     <name>MainWidgetModel</name>
     <message>
         <source>Day</source>
-        <translation type="unfinished">День</translation>
+        <translation>День</translation>
     </message>
     <message>
         <source>Month</source>
-        <translation type="unfinished">Месяц</translation>
+        <translation>Месяц</translation>
     </message>
     <message>
         <source>Year</source>
-        <translation type="unfinished">Год</translation>
+        <translation>Год</translation>
     </message>
     <message>
         <source>From Account</source>
-        <translation type="unfinished">Со счета</translation>
+        <translation>Со счета</translation>
     </message>
     <message>
         <source>To Account</source>
-        <translation type="unfinished">На счет</translation>
+        <translation>На счет</translation>
     </message>
     <message>
         <source>Summ</source>
-        <translation type="unfinished">Сумма</translation>
+        <translation>Сумма</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished">Статус</translation>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Descr</source>
-        <translation type="unfinished">Описание</translation>
+        <translation>Описание</translation>
     </message>
     <message>
         <source>Actual</source>
-        <translation type="unfinished">Активные</translation>
+        <translation type="obsolete">Активные</translation>
     </message>
     <message>
         <source>Committed</source>
-        <translation type="unfinished">Выполненные</translation>
+        <translation type="obsolete">Выполненные</translation>
     </message>
     <message>
         <source>Expired</source>
-        <translation type="unfinished">Просроченные</translation>
+        <translation>Просроченные</translation>
     </message>
     <message>
         <source>&lt; 3 days</source>
-        <translation type="unfinished">&lt; 3 дней</translation>
+        <translation type="obsolete">&lt; 3 дней</translation>
+    </message>
+    <message>
+        <source>&lt;3 days</source>
+        <translation>&lt; 3 дней</translation>
     </message>
 </context>
 <context>
     <name>MyCash</name>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished">&amp;Файл</translation>
+        <translation>&amp;Файл</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation type="unfinished">&amp;Справка</translation>
+        <translation>&amp;Справка</translation>
     </message>
     <message>
         <source>&amp;Objects</source>
-        <translation type="unfinished">&amp;Объекты</translation>
+        <translation>&amp;Объекты</translation>
     </message>
     <message>
         <source>Reports</source>
-        <translation type="unfinished">Отчеты</translation>
+        <translation type="obsolete">Отчеты</translation>
     </message>
     <message>
         <source>&amp;Create</source>
-        <translation type="unfinished">&amp;Создать</translation>
+        <translation>&amp;Создать</translation>
     </message>
     <message>
         <source>&amp;Open</source>
-        <translation type="unfinished">&amp;Открыть</translation>
+        <translation>&amp;Открыть</translation>
     </message>
     <message>
         <source>C&amp;lose</source>
-        <translation type="unfinished">&amp;Закрыть</translation>
+        <translation>&amp;Закрыть</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Выход</translation>
+        <translation>&amp;Выход</translation>
     </message>
     <message>
         <source>About &amp;program</source>
-        <translation type="unfinished">О &amp;программе</translation>
+        <translation>О &amp;программе</translation>
     </message>
     <message>
         <source>About &amp;QT</source>
-        <translation type="unfinished">О &amp;QT</translation>
+        <translation>О &amp;QT</translation>
     </message>
     <message>
         <source>&amp;Settings</source>
-        <translation type="unfinished">&amp;Настройки</translation>
+        <translation>&amp;Настройки</translation>
     </message>
     <message>
         <source>&amp;Accounts</source>
-        <translation type="unfinished">&amp;Счета</translation>
+        <translation>&amp;Счета</translation>
     </message>
     <message>
         <source>&amp;Operations</source>
-        <translation type="unfinished">&amp;Операции</translation>
+        <translation>&amp;Операции</translation>
     </message>
     <message>
         <source>Agents</source>
-        <translation type="unfinished">&amp;Агенты</translation>
+        <translation type="obsolete">&amp;Агенты</translation>
     </message>
     <message>
         <source>&amp;Currencies</source>
-        <translation type="unfinished">&amp;Валюты</translation>
+        <translation>&amp;Валюты</translation>
     </message>
     <message>
         <source>Report 1</source>
-        <translation type="unfinished">Отчет &amp;1</translation>
+        <translation>Отчет &amp;1</translation>
     </message>
     <message>
         <source>Report 2</source>
-        <translation type="unfinished">Отчет &amp;2</translation>
+        <translation>Отчет &amp;2</translation>
     </message>
     <message>
         <source>Select current currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите текущую валюту</translation>
     </message>
     <message>
         <source>MyCash</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>MyCash ver </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>&amp;Plan Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Плановые операции</translation>
     </message>
     <message>
         <source>&amp;Home</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>test</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source>&amp;Reports</source>
+        <translation>Отчеты</translation>
+    </message>
+    <message>
+        <source>Ctrl+A</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+O</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>A&amp;gents</source>
+        <translation>Агенты</translation>
+    </message>
+    <message>
+        <source>Ctrl+G</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+C</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+P</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Budget</source>
+        <translation>Бюджет</translation>
+    </message>
+    <message>
+        <source>Ctrl+B</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>ÐÑÐ±ÐµÑÐ¸ÑÐµ ÑÐµÐºÑÑÑÑ Ð²Ð°Ð»ÑÑÑ</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Plan operation</source>
+        <translation>Плановая операция</translation>
+    </message>
+    <message>
+        <source>Plan operation
+From: %1, To: %2
+Nedostatocjno sredstv</source>
+        <translation>Плановая операция
+Со счета: %1 на счет: %2
+Недостаточно средств</translation>
     </message>
 </context>
 <context>
     <name>OpenDatabase</name>
     <message>
         <source>Database file</source>
-        <translation type="unfinished">&amp;Файл базы данных</translation>
+        <translation>&amp;Файл базы данных</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter database file name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Введите имя файла базы данных&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Введите имя файла базы данных&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press to select database file name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нажмите для выбора файла базы данных&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нажмите для выбора файла базы данных&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>Choose File</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите файл</translation>
     </message>
     <message>
         <source>Database file (*.db)</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл базы данных (*.db)</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
+    </message>
+</context>
+<context>
+    <name>SelectAccount</name>
+    <message>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>New account</source>
+        <translation>Новый счет</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
     </message>
 </context>
 <context>
     <name>Settings</name>
     <message>
         <source>Cancel Alt+Q</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмета Alt+Q</translation>
     </message>
     <message>
         <source>Alt+Q</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Initial Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>Начальное сальдо</translation>
     </message>
     <message>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>List Font:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Precision:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Correct Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>Корректировка баланса</translation>
     </message>
     <message>
         <source>Tab 1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Tab 2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
 </context>
 <context>
     <name>editPlanOper</name>
     <message>
-        <source>Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>From Account:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To Account:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Summ:</source>
-        <translation type="unfinished">Сумма</translation>
+        <translation type="obsolete">Сумма</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished">Примечание</translation>
+        <translation type="obsolete">Примечание</translation>
     </message>
     <message>
         <source>Agent:</source>
-        <translation type="unfinished">Агент</translation>
-    </message>
-    <message>
-        <source>Day:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Month:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Year:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Агент</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation type="obsolete">Сохранить</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation type="obsolete">Отмена</translation>
     </message>
 </context>
 </TS>

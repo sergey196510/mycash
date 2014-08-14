@@ -11,6 +11,10 @@
 struct SbD {
     double value;
     QDate dt;
+    SbD() {
+        value = 0;
+        dt.currentDate();
+    }
 };
 
 class AccountGraph : public QWidget

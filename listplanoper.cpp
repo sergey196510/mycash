@@ -234,7 +234,7 @@ int ListPlanOper::get_selected_id()
 
     list = ui->tableView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
-        QMessageBox::critical(this, "Operation cancellation", "Nothing selected");
+        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return 0;
     }
 

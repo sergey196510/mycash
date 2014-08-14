@@ -11,5 +11,6 @@
         <file>icons/payment.ico</file>
         <file>icons/home.png</file>
         <file>mycash.sql</file>
+        <file>mycash_ru.qm</file>
     </qresource>
 </RCC>

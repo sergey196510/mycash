@@ -769,7 +769,7 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
                 summ_to += i.value();
         }
         if ((data.status == Plan_Status::minimum || data.status == Plan_Status::expired) && summ_from < summ_to)
-            data.descr += " [Nedostatochno sredstv]";
+            data.descr += QObject::tr(" [Nedostatochno sredstv]");
     }
 
     return data;
