@@ -802,7 +802,7 @@ tak kak v etom sluchae budut izmeneni balansi accounts</source>
     </message>
     <message>
         <source>Cancel selected operation</source>
-        <translation>Удалить выбранную операцию</translation>
+        <translation>Отменить выбранную операцию</translation>
     </message>
 </context>
 <context>

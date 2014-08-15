@@ -1,10 +1,11 @@
 #include "listbudget.h"
 
-ListBudgetModel::ListBudgetModel(Database *db, QObject *parent) :
+ListBudgetModel::ListBudgetModel(Database *d, QObject *parent) :
     QAbstractTableModel(parent)
 {
+    db = d;
     header_data << "" << tr("Month") << tr("Account") << tr("Summ") << tr("Description");
-    list = read_list();
+    list = db->read_budget_list(0);
     accounts_list = db->get_accounts_list();
 }
 
@@ -60,27 +61,6 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QList<Budget_Data> ListBudgetModel::read_list()
-{
-    QList<Budget_Data> list;
-    Budget_Data data;
-    QSqlQuery q;
-
-    q.prepare("SELECT id,mon,a_id,summ FROM budget_plan ORDER BY mon,a_id");
-    if (!q.exec()) {
-        qDebug() << q.lastError();
-        return list;
-    }
-    while (q.next()) {
-        data.id = q.value(0).toInt();
-        data.mon = q.value(1).toInt();
-        data.account = q.value(2).toInt();
-        data.summ = q.value(3).toDouble();
-        list.append(data);
-    }
-
-    return list;
-}
 
 ListBudget::ListBudget(QWidget *parent) :
     QWidget(parent)

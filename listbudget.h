@@ -15,6 +15,7 @@ public:
     explicit ListBudgetModel(Database *db, QObject *parent = 0);
 
 private:
+    Database *db;
     QList<Budget_Data> list;
     QMap<int,QString> accounts_list;
     QStringList header_data;
@@ -22,7 +23,7 @@ private:
     int columnCount(const QModelIndex &parent) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     QVariant data(const QModelIndex &index, int role) const;
-    QList<Budget_Data> read_list();
+//    QList<Budget_Data> read_list();
 };
 
 class ListBudget : public QWidget

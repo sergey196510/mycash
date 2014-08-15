@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include <QFont>
+#include <widgets/mycurrency.h>
 
 extern QLocale *default_locale;
 
@@ -82,6 +83,7 @@ public:
     };
     int account() const { return acc; }
     double balance() const { return s; }
+//    MyCurrency balance() const { return s; }
     void set_account(int val) { acc = val; }
     void set_balance(double val) { s = val; }
 };

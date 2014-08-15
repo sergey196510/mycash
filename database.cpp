@@ -186,6 +186,34 @@ QMap<int,QString> Database::get_accounts_list()
     return list;
 }
 
+QList<Budget_Data> Database::read_budget_list(int mon)
+{
+    QList<Budget_Data> list;
+    Budget_Data data;
+    QSqlQuery q;
+    QString query;
+
+    if (mon)
+        query = QString("SELECT id,mon,a_id,summ FROM budget_plan WHERE mon=%1 ORDER BY mon,a_id").arg(mon);
+    else
+        query = QString("SELECT id,mon,a_id,summ FROM budget_plan ORDER BY mon,a_id");
+
+    q.prepare(query);
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return list;
+    }
+    while (q.next()) {
+        data.id = q.value(0).toInt();
+        data.mon = q.value(1).toInt();
+        data.account = q.value(2).toInt();
+        data.summ = q.value(3).toDouble();
+        list.append(data);
+    }
+
+    return list;
+}
+
 QMap<int,double> Database::get_account_oper_list(int oper, int type)
 {
     QMap<int,double> list;
@@ -343,6 +371,7 @@ bool Database::new_account_oper(QString table, const int o_id, account_summ &acc
     QString str;
     QSqlQuery q;
 
+    qDebug() << acc.balance();
     str = QString("INSERT INTO %1(a_id, o_id, summ, direction, agent) VALUES(%2, %3, %4, %5, %6)")
             .arg(table)
             .arg(acc.account())
@@ -477,6 +506,9 @@ bool Database::save_operation(Operation_Data &oper)
             tr.rollback();
             return false;
         }
+        if (data.top == Account_Type::debet) {
+            add_budget(d);
+        }
         from += abs(d.balance());
     }
     for (i = oper.to.begin(); i != oper.to.end(); i++) {
@@ -496,6 +528,9 @@ bool Database::save_operation(Operation_Data &oper)
             tr.rollback();
             return false;
         }
+        if (data.top == Account_Type::credit) {
+            add_budget(d);
+        }
         to += abs(d.balance());
     }
 
@@ -507,6 +542,46 @@ bool Database::save_operation(Operation_Data &oper)
 
     tr.commit();
     return true;
+}
+
+bool Database::add_budget(account_summ &d)
+{
+    QSqlQuery q;
+    QList<Budget_Data> list = read_budget_list(QDate::currentDate().month());
+    QList<Budget_Data>::iterator i;
+
+    for (i = list.begin(); i != list.end(); i++) {
+        Budget_Data data = *i;
+        if (find_budget_id(data.account, d.account())) {
+            int id = data.id;
+            qDebug() << id;
+        }
+    }
+
+    return true;
+}
+
+bool Database::find_budget_id(int budget, int acc)
+{
+    QSqlQuery q;
+
+    if (budget == acc)
+        return true;
+
+    q.prepare("SELECT id,parent FROM account WHERE id=:id");
+    q.bindValue(":id",acc);
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return false;
+    }
+    if (q.next()) {
+        if (q.value(1).toInt())
+            return find_budget_id(budget,q.value(1).toInt());
+//        else
+//            return true;
+    }
+
+    return false;
 }
 
 Operation_Data Database::get_operation(int id)
@@ -525,7 +600,7 @@ Operation_Data Database::get_operation(int id)
     data.date =      q.value(2).toDate();
     data.descr =     q.value(3).toString();
 
-    list = get_account_oper_list(q.value(0).toInt(), 1);
+    list = get_account_oper_list(q.value(0).toInt(), Direction::from);
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         d.set_account(i.key());
@@ -533,7 +608,7 @@ Operation_Data Database::get_operation(int id)
         data.from.append(d);
     }
 
-    list = get_account_oper_list(q.value(0).toInt(), 2);
+    list = get_account_oper_list(q.value(0).toInt(), Direction::to);
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         d.set_account(i.key());

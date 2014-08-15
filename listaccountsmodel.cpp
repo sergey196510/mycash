@@ -28,6 +28,7 @@ double ListAccountsModel::get_reserv(int id)
     Account_Data acc = db->get_account_data(id);
     QList<Operation_Data>::iterator i;
     Operation_Data oper;
+    account_summ as;
     double summ = 0;
 
     if (acc.top != Account_Type::active)
@@ -35,8 +36,10 @@ double ListAccountsModel::get_reserv(int id)
 
     for (i = plan_list.begin(); i != plan_list.end(); i++) {
         oper = *i;
-        if (oper.from.at(0).account() == id)
-            summ += oper.from.at(0).balance();
+        if (oper.from.at(0).account() == id) {
+            as = oper.from.at(0);
+            summ += as.balance();
+        }
     }
 
     return summ;
@@ -48,7 +51,8 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
 //    int id;
     int i = 0;
 //    int row = 0;
-    double summ = 0, summ2 = 0, reserv = 0;
+    double summ = 0, summ2 = 0;
+    MyCurrency reserv;
 
     q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = :parent ORDER BY name");
     q.bindValue(":parent", parent);
@@ -76,21 +80,21 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
 //        qDebug() << q.value(0).toInt() << index(i,0,idx);
         setData(index(i,0,idx), q.value(1).toString());
         setData(index(i,1,idx), q.value(2).toDouble());
-        setData(index(i,2,idx), reserv);
+        setData(index(i,2,idx), reserv.toDouble());
         setData(index(i,3,idx), q.value(4).toInt());
         setData(index(i,4,idx), q.value(5).toBool());
         setData(index(i,5,idx), q.value(3).toString());
         setData(index(i,6,idx), q.value(0).toInt());
         summ2 = get_list(q.value(0).toInt(), index(i,0,idx));
         setData(index(i,1,idx), summ2+q.value(2).toDouble());
-        if (reserv && reserv > q.value(2).toDouble()) {
+        if (reserv>0 && reserv > q.value(2).toDouble()) {
             for (int j = 0; j < 7; j++) {
                 setData(index(i,j,idx), QColor(Qt::red), Qt::BackgroundColorRole);
                 setData(index(i,j,idx), QColor(Qt::white), Qt::TextColorRole);
             }
             setData(index(i,0,idx), tr("Plan operation\nNedostatochno sredstv\nTrebuetsa %1; v nalichii %2")
-                    .arg(default_locale->toString(reserv,'f',2))
-                    .arg(default_locale->toString(q.value(2).toDouble(),'f',2)),
+                    .arg(default_locale->toCurrencyString(reserv.toDouble()))
+                    .arg(default_locale->toCurrencyString(q.value(2).toDouble())),
                     Qt::ToolTipRole);
         }
         summ += summ2;
