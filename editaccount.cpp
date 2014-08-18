@@ -98,7 +98,7 @@ void EditAccount::setData(Account_Data &data)
     ui->nameEdit->setText(data.name);
     ui->typeBox->setValue(data.type);
     ui->currencyBox->setValue(data.curr);
-    ui->balanceSpinBox->setValue(data.balance);
+    ui->balanceSpinBox->setValue(data.balance.toDouble());
     ui->descrEdit->setText(data.descr);
     ui->hiddenBox->setChecked(data.hidden);
     ui->accountWidget->setValue(data.parent);

@@ -29,7 +29,7 @@ private:
 //    QMap<QString,double> list_curs;
     QList<Operation_Data> plan_list;
     Globals var;
-    double get_reserv(int id);
+    MyCurrency get_reserv(int id);
 
 public:
     explicit ListAccountsModel(QObject *parent = 0);

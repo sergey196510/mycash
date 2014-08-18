@@ -18,7 +18,7 @@ void AccountGraph::calc_array(int id)
     Account_Data data;
     QList<SbD> stack;
     QList<SbD> summ;
-    QMap<QDate,double> result;
+    QMap<QDate,MyCurrency> result;
 
 //    qDebug() << id;
     if (id == 0) {
@@ -84,7 +84,7 @@ void AccountGraph::calc_array(int id)
 
     QDate ldate = QDate::currentDate();
     QDate pdate = ldate.addDays(-29);
-    double prev = 0;
+    MyCurrency prev = 0;
     QDate dt;
     list.clear();
     for (dt = pdate; dt <= ldate; dt = dt.addDays(1)) {
@@ -104,7 +104,7 @@ void AccountGraph::calc_array(int id)
 
 void AccountGraph::paintEvent(QPaintEvent *)
 {
-    double max = 0;
+    MyCurrency max = 0;
     qreal x, y;
     QList<SbD>::iterator i;
 
@@ -141,7 +141,7 @@ void AccountGraph::paintEvent(QPaintEvent *)
     SbD f, l;
     for (i = list.begin(); i != list.end(); i++) {
         SbD val = *i;
-        if (!f.value && val.value)
+        if (f.value.isNull() && !val.value.isNull())
             f = val;
         l = val;
         if (val.value > max)
@@ -154,8 +154,8 @@ void AccountGraph::paintEvent(QPaintEvent *)
     x = 5;
     int j = 0;
     QPoint a[30];
-    double summ = 0;
-    double average = 0;
+    MyCurrency summ = 0;
+    MyCurrency average = 0;
     painter.setPen(QPen(Qt::gray, 0, Qt::DotLine));
     for (i = list.begin(); i != list.end(); i++) {
         SbD val = *i;
@@ -178,8 +178,8 @@ void AccountGraph::paintEvent(QPaintEvent *)
 
     painter.setPen(QPen(Qt::black, 0, Qt::SolidLine));
     painter.drawText(10,height+20, tr("saldo from: %1 to: %2")
-                     .arg(default_locale->toCurrencyString(f.value))
-                     .arg(default_locale->toCurrencyString(l.value)));
+                     .arg(default_locale->toCurrencyString(f.value.toDouble()))
+                     .arg(default_locale->toCurrencyString(l.value.toDouble())));
 
     painter.end();
 

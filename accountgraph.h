@@ -9,7 +9,7 @@
 #include "database.h"
 
 struct SbD {
-    double value;
+    MyCurrency value;
     QDate dt;
     SbD() {
         value = 0;

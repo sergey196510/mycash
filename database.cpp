@@ -371,12 +371,12 @@ bool Database::new_account_oper(QString table, const int o_id, account_summ &acc
     QString str;
     QSqlQuery q;
 
-    qDebug() << acc.balance();
+    qDebug() << acc.balance().toDouble();
     str = QString("INSERT INTO %1(a_id, o_id, summ, direction, agent) VALUES(%2, %3, %4, %5, %6)")
             .arg(table)
             .arg(acc.account())
             .arg(o_id)
-            .arg(acc.balance())
+            .arg(acc.balance().toDouble())
             .arg(direction)
             .arg(agent);
     qDebug() << str;
@@ -453,7 +453,7 @@ bool Database::del_operation(int id)
 bool Database::change_account_balance(account_summ &acc)
 {
     QSqlQuery query;
-    double summ;
+    MyCurrency summ;
     Account_Data data;
     int flag = 1;
 
@@ -468,7 +468,7 @@ bool Database::change_account_balance(account_summ &acc)
 
     query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
     query.bindValue(":id", acc.account());
-    query.bindValue(":summ", summ);
+    query.bindValue(":summ", summ.toDouble());
     if (!query.exec()) {
         return false;
     }
@@ -482,7 +482,7 @@ bool Database::save_operation(Operation_Data &oper)
     int oper_id;
     QList<account_summ>::iterator i;
     Transaction tr;
-    double from = 0, to = 0;
+    MyCurrency from = 0, to = 0;
 
     tr.begin();
 
@@ -501,7 +501,7 @@ bool Database::save_operation(Operation_Data &oper)
         }
         if (data.top == Account_Type::active ||
                 data.top == Account_Type::credit)
-            d.set_balance(-d.balance()); // сменить знак
+            d.set_balance(-d.balance().toDouble()); // сменить знак
         if (change_account_balance(d) == false) {
             tr.rollback();
             return false;
@@ -509,7 +509,7 @@ bool Database::save_operation(Operation_Data &oper)
         if (data.top == Account_Type::debet) {
             add_budget(d);
         }
-        from += abs(d.balance());
+        from += abs(d.balance().toDouble());
     }
     for (i = oper.to.begin(); i != oper.to.end(); i++) {
         account_summ d = *i;
@@ -523,7 +523,7 @@ bool Database::save_operation(Operation_Data &oper)
         if (data.top == Account_Type::passive ||
                 data.top == Account_Type::debet ||
                 data.top == Account_Type::initial)
-            d.set_balance(-d.balance()); // сменить знак
+            d.set_balance(-d.balance().toDouble()); // сменить знак
         if (change_account_balance(d) == false) {
             tr.rollback();
             return false;
@@ -531,7 +531,7 @@ bool Database::save_operation(Operation_Data &oper)
         if (data.top == Account_Type::credit) {
             add_budget(d);
         }
-        to += abs(d.balance());
+        to += abs(d.balance().toDouble());
     }
 
     if (from != to) {
@@ -789,7 +789,7 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
     QMap<int,double> list;
     QMap<int,double>::iterator i;
     QDate curr = QDate::currentDate();
-    double summ_from = 0, summ_to = 0;
+    MyCurrency summ_from = 0, summ_to = 0;
     Operation_Data data;
 
     q.prepare("SELECT id, day, month, year, descr, auto FROM plan_oper WHERE id = :id");

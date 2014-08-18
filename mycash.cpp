@@ -393,7 +393,7 @@ void MyCash::check_plan_oper()
             continue;
         from = db->get_account_data(data.from.at(0).account());
         to = db->get_account_data(data.to.at(0).account());
-        if (from.top == Account_Type::active && from.balance < data.to.at(0).balance()) {
+        if (from.top == Account_Type::active && from.balance < data.to.at(0).balance().toDouble()) {
             QMessageBox::warning(0,
                                  tr("Plan operation"),
                                  tr("Plan operation\nFrom: %1, To: %2\nNedostatocjno sredstv")

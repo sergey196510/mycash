@@ -75,15 +75,15 @@ public:
 
 class account_summ {
     int acc;
-    double s;
+    MyCurrency s;
 public:
     account_summ() {
         acc = 0;
         s = 0;
     };
     int account() const { return acc; }
-    double balance() const { return s; }
-//    MyCurrency balance() const { return s; }
+//    double balance() const { return s; }
+    MyCurrency balance() const { return s; }
     void set_account(int val) { acc = val; }
     void set_balance(double val) { s = val; }
 };
@@ -92,7 +92,7 @@ struct Account_Data {
     QString name;
     int type;
     int curr;
-    double balance;
+    MyCurrency balance;
     bool hidden;
     int parent;
     int top;
@@ -179,7 +179,7 @@ struct Budget_Data {
     int id;
     int mon;
     int account;
-    double summ;
+    MyCurrency summ;
 };
 
 #endif

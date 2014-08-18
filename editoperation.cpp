@@ -128,7 +128,7 @@ void EditOperation::check_balance(QString value)
     if (data.type != 1)
         return;
 
-    if (value.toDouble() > data.balance)
+    if (value.toDouble() > data.balance.toDouble())
         ui->warning->show();
     else
         ui->warning->hide();
@@ -174,14 +174,14 @@ void EditOperation::setdata(Operation_Data &d)
         i = d.from.begin();
         account_summ a = *i;
         ui->fromWidget->setValue(a.account());
-        ui->fromSpinBox->setValue(a.balance());
+        ui->fromSpinBox->setValue(a.balance().toDouble());
     }
 
     if (!d.to.empty()) {
         i = d.to.begin();
         account_summ a = *i;
         ui->toWidget->setValue(a.account());
-        ui->toSpinBox->setValue(a.balance());
+        ui->toSpinBox->setValue(a.balance().toDouble());
     }
 
     ui->agent_comboBox->setValue(d.agent);

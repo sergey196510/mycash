@@ -23,13 +23,13 @@ void ViewCurrency::paint(QPainter *painter, const QStyleOptionViewItem &option, 
 }
 */
 
-double ListAccountsModel::get_reserv(int id)
+MyCurrency ListAccountsModel::get_reserv(int id)
 {
     Account_Data acc = db->get_account_data(id);
     QList<Operation_Data>::iterator i;
     Operation_Data oper;
     account_summ as;
-    double summ = 0;
+    MyCurrency summ = 0;
 
     if (acc.top != Account_Type::active)
         return 0;

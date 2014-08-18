@@ -167,7 +167,7 @@ void ListAccounts::new_account()
             return;
         }
 
-        if (data.balance == 0) {
+        if (data.balance.toDouble() == 0) {
             t.commit();
             reload_model();
             return;
@@ -185,11 +185,11 @@ void ListAccounts::new_account()
         oper.descr = tr("Primary balance");
 
         a.set_account(var.InitialAccount());
-        a.set_balance(data.balance);
+        a.set_balance(data.balance.toDouble());
         oper.from.append(a);
 
         a.set_account(acc);
-        a.set_balance(data.balance);
+        a.set_balance(data.balance.toDouble());
         oper.to.append(a);
 
         db->save_operation(oper);
@@ -263,33 +263,38 @@ void ListAccounts::correct_balance()
 	return;
     }
 
-    cb->setBalance(data.balance);
+    cb->setBalance(data.balance.toDouble());
     if (cb->exec() == QDialog::Accepted) {
-        double current_balance = data.balance;
-        double new_balance = cb->balance();
+        MyCurrency current_balance = data.balance;
+        MyCurrency new_balance = cb->balance();
 
         Operation_Data od;
         od.date = cb->date();
         od.agent = 0;
         od.descr = tr("correct");
         if (new_balance < current_balance) {
+            double summ = current_balance-new_balance;
+
             a.set_account(id);
-            a.set_balance(current_balance-new_balance);
+            a.set_balance(summ);
             od.from.append(a);
+
             a.set_account(cb->account());
-            a.set_balance(current_balance-new_balance);
+            a.set_balance(summ);
             od.to.append(a);
-            db->save_operation(od);
         }
         else {
+            double summ = new_balance-current_balance;
+
             a.set_account(cb->account());
-            a.set_balance(new_balance-current_balance);
+            a.set_balance(summ);
             od.from.append(a);
+
             a.set_account(id);
-            a.set_balance(new_balance-current_balance);
+            a.set_balance(summ);
             od.to.append(a);
-            db->save_operation(od);
         }
+        db->save_operation(od);
 
         reload_model();
     }
