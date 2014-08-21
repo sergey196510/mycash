@@ -34,6 +34,7 @@ private:
     void writesettings();
     void setconnects();
     void opendb(QString);
+    void check_plan_oper();
 
 private slots:
     void create();
@@ -52,7 +53,6 @@ private slots:
     void report1();
     void report2();
     void update_curr();
-    void check_plan_oper();
 //    void test();
 
 signals:

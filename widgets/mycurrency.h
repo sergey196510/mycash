@@ -1,6 +1,8 @@
 #ifndef MYCURRENCY_H
 #define MYCURRENCY_H
 
+#include <QtGlobal>
+
 class MyCurrency
 {
 private:

@@ -134,8 +134,9 @@ void AccountGraph::paintEvent(QPaintEvent *)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.eraseRect(rect());
 
+    // рисуем рамку
     painter.setBrush(QBrush(Qt::white, Qt::SolidPattern));
-    painter.setPen(QPen(Qt::gray, 0, Qt::SolidLine));
+    painter.setPen(QPen(Qt::black, 0, Qt::SolidLine));
     painter.drawRect(QRect(5,5,width-10,height-10));
 
     SbD f, l;
@@ -150,6 +151,9 @@ void AccountGraph::paintEvent(QPaintEvent *)
 //    qDebug() << f.dt << f.value;
 //    qDebug() << l.dt << l.value;
 
+    painter.drawLine(QPointF(10,height-10), QPointF(10,10));
+    painter.drawLine(QPointF(10,height-10), QPointF(width-10,height-10));
+
 //    qreal step = (width-20)/30;
     x = 5;
     int j = 0;
@@ -161,10 +165,14 @@ void AccountGraph::paintEvent(QPaintEvent *)
         SbD val = *i;
         summ += val.value;
         y = (val.value * (height-20) / max) + 10;
-        x = (j * (width-20)/30)+10;
-        painter.drawLine(QPointF(x,height-5), QPointF(x,5));
-        painter.drawLine(QPointF(5,height-y), QPointF(width-10,height-y));
+        x = (j * (width-20)/(30-1))+10;
+//        qDebug() << x << y;
+        // вертикальная линия
+//        painter.drawLine(QPointF(x,height-5), QPointF(x,5));
+        // горизонтальная линия
+//        painter.drawLine(QPointF(5,height-y), QPointF(width-10,height-y));
         a[j] = QPoint(x,height-y);
+//        qDebug() << j << a[j];
         j++;
     }
 
@@ -174,7 +182,9 @@ void AccountGraph::paintEvent(QPaintEvent *)
     painter.setPen(QPen(Qt::red, 0, Qt::SolidLine));
     average = summ/30;
     y = (average*(height-20)/max)+10;
-    painter.drawLine(a[0], QPointF(width-10,height-y));
+//    painter.drawLine(a[0], QPointF(width-10,height-y));
+    painter.drawLine(a[0], QPoint(a[29].x(),height-y));
+//    qDebug() << QPointF(width-10,height-y);
 
     painter.setPen(QPen(Qt::black, 0, Qt::SolidLine));
     painter.drawText(10,height+20, tr("saldo from: %1 to: %2")

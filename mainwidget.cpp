@@ -127,6 +127,7 @@ MainWidget::MainWidget(Database *d, QWidget *parent) :
     ui(new Ui::MainWidget)
 {
     summAccount active(Account_Type::active), passive(Account_Type::passive);
+    QFont font;
 
     ui->setupUi(this);
     double saldo;
@@ -140,6 +141,10 @@ MainWidget::MainWidget(Database *d, QWidget *parent) :
     ui->active_value->setText(default_locale->toCurrencyString(active.Value()));
     ui->passive_value->setText(default_locale->toCurrencyString(passive.Value()));
     saldo = active.Value()-passive.Value();
+    if (saldo < 0) {
+        font.setBold(true);
+        ui->saldo_value->setFont(font);
+    }
     ui->saldo_value->setText(default_locale->toCurrencyString(saldo));
 
     ui->tableView->setModel(model);

@@ -30,7 +30,7 @@ graphWidget::~graphWidget()
 
 void graphWidget::paintEvent(QPaintEvent *)
 {
-    double x = 0, y = 0;
+    qreal x = 0, y = 0;
     QMap<QString,double>::iterator i;
     QList<QString> cols = QColor::colorNames();
 

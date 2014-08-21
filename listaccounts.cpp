@@ -15,7 +15,7 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
 
     ui->setupUi(this);
     ui->verticalLayout->setStretch(1,1);
-//    ui->splitter->setStretchFactor(2,1);
+    ui->splitter->setStretchFactor(0,0);
 
 //    db = new Database;
     db = d;
