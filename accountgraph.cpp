@@ -108,7 +108,7 @@ void AccountGraph::paintEvent(QPaintEvent *)
     qreal x, y;
     QList<SbD>::iterator i;
 
-    QImage image(size(), QImage::Format_ARGB32_Premultiplied);
+    QImage image(500,250, QImage::Format_ARGB32_Premultiplied);
     QPainter painter(&image);
 
     if (isFree == false) {
