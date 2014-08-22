@@ -102,7 +102,7 @@ void AccountGraph::calc_array(int id)
     this->update();
 }
 
-void AccountGraph::paintEvent(QPaintEvent *)
+void AccountGraph::paintEvent(QPaintEvent *pe)
 {
     MyCurrency max = 0;
     qreal x, y;

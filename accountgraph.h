@@ -2,6 +2,7 @@
 #define ACCOUNTGRAPH_H
 
 #include <QWidget>
+#include <QPaintEvent>
 #include <QTextEdit>
 #include <QPainter>
 #include <QtSql>
