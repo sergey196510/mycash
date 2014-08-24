@@ -108,7 +108,7 @@ void AccountGraph::paintEvent(QPaintEvent *pe)
     qreal x, y;
     QList<SbD>::iterator i;
 
-    QImage image(500,250, QImage::Format_ARGB32_Premultiplied);
+    QImage image(size(), QImage::Format_ARGB32_Premultiplied);
     QPainter painter(&image);
 
     if (isFree == false) {
@@ -129,6 +129,7 @@ void AccountGraph::paintEvent(QPaintEvent *pe)
         height = width/2;
     else
         height = image.height()-30;
+//    painter.setViewport(0,0,width,height);
 
     painter.initFrom(this);
     painter.setRenderHint(QPainter::Antialiasing, true);

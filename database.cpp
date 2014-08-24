@@ -789,6 +789,7 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
     QMap<int,double> list;
     QMap<int,double>::iterator i;
     QDate curr = QDate::currentDate();
+//    QDate future = curr.addDays(3);
     MyCurrency summ_from = 0, summ_to = 0;
     Operation_Data data;
 
@@ -807,7 +808,17 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
         data.auto_exec = q.value(5).toInt();
         data.date = oper_date;
 
-        int diff = data.day - curr.day();
+        // поиск близких планвых операций учетом перехода через границу месяца
+        int diff = 0;
+        for (int j = 0; j <= 3; j++) {
+            QDate future = curr.addDays(j);
+            if (data.day == future.day()) {
+                data.status = Plan_Status::minimum;
+                diff = 1;
+                break;
+            }
+        }
+
         QDate dt(curr.year(), curr.month(), data.day);
         if (data.date > dt) {
             data.status = Plan_Status::actual;
@@ -815,7 +826,7 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
         else if (int stat = find_oper_by_plan(data.id, curr.month(), curr.year())) {
             data.status = stat;
         }
-        else if (diff < 3 && diff >= 0)
+        else if (diff == 1)
             data.status = Plan_Status::minimum;
         else if (diff < 0)
             data.status = Plan_Status::expired;
