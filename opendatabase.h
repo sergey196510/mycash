@@ -3,6 +3,7 @@
 
 #include <QtGui>
 #include <QDialog>
+#include <QFileDialog>
 
 namespace Ui {
 class OpenDatabase;

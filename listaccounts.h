@@ -5,6 +5,7 @@
 #include <QWidget>
 #include "QtSql"
 #include <QDate>
+#include <QMessageBox>
 #include "database.h"
 #include "global.h"
 #include "listaccountsmodel.h"

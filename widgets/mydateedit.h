@@ -1,7 +1,7 @@
 #ifndef MYDATEEDIT_H
 #define MYDATEEDIT_H
 
-#include <QtGui>
+#include <QDateEdit>
 #include <QCalendarWidget>
 
 

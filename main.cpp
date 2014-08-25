@@ -6,10 +6,10 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QSplashScreen splash(QPixmap(":icons/mycash.jpe"));
+//    QSplashScreen splash(QPixmap(":icons/mycash.jpe"));
     QTranslator translator, tr;
 
-    splash.show();
+//    splash.show();
 
     tr.load(":mycash_"+QLocale::system().name());
     a.installTranslator(&tr);
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     MyCash w;
 
-    splash.finish(&w);
+//    splash.finish(&w);
 
     w.show();
     

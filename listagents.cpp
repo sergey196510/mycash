@@ -93,8 +93,8 @@ ListAgents::ListAgents(QWidget *parent) :
 
     ui->treeView->setModel(model);
     ui->treeView->hideColumn(0);
-    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+//    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+//    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
 
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);

@@ -106,7 +106,8 @@ void ListCurrencyModel::changed_data()
 {
     list.clear();
     list = read_list();
-    reset();
+    this->resetInternalData();
+//    reset();
 }
 
 ListCurrency::ListCurrency(QWidget *parent) :
@@ -124,9 +125,9 @@ ListCurrency::ListCurrency(QWidget *parent) :
         ui->treeView->hideColumn(0);
     }
 
-    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
-    ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
+//    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+//    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+//    ui->treeView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
 
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);

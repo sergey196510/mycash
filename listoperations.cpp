@@ -3,7 +3,7 @@
 #include "global.h"
 
 ListOperationsModel::ListOperationsModel(int account, QDate fdate, QDate ldate, QObject *parent) :
-    QAbstractItemModel(parent)
+    QAbstractTableModel(parent)
 {
     header_data << "" << tr("Date") << tr("Account") << tr("Debet") << tr("Credit") << tr("Description");
     list = read_list(account, fdate, ldate);
@@ -42,23 +42,31 @@ QList<Operation_Data> ListOperationsModel::read_list(int account, QDate fdate, Q
         data.date = q1.value(1).toDate();
         data.descr = q1.value(2).toString();
 
+        a1 = 0;
+        s1 = 0;
         q2.bindValue(":oid", data.id);
-        q2.bindValue(":direction", Direction::from);
-        if (!q2.exec() || !q2.next()) {
+        q2.bindValue(":direct", Direction::from);
+        if (!q2.exec()) {
             qDebug() << q2.lastError();
             return list;
         }
-        a1 = q2.value(0).toInt();
-        s1 = q2.value(1).toDouble();
+        if (q2.next()) {
+            a1 = q2.value(0).toInt();
+            s1 = q2.value(1).toDouble();
+        }
 
+        a2 = 0;
+        s2 = 0;
         q2.bindValue(":oid", data.id);
-        q2.bindValue(":direction", Direction::to);
-        if (!q2.exec() || !q2.next()) {
+        q2.bindValue(":direct", Direction::to);
+        if (!q2.exec()) {
             qDebug() << q2.lastError();
             return list;
         }
-        a2 = q2.value(0).toInt();
-        s2 = q2.value(1).toDouble();
+        if (q2.next()) {
+            a2 = q2.value(0).toInt();
+            s2 = q2.value(1).toDouble();
+        }
 
         if (a1 != account && a2 != account)
             continue;
@@ -73,16 +81,17 @@ QList<Operation_Data> ListOperationsModel::read_list(int account, QDate fdate, Q
         list.append(data);
     }
 
+    qDebug() << list.size();
     return list;
 }
 
 void ListOperationsModel::reload_data(int account, QDate fdate, QDate ldate)
 {
     current_account = account;
+    beginResetModel();
     list.clear();
     list = read_list(account, fdate, ldate);
-    reset();
-//    qDebug() << list.count();
+    endResetModel();
 }
 
 QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
@@ -157,6 +166,7 @@ QVariant ListOperationsModel::headerData(int section,Qt::Orientation orientation
         return QString("%1").arg(section+1);
 }
 
+/*
 QModelIndex ListOperationsModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
@@ -173,6 +183,7 @@ QModelIndex ListOperationsModel::parent(const QModelIndex &child) const
     Q_UNUSED(child);
     return QModelIndex();
 }
+*/
 
 ListOperations::ListOperations(QWidget *parent) :
     QWidget(parent),
@@ -232,8 +243,8 @@ ListOperations::ListOperations(QWidget *parent) :
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 //    for (int i = 1; i < 5; i++)
 //        ui->tableView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
-    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     ui->tableView->addActions(acts);

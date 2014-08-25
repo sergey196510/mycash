@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <QWidget>
 #include <QtSql>
+#include <QMessageBox>
 #include "database.h"
 #include "global.h"
 #include "editoperation.h"
@@ -63,7 +64,7 @@ private:
 
 private slots:
     void new_oper();
-    int get_selected_id();
+    QList<int> get_selected_id();
     void commit_oper();
     void update_oper();
     void del_oper();

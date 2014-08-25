@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <QWidget>
 #include <QtSql>
+#include <QMessageBox>
 #include "global.h"
 
 namespace Ui {

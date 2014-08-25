@@ -2,7 +2,7 @@
 #define MYTREEVIEW_H
 
 #include <QWidget>
-#include <QtGui/QTreeView>
+#include <QTreeView>
 
 class myTreeView : public QTreeView
 {

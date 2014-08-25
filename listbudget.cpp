@@ -76,8 +76,10 @@ ListBudget::ListBudget(QWidget *parent) :
     ui.tableView->setAlternatingRowColors(true);
     ui.tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui.tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui.tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui.tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+//    ui.tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+//    ui.tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui.tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui.tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui.tableView->horizontalHeader()->setStretchLastSection(true);
 
     QAction *nb = new QAction(tr("New budget"), this);

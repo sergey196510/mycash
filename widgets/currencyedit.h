@@ -1,7 +1,8 @@
 #ifndef CURRENCYEDIT_H
 #define CURRENCYEDIT_H
 
-#include <QtGui>
+#include <QLineEdit>
+#include <QValidator>
 
 class currencyEdit : public QLineEdit
 {

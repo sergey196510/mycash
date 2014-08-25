@@ -138,21 +138,22 @@ int ListPlanOperModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
         return 0;
-    return list.count();
+    return list.size();
 }
 
 int ListPlanOperModel::columnCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
         return 0;
-    return header_data.count();
+    return header_data.size();
 }
 
 void ListPlanOperModel::change_data()
 {
+    beginResetModel();
     list.clear();
     list = db->get_plan_oper_list(0);
-    reset();
+    endResetModel();
 }
 
 ListPlanOper::ListPlanOper(QWidget *parent) :
@@ -200,9 +201,9 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
 
     ui->tableView->setAlternatingRowColors(true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+//    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), SLOT(check_selected()));
@@ -228,17 +229,22 @@ void ListPlanOper::new_oper()
     delete po;
 }
 
-int ListPlanOper::get_selected_id()
+QList<int> ListPlanOper::get_selected_id()
 {
     QModelIndexList list;
+    QList<int> l;
 
     list = ui->tableView->selectionModel()->selectedIndexes();
-    if (list.count() == 0) {
+    if (list.size() == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
-        return 0;
+        return l;
     }
+    qDebug() << list.size();
 
-     return list.at(0).data(Qt::DisplayRole).toInt();
+    for (int i = 0; i < list.size(); i+=9)
+        l.append(list.at(i).data(Qt::DisplayRole).toInt());
+
+    return l;
 }
 
 void ListPlanOper::commit_oper()
@@ -246,20 +252,24 @@ void ListPlanOper::commit_oper()
     Operation_Data pod;
     Operation_Data od;
     EditOperation *eo = new EditOperation(1, this);
-    int id = get_selected_id();
+    QList<int> id = get_selected_id();
+    QList<int>::iterator i;
 
-    if (id == 0)
+    if (id.size() == 0)
         return;
 
-    pod = db->get_plan_oper_data(id, QDate::currentDate());
+    for (i = id.begin(); i != id.end(); i++) {
+        int d = *i;
+        pod = db->get_plan_oper_data(d, QDate::currentDate());
 
-    eo->setdata(pod);
-    if (eo->exec() == QDialog::Rejected)
-        return;
+        eo->setdata(pod);
+        if (eo->exec() == QDialog::Rejected)
+            continue;
 
-    pod = eo->data();
-    db->save_operation(pod);
-    db->new_mon_oper(id,1);
+        pod = eo->data();
+        db->save_operation(pod);
+        db->new_mon_oper(d,1);
+    }
 
     emit data_changed();
 }
@@ -269,13 +279,13 @@ void ListPlanOper::update_oper()
     QSqlQuery q;
     Operation_Data pod, od;
     EditOperation *eo = new EditOperation(2, this);
-    int id = get_selected_id();
+    QList<int> id = get_selected_id();
     Transaction tr;
 
-    if (id == 0)
+    if (id.size() == 0)
         return;
 
-    pod = db->get_plan_oper_data(id, QDate::currentDate());
+    pod = db->get_plan_oper_data(id.at(0), QDate::currentDate());
 
     eo->setdata(pod);
     if (eo->exec() == QDialog::Rejected)
@@ -286,7 +296,7 @@ void ListPlanOper::update_oper()
     od = eo->data();
     delete eo;
 
-    od.id = id;
+    od.id = id.at(0);
     if (db->update_plan_oper(od)) {
         tr.commit();
         emit data_changed();
@@ -296,16 +306,16 @@ void ListPlanOper::update_oper()
 void ListPlanOper::del_oper()
 {
     QSqlQuery q;
-    int id = get_selected_id();
+    QList<int> id = get_selected_id();
     Transaction tr;
 
-    if (id == 0)
+    if (id.size() == 0)
         return;
 
     tr.begin();
 
     q.prepare("DELETE FROM plan_oper_acc WHERE o_id = :id");
-    q.bindValue(":id", id);
+    q.bindValue(":id", id.at(0));
     if (!q.exec()) {
         tr.rollback();
         qDebug() << "Error DELETE:" << q.lastError().text();
@@ -313,7 +323,7 @@ void ListPlanOper::del_oper()
     }
 
     q.prepare("DELETE FROM plan_oper WHERE id = :id");
-    q.bindValue(":id", id);
+    q.bindValue(":id", id.at(0));
     if (!q.exec()) {
         tr.rollback();
         qDebug() << "Error DELETE:" << q.lastError().text();
@@ -327,12 +337,12 @@ void ListPlanOper::del_oper()
 void ListPlanOper::cancel_oper()
 {
     QSqlQuery q;
-    int id = get_selected_id();
+    QList<int> id = get_selected_id();
     Transaction tr;
 
     tr.begin();
 
-    db->new_mon_oper(id,2);
+    db->new_mon_oper(id.at(0),2);
 
     tr.commit();
     emit data_changed();
@@ -340,11 +350,11 @@ void ListPlanOper::cancel_oper()
 
 void ListPlanOper::check_selected()
 {
-    int id = get_selected_id();
-    comm->setEnabled(id);
-    upd->setEnabled(id);
-    delo->setEnabled(id);
-    can->setEnabled(id);
+    QList<int> id = get_selected_id();
+    comm->setEnabled(id.at(0));
+    upd->setEnabled(id.at(0));
+    delo->setEnabled(id.at(0));
+    can->setEnabled(id.at(0));
 }
 
 void ListPlanOper::reload_model()

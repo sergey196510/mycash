@@ -149,8 +149,8 @@ MainWidget::MainWidget(Database *d, QWidget *parent) :
 
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(0);
-    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+//    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+//    ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
 }
 

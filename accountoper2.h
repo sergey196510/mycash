@@ -2,6 +2,7 @@
 #define ACCOUNTOPER2_H
 
 #include <QTextEdit>
+#include <QLineEdit>
 #include "database.h"
 #include "selectaccount.h"
 
