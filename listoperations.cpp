@@ -81,7 +81,7 @@ QList<Operation_Data> ListOperationsModel::read_list(int account, QDate fdate, Q
         list.append(data);
     }
 
-    qDebug() << list.size();
+//    qDebug() << list.size();
     return list;
 }
 

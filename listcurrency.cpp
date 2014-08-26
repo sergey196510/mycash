@@ -104,10 +104,10 @@ QVariant ListCurrencyModel::headerData(int section,Qt::Orientation orientation, 
 
 void ListCurrencyModel::changed_data()
 {
+    beginResetModel();
     list.clear();
     list = read_list();
-    this->resetInternalData();
-//    reset();
+    endResetModel();
 }
 
 ListCurrency::ListCurrency(QWidget *parent) :

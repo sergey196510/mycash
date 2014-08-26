@@ -61,6 +61,13 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+void ListBudgetModel::update_list()
+{
+    beginResetModel();
+    list.clear();
+    list = db->read_budget_list(0);
+    endResetModel();
+}
 
 ListBudget::ListBudget(QWidget *parent) :
     QWidget(parent)
@@ -70,6 +77,7 @@ ListBudget::ListBudget(QWidget *parent) :
     db = new Database;
 
     model = new ListBudgetModel(db);
+    connect(this, SIGNAL(change_data()), model, SLOT(update_list()));
     ui.tableView->setModel(model);
 
     ui.tableView->hideColumn(0);
@@ -108,6 +116,7 @@ void ListBudget::new_budget()
 
     data = eb.data();
     insert_record(data);
+    emit change_data();
 }
 
 bool ListBudget::insert_record(Budget_Data &data)
