@@ -2,6 +2,7 @@
 #define ACCOUNTGRAPH_H
 
 #include <QWidget>
+#include <QPainter>
 #include <QPaintEvent>
 #include <QTextEdit>
 #include <QPainter>
@@ -29,7 +30,7 @@ public slots:
     void calc_array(int id);
 
 private:
-    int width, height;
+    int w, h;
     Database *db;
     QList<SbD> list;
     bool isFree;

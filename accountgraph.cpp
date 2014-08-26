@@ -101,8 +101,9 @@ void AccountGraph::paintEvent(QPaintEvent *)
     qreal x, y;
     QList<SbD>::iterator i;
 
-    QImage image(size(), QImage::Format_ARGB32_Premultiplied);
-    QPainter painter(&image);
+//    QImage image(size(), QImage::Format_ARGB32_Premultiplied);
+//    QPainter painter(&image);
+    QPainter painter(this);
 
     if (isFree == false) {
         qDebug() << "false";
@@ -116,12 +117,20 @@ void AccountGraph::paintEvent(QPaintEvent *)
         return;
     }
 
-    width = image.width();
-    height = image.height();
-    if (height > width/2+30)
-        height = width/2;
+    w = width();
+    h = height();
+//    width = image.width();
+//    height = image.height();
+    if (h > w/2+30)
+        h = w/2;
     else
-        height = image.height()-30;
+        h = w-30;
+
+    painter.setViewport(0,0,w,h);
+
+    w = 600;
+    h = 300;
+    painter.setWindow(0,0,w,h);
 
     painter.initFrom(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -130,7 +139,7 @@ void AccountGraph::paintEvent(QPaintEvent *)
     // рисуем рамку
     painter.setBrush(QBrush(Qt::white, Qt::SolidPattern));
     painter.setPen(QPen(Qt::black, 0, Qt::SolidLine));
-    painter.drawRect(QRect(5,5,width-10,height-10));
+    painter.drawRect(QRect(5,5,w-10,h-10));
 
     SbD f, l;
     for (i = list.begin(); i != list.end(); i++) {
@@ -142,8 +151,9 @@ void AccountGraph::paintEvent(QPaintEvent *)
             max = val.value;
     }
 
-    painter.drawLine(QPointF(10,height-10), QPointF(10,10));
-    painter.drawLine(QPointF(10,height-10), QPointF(width-10,height-10));
+    painter.drawLine(QPointF(30,h-30), QPointF(30,10));
+    painter.drawLine(QPointF(30,h-30), QPointF(w-10,h-30));
+    painter.drawText(QPoint(250,h-10),tr("Date"));
 
     x = 5;
     int j = 0;
@@ -154,9 +164,9 @@ void AccountGraph::paintEvent(QPaintEvent *)
     for (i = list.begin(); i != list.end(); i++) {
         SbD val = *i;
         summ += val.value;
-        y = (val.value * (height-20) / max) + 10;
-        x = (j * (width-20)/(30-1))+10;
-        a[j] = QPoint(x,height-y);
+        y = (val.value * (h-40) / max) + 30;
+        x = (j * (w-40)/(30-1))+30;
+        a[j] = QPoint(x,h-y);
         j++;
     }
 
@@ -165,17 +175,23 @@ void AccountGraph::paintEvent(QPaintEvent *)
 
     painter.setPen(QPen(Qt::red, 0, Qt::SolidLine));
     average = summ/30;
-    y = (average*(height-20)/max)+10;
-    painter.drawLine(a[0], QPoint(a[29].x(),height-y));
+    y = (average*(h-20)/max)+10;
+    painter.drawLine(a[0], QPoint(a[29].x(),h-y));
 
     painter.setPen(QPen(Qt::black, 0, Qt::SolidLine));
-    painter.drawText(10,height+20, tr("saldo from: %1 to: %2")
+    painter.drawText(10,h+10, tr("Saldo"));
+    painter.drawText(10,h+21, tr("From: %1; to: %2")
                      .arg(default_locale->toCurrencyString(f.value.toDouble()))
                      .arg(default_locale->toCurrencyString(l.value.toDouble())));
 
+    painter.translate(10,100);
+    painter.rotate(90);
+//    painter.translate(-10,-100);
+    painter.drawText(0,0,tr("Summ"));
+
     painter.end();
 
-    painter.begin(this);
-    painter.drawImage(0,0,image);
-    painter.end();
+//    painter.begin(this);
+//    painter.drawImage(0,0,image);
+//    painter.end();
 }
