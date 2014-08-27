@@ -16,9 +16,11 @@ void AccountGraph::calc_array(int id)
 {
     QSqlQuery q, q2;
     Account_Data data;
-    QList<SbD> stack;
+    QStack<SbD> stack;
     QList<SbD> summ;
     QMap<QDate,MyCurrency> result;
+    QDate ldate = QDate::currentDate();
+    QDate pdate = ldate.addDays(-29);
 
 //    qDebug() << id;
     if (id == 0) {
@@ -30,8 +32,10 @@ void AccountGraph::calc_array(int id)
 
     data = db->get_account_data(id);
 
+    qDebug() << "oper:";
     // выборка значений операций по счету
-    q.prepare("SELECT id,dt FROM oper ORDER BY dt");
+    q.prepare("SELECT id,dt FROM oper WHERE dt >= :dt ORDER BY dt");
+    q.bindValue(":dt", pdate.toString("yyyy-MM-dd"));
     if (!q.exec()) {
         qDebug() << q.lastError();
         isFree = true;
@@ -53,31 +57,35 @@ void AccountGraph::calc_array(int id)
             else
                 val.value = q2.value(0).toDouble();
             val.dt = q.value(1).toDate();
-            stack.append(val);
+            qDebug() << val.dt << val.value.toDouble();
+            stack.push(val);
         }
     }
 
     // расчет баланса по счету на момент совершения операции
     // итоговые значения расположены в массиве result
+    qDebug() << "balance:";
     SbD val;
     val.value = data.balance;
     val.dt = QDate::currentDate();
     summ.append(val);
-    for (int j = stack.size()-1; j >= 0; j--) {
-        SbD v = stack.at(j);
+    while (!stack.empty()) {
+        SbD v = stack.pop();
         val.value += v.value;
         val.dt = v.dt;
+        qDebug() << val.dt << val.value.toDouble();
         summ.append(val);
     }
 
+    qDebug() << "Balance 2:";
     for (int j = summ.size()-1; j > 0; j--) {
         val.dt = summ.at(j).dt;
         val.value = summ.at(j-1).value;
         result[val.dt] = val.value;
+        qDebug() << val.dt << val.value.toDouble();
     }
 
-    QDate ldate = QDate::currentDate();
-    QDate pdate = ldate.addDays(-29);
+    qDebug() << "Balance 3:";
     MyCurrency prev = 0;
     QDate dt;
     list.clear();
@@ -88,6 +96,7 @@ void AccountGraph::calc_array(int id)
         }
         val.dt = dt;
         val.value = prev;
+        qDebug() << val.dt << val.value.toDouble();
         list.append(val);
     }
 
@@ -160,12 +169,17 @@ void AccountGraph::paintEvent(QPaintEvent *)
     QPoint a[30];
     MyCurrency summ = 0;
     MyCurrency average = 0;
-    painter.setPen(QPen(Qt::gray, 0, Qt::DotLine));
+    painter.setPen(QPen(Qt::black, 0, Qt::DotLine));
     for (i = list.begin(); i != list.end(); i++) {
         SbD val = *i;
+        qDebug() << val.dt << val.value.toDouble();
         summ += val.value;
         y = (val.value * (h-40) / max) + 30;
         x = (j * (w-40)/(30-1))+30;
+        if (j%5 == 0) {
+            painter.drawLine(QPointF(x,h-30), QPointF(x,h-25));
+            painter.drawText(x,h-20,val.dt.toString("dd-MM-yyyy"));
+        }
         a[j] = QPoint(x,h-y);
         j++;
     }
