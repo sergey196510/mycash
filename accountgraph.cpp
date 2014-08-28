@@ -16,9 +16,9 @@ void AccountGraph::calc_array(int id)
 {
     QSqlQuery q, q2;
     Account_Data data;
-    QStack<SbD> stack;
-    QList<SbD> summ;
-    QMap<QDate,MyCurrency> result;
+    QStack<SbD> stack1, stack2, stack3;
+//    QList<SbD> summ;
+//    QMap<QDate,MyCurrency> result;
     QDate ldate = QDate::currentDate();
     QDate pdate = ldate.addDays(-29);
 
@@ -30,11 +30,18 @@ void AccountGraph::calc_array(int id)
 
     isFree = false;
 
+    list.clear();
     data = db->get_account_data(id);
+    if (data.top != Account_Type::active) {
+        update();
+        return;
+    }
 
-    qDebug() << "oper:";
+//    qDebug() << "stack1:";
     // выборка значений операций по счету
     q.prepare("SELECT id,dt FROM oper WHERE dt >= :dt ORDER BY dt");
+    q2.prepare("SELECT summ, direction FROM account_oper WHERE o_id = :oid AND a_id = :aid");
+
     q.bindValue(":dt", pdate.toString("yyyy-MM-dd"));
     if (!q.exec()) {
         qDebug() << q.lastError();
@@ -42,7 +49,6 @@ void AccountGraph::calc_array(int id)
         return;
     }
     while (q.next()) {
-        q2.prepare("SELECT summ, direction FROM account_oper WHERE o_id = :oid AND a_id = :aid");
         q2.bindValue(":oid", q.value(0).toInt());
         q2.bindValue(":aid", id);
         if (!q2.exec()) {
@@ -52,52 +58,78 @@ void AccountGraph::calc_array(int id)
         }
         while (q2.next()) {
             SbD val;
-            if (q2.value(1).toInt() == 2)
+            if (q2.value(1).toInt() == Account_Type::debet || q2.value(1).toInt() == Account_Type::passive)
                 val.value = -q2.value(0).toDouble();
             else
                 val.value = q2.value(0).toDouble();
             val.dt = q.value(1).toDate();
-            qDebug() << val.dt << val.value.toDouble();
-            stack.push(val);
+//            qDebug() << val.dt << val.value.toDouble();
+            stack1.push(val);
         }
     }
 
-    // расчет баланса по счету на момент совершения операции
-    // итоговые значения расположены в массиве result
-    qDebug() << "balance:";
-    SbD val;
-    val.value = data.balance;
-    val.dt = QDate::currentDate();
-    summ.append(val);
-    while (!stack.empty()) {
-        SbD v = stack.pop();
-        val.value += v.value;
-        val.dt = v.dt;
-        qDebug() << val.dt << val.value.toDouble();
-        summ.append(val);
+    if (stack1.empty()) {
+        isFree = true;
+        this->update();
+        return;
     }
 
-    qDebug() << "Balance 2:";
-    for (int j = summ.size()-1; j > 0; j--) {
-        val.dt = summ.at(j).dt;
-        val.value = summ.at(j-1).value;
-        result[val.dt] = val.value;
-        qDebug() << val.dt << val.value.toDouble();
-    }
-
-    qDebug() << "Balance 3:";
-    MyCurrency prev = 0;
+    // инициализация итогового массива
+//    qDebug() << "stack2:";
     QDate dt;
-    list.clear();
     for (dt = pdate; dt <= ldate; dt = dt.addDays(1)) {
         SbD val;
-        if (result.contains(dt)) {
-            prev = result[dt];
-        }
         val.dt = dt;
-        val.value = prev;
-        qDebug() << val.dt << val.value.toDouble();
-        list.append(val);
+        val.value = 0;
+//        qDebug() << val.dt << val.value.toDouble();
+        stack2.push(val);
+    }
+
+    qDebug() << stack2.size() << stack3.size();
+
+    //расчет баланса по дням от текущего
+    MyCurrency balance = data.balance;
+    SbD val1 = stack1.pop();
+    QDate dt1 = val1.dt;
+    SbD val2 = stack2.pop();
+    QDate dt2 = val2.dt;
+    SbD val;
+    val.dt = dt2;
+    val.value = balance;
+    stack3.push(val);
+    while (1) {
+        if (stack2.empty()) {
+//            val.dt = dt2;
+//            val.value = balance;
+//            qDebug() << val.dt << val.value.toDouble();
+//            stack3.push(val);
+            break;
+        }
+        if (dt2 > dt1) {
+            val.dt = dt2;
+            val.value = balance;
+//            qDebug() << val.dt << val.value.toDouble();
+            stack3.push(val);
+            val2 = stack2.pop();
+            dt2 = val2.dt;
+        }
+        else if (dt2 == dt1) {
+            balance += val1.value;
+            if (!stack1.empty()) {
+                val1 = stack1.pop();
+                dt1 = val1.dt;
+            }
+            else
+                dt1 = pdate.addDays(-1);
+        }
+        else if (stack1.empty())
+            dt1 = pdate.addDays(-1);
+    }
+
+    qDebug() << stack2.size() << stack3.size();
+
+    while (!stack3.empty()) {
+        list.append(stack3.pop());
     }
 
     isFree = true;
@@ -116,12 +148,6 @@ void AccountGraph::paintEvent(QPaintEvent *)
 
     if (isFree == false) {
         qDebug() << "false";
-        painter.end();
-        return;
-    }
-
-    // пустой список
-    if (list.size() == 0) {
         painter.end();
         return;
     }
@@ -150,6 +176,12 @@ void AccountGraph::paintEvent(QPaintEvent *)
     painter.setPen(QPen(Qt::black, 0, Qt::SolidLine));
     painter.drawRect(QRect(5,5,w-10,h-10));
 
+    // пустой список
+    if (list.size() == 0) {
+        painter.end();
+        return;
+    }
+
     SbD f, l;
     for (i = list.begin(); i != list.end(); i++) {
         SbD val = *i;
@@ -172,7 +204,7 @@ void AccountGraph::paintEvent(QPaintEvent *)
     painter.setPen(QPen(Qt::black, 0, Qt::DotLine));
     for (i = list.begin(); i != list.end(); i++) {
         SbD val = *i;
-        qDebug() << val.dt << val.value.toDouble();
+//        qDebug() << val.dt << val.value.toDouble();
         summ += val.value;
         y = (val.value * (h-40) / max) + 30;
         x = (j * (w-40)/(30-1))+30;
