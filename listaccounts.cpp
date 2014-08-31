@@ -85,7 +85,7 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
 
 //    connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(check_type()));
 
-    ui->act_summ->setText(default_locale->toCurrencyString(active.Value()));
+    ui->act_summ->setText(default_locale->toCurrencyString(active.Value().toDouble()));
     ui->act_summ->setFont(font);
 }
 

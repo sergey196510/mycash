@@ -138,8 +138,8 @@ MainWidget::MainWidget(Database *d, QWidget *parent) :
     ui->groupBox->setTitle(tr("Balance status"));
     ui->groupBox_2->setTitle(tr("Prosrochennie operations"));
 
-    ui->active_value->setText(default_locale->toCurrencyString(active.Value()));
-    ui->passive_value->setText(default_locale->toCurrencyString(passive.Value()));
+    ui->active_value->setText(default_locale->toCurrencyString(active.Value().toDouble()));
+    ui->passive_value->setText(default_locale->toCurrencyString(passive.Value().toDouble()));
     saldo = active.Value()-passive.Value();
     if (saldo < 0) {
         font.setBold(true);

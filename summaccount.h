@@ -3,18 +3,19 @@
 
 #include "global.h"
 #include "database.h"
+#include "widgets/mycurrency.h"
 
 class summAccount
 {
 private:
-    double value;
+    MyCurrency value;
     Database *db;
 
 public:
     summAccount() { value = 0; }
     summAccount(int);
     QString text();
-    double Value();
+    MyCurrency Value();
 };
 
 #endif // SUMMACCOUNT_H
