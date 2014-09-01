@@ -85,7 +85,7 @@ void AccountGraph::calc_array(int id)
         stack2.push(val);
     }
 
-    qDebug() << stack2.size() << stack3.size();
+//    qDebug() << stack2.size() << stack3.size();
 
     //расчет баланса по дням от текущего
     MyCurrency balance = data.balance;
@@ -126,7 +126,7 @@ void AccountGraph::calc_array(int id)
             dt1 = pdate.addDays(-1);
     }
 
-    qDebug() << stack2.size() << stack3.size();
+//    qDebug() << stack2.size() << stack3.size();
 
     while (!stack3.empty()) {
         list.append(stack3.pop());

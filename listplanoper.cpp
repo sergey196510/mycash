@@ -340,6 +340,9 @@ void ListPlanOper::cancel_oper()
     QList<int> id = get_selected_id();
     Transaction tr;
 
+    if (id.empty())
+        return;
+
     tr.begin();
 
     db->new_mon_oper(id.at(0),2);
@@ -351,6 +354,9 @@ void ListPlanOper::cancel_oper()
 void ListPlanOper::check_selected()
 {
     QList<int> id = get_selected_id();
+    if (id.empty())
+        return;
+
     comm->setEnabled(id.at(0));
     upd->setEnabled(id.at(0));
     delo->setEnabled(id.at(0));
