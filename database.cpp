@@ -818,6 +818,8 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
                 break;
             }
         }
+        if (diff == 0)
+            diff = data.day - curr.day();
 
         QDate dt(curr.year(), curr.month(), data.day);
         if (data.date > dt) {

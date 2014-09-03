@@ -393,6 +393,16 @@ void MyCash::check_plan_oper()
             continue;
         from = db->get_account_data(data.from.at(0).account());
         to = db->get_account_data(data.to.at(0).account());
+
+        int r = QMessageBox::question(0,
+                                      tr("Plan operation"),
+                                      tr("Commit plan operation\nFrom: %1, To: %2")
+                                      .arg(from.name)
+                                      .arg(to.name),
+                                      QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::No);
+        if (r == QMessageBox::No)
+            continue;
+
         if (from.top == Account_Type::active && from.balance < data.to.at(0).balance().toDouble()) {
             QMessageBox::warning(0,
                                  tr("Plan operation"),
@@ -401,8 +411,14 @@ void MyCash::check_plan_oper()
                                  .arg(to.name));
             continue;
         }
-        db->save_operation(data);
-        db->new_mon_oper(data.id,1);
+
+        if (r == QMessageBox::Yes) {
+            db->save_operation(data);
+            db->new_mon_oper(data.id,1);
+        }
+        else if (r == QMessageBox::Cancel)
+            db->new_mon_oper(data.id,2);
+
         qDebug() << data.id;
     }
 }
