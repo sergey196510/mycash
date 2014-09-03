@@ -19,7 +19,7 @@ public slots:
 
 private:
     Database *db;
-    QList<Budget_Data> list;
+    QList<Budget> list;
     QMap<int,QString> accounts_list;
     QStringList header_data;
     int rowCount(const QModelIndex &parent) const;
@@ -42,7 +42,6 @@ private:
     Database *db;
     Ui::ListBudget ui;
     ListBudgetModel *model;
-    bool insert_record(Budget_Data &data);
 
 private slots:
     void new_budget();

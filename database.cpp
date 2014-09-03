@@ -186,10 +186,10 @@ QMap<int,QString> Database::get_accounts_list()
     return list;
 }
 
-QList<Budget_Data> Database::read_budget_list(int mon)
+QList<Budget> Database::read_budget_list(int mon)
 {
-    QList<Budget_Data> list;
-    Budget_Data data;
+    QList<Budget> list;
+    Budget data;
     QSqlQuery q;
     QString query;
 
@@ -204,10 +204,7 @@ QList<Budget_Data> Database::read_budget_list(int mon)
         return list;
     }
     while (q.next()) {
-        data.id = q.value(0).toInt();
-        data.mon = q.value(1).toInt();
-        data.account = q.value(2).toInt();
-        data.summ = q.value(3).toDouble();
+        data.set_Value(q.value(0).toInt(), q.value(1).toInt(), q.value(2).toInt(), q.value(3).toDouble());
         list.append(data);
     }
 
@@ -547,13 +544,13 @@ bool Database::save_operation(Operation_Data &oper)
 bool Database::add_budget(account_summ &d)
 {
     QSqlQuery q;
-    QList<Budget_Data> list = read_budget_list(QDate::currentDate().month());
-    QList<Budget_Data>::iterator i;
+    QList<Budget> list = read_budget_list(QDate::currentDate().month());
+    QList<Budget>::iterator i;
 
     for (i = list.begin(); i != list.end(); i++) {
-        Budget_Data data = *i;
-        if (find_budget_id(data.account, d.account())) {
-            int id = data.id;
+        Budget data = *i;
+        if (find_budget_id(data.Account(), d.account())) {
+            int id = data.Id();
             qDebug() << id;
         }
     }

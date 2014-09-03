@@ -41,20 +41,20 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DisplayRole) {
         if (index.column() == 0) {
-            Budget_Data data = list.at(index.row());
-            return data.id;
+            Budget data = list.at(index.row());
+            return data.Id();
         }
         if (index.column() == 1) {
-            Budget_Data data = list.at(index.row());
-            return QDate::shortMonthName(data.mon);
+            Budget data = list.at(index.row());
+            return QDate::shortMonthName(data.Month());
         }
         if (index.column() == 2) {
-            Budget_Data data = list.at(index.row());
-            return accounts_list[data.account];
+            Budget data = list.at(index.row());
+            return accounts_list[data.Account()];
         }
         if (index.column() == 3) {
-            Budget_Data data = list.at(index.row());
-            return data.summ.toDouble();
+            Budget data = list.at(index.row());
+            return data.Summ().toDouble();
         }
     }
 
@@ -109,28 +109,12 @@ ListBudget::~ListBudget()
 void ListBudget::new_budget()
 {
     EditBudget eb;
-    Budget_Data data;
+    Budget data;
 
     if (eb.exec() != QDialog::Accepted)
         return;
 
     data = eb.data();
-    insert_record(data);
-    emit change_data();
-}
-
-bool ListBudget::insert_record(Budget_Data &data)
-{
-    QSqlQuery q;
-
-    q.prepare("INSERT INTO budget_plan(mon,a_id,summ) VALUES(:mon,:acc,:summ)");
-    q.bindValue(":mon", data.mon);
-    q.bindValue(":acc", data.account);
-    q.bindValue(":summ", data.summ.toDouble());
-    if (!q.exec()) {
-        q.lastError();
-        return false;
-    }
-
-    return true;
+    if (data.insert())
+        emit change_data();
 }

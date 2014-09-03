@@ -20,13 +20,11 @@ EditBudget::~EditBudget()
     delete ui;
 }
 
-Budget_Data EditBudget::data()
+Budget EditBudget::data()
 {
-    Budget_Data d;
+    Budget d;
 
-    d.mon = ui->comboBox->currentIndex()+1;
-    d.account = ui->accountEdit->value();
-    d.summ = ui->summEdit->value();
+    d.set_Value(0, ui->comboBox->currentIndex()+1, ui->accountEdit->value(), ui->summEdit->value());
 
     return d;
 }

@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include <QFont>
+#include <QtSql>
 #include <widgets/mycurrency.h>
 
 extern QLocale *default_locale;
@@ -175,11 +176,68 @@ struct Currency_Data {
     double kurs;
 };
 
-struct Budget_Data {
+class Budget {
     int id;
     int mon;
     int account;
     MyCurrency summ;
+public:
+    Budget()
+    {
+        id = 0;
+        mon = 0;
+        account = 0;
+        summ = 0;
+    }
+    int Id() { return id; }
+    int Month() { return mon; }
+    int Account() { return account; }
+    MyCurrency Summ() { return summ; }
+    void set_Value(int i, int m, int a, double s)
+    {
+        id = i;
+        mon = m;
+        account = a;
+        summ = s;
+    }
+    bool read(int i)
+    {
+        QSqlQuery q;
+        if (i == 0)
+            return false;
+
+        q.prepare("SELECT mon,a_id,summ FROM budget_plan WHERE id=:id");
+        q.bindValue(":id", i);
+        if (!q.exec()) {
+            qDebug() << q.lastError();
+            return false;
+        }
+        if (q.next()) {
+            id = i;
+            mon = q.value(0).toInt();
+            account = q.value(1).toInt();
+            summ = q.value(2).toDouble();
+            return true;
+        }
+
+        return false;
+    }
+
+    bool insert()
+    {
+        QSqlQuery q;
+
+        q.prepare("INSERT INTO budget_plan(mon,a_id,summ) VALUES(:mon,:acc,:summ)");
+        q.bindValue(":mon", Month());
+        q.bindValue(":acc", Account());
+        q.bindValue(":summ", Summ().toDouble());
+        if (!q.exec()) {
+            qDebug() << q.lastError();
+            return false;
+        }
+
+        return true;
+    }
 };
 
 #endif

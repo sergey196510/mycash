@@ -15,7 +15,7 @@ class EditBudget : public QDialog
 public:
     explicit EditBudget(QWidget *parent = 0);
     ~EditBudget();
-    Budget_Data data();
+    Budget data();
 
 private:
     Ui::EditBudget *ui;
