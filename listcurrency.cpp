@@ -12,11 +12,10 @@ ListCurrencyModel::~ListCurrencyModel()
 {
 }
 
-QList<Currency_Data> ListCurrencyModel::read_list()
+QList<Currency> ListCurrencyModel::read_list()
 {
     QSqlQuery q;
-    QList<Currency_Data> list;
-    Currency_Data data;
+    QList<Currency> list;
 
     q.prepare("SELECT id, name, icod, scod, kurs FROM currency ORDER BY name");
     if (!q.exec()) {
@@ -24,11 +23,12 @@ QList<Currency_Data> ListCurrencyModel::read_list()
         return list;
     }
     while (q.next()) {
-        data.id = q.value(0).toInt();
-        data.name = q.value(1).toString();
-        data.icod = q.value(2).toInt();
-        data.scod = q.value(3).toString();
-        data.kurs = q.value(4).toDouble();
+        Currency data(q.value(0).toInt());
+//        data.id = q.value(0).toInt();
+//        data.name = q.value(1).toString();
+//        data.icod = q.value(2).toInt();
+//        data.scod = q.value(3).toString();
+//        data.kurs = q.value(4).toDouble();
         list.append(data);
     }
 
@@ -54,24 +54,24 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 0) {
-            Currency_Data data = list.at(index.row());
-            return data.id;
+            Currency data = list.at(index.row());
+            return data.Id();
         }
         if (index.column() == 1) {
-            Currency_Data data = list.at(index.row());
-            return data.name;
+            Currency data = list.at(index.row());
+            return data.Name();
         }
         if (index.column() == 2) {
-            Currency_Data data = list.at(index.row());
-            return data.icod;
+            Currency data = list.at(index.row());
+            return data.ICod();
         }
         if (index.column() == 3) {
-            Currency_Data data = list.at(index.row());
-            return data.scod;
+            Currency data = list.at(index.row());
+            return data.SCod();
         }
         else if (index.column() == 4) {
-            Currency_Data data = list.at(index.row());
-            return default_locale->toString(data.kurs);
+            Currency data = list.at(index.row());
+            return default_locale->toString(data.Kurs());
         }
         else
             return QVariant();
@@ -121,8 +121,14 @@ ListCurrency::ListCurrency(QWidget *parent) :
     if (var.database_Opened()) {
         model = new ListCurrencyModel;
         connect(this, SIGNAL(data_change()), model, SLOT(changed_data()));
-        ui->treeView->setModel(model);
-        ui->treeView->hideColumn(0);
+        ui->tableView->setModel(model);
+        ui->tableView->hideColumn(0);
+        ui->tableView->setAlternatingRowColors(true);
+        ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+        ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+        ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        ui->tableView->horizontalHeader()->setStretchLastSection(true);
     }
 
 //    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
@@ -134,8 +140,8 @@ ListCurrency::ListCurrency(QWidget *parent) :
     ui->delButton->setEnabled(false);
     ui->clearButton->setEnabled(false);
 
-    connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(check_select()));
-    connect(ui->treeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), SLOT(check_select()));
+    connect(ui->tableView, SIGNAL(clicked(QModelIndex)), SLOT(check_select()));
+    connect(ui->tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), SLOT(check_select()));
     connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(check_new_button(QString)));
     connect(ui->symbolEdit, SIGNAL(textChanged(QString)), SLOT(check_symbol(QString)));
 
@@ -180,7 +186,7 @@ int ListCurrency::get_selected_id()
 {
     QModelIndexList list;
 
-    list = ui->treeView->selectionModel()->selectedIndexes();
+    list = ui->tableView->selectionModel()->selectedIndexes();
     if (list.count() == 0) {
         return 0;
     }

@@ -168,12 +168,41 @@ public:
     void set_contact(QString s) { cont = s; }
 };
 
-struct Currency_Data {
+class Currency {
     int id;
     QString name;
     int icod;
     QString scod;
     double kurs;
+public:
+    Currency(int i = 0)
+    {
+        id = i;
+        name.clear();
+        icod = 0;
+        scod.clear();
+        kurs = 0;
+
+        if (id != 0) {
+            QSqlQuery q;
+            q.prepare("SELECT name, icod, scod, kurs FROM currency WHERE id=:id");
+            q.bindValue(":id", id);
+            if (!q.exec()) {
+                qDebug() << q.lastError();
+            }
+            if (q.next()) {
+                name = q.value(0).toString();
+                icod = q.value(1).toInt();
+                scod = q.value(2).toString();
+                kurs = q.value(3).toDouble();
+            }
+        }
+    }
+    int Id() { return id; }
+    QString Name() { return name; }
+    int ICod() { return icod; }
+    QString SCod() { return scod; }
+    double Kurs() { return kurs; }
 };
 
 #endif

@@ -17,10 +17,10 @@ class ListCurrencyModel : public QAbstractTableModel
 
 private:
     QStringList header_data;
-    QList<Currency_Data> list;
+    QList<Currency> list;
 
 private slots:
-    QList<Currency_Data> read_list();
+    QList<Currency> read_list();
 
 public:
     explicit ListCurrencyModel(QObject *parent = 0);
