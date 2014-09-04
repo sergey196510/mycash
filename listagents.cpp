@@ -91,18 +91,16 @@ ListAgents::ListAgents(QWidget *parent) :
 
     db = new Database;
 
-    ui->treeView->setModel(model);
-    ui->treeView->hideColumn(0);
-//    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-//    ui->treeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+    ui->tableView->setModel(model);
+    ui->tableView->hideColumn(0);
 
     ui->newButton->setEnabled(false);
     ui->editButton->setEnabled(false);
     ui->delButton->setEnabled(false);
     ui->clearButton->setEnabled(false);
 
-    connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(check_select_line()));
-    connect(ui->treeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), SLOT(check_select_line()));
+    connect(ui->tableView, SIGNAL(clicked(QModelIndex)), SLOT(check_select_line()));
+    connect(ui->tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), SLOT(check_select_line()));
     connect(ui->nameEdit, SIGNAL(textChanged(QString)), SLOT(check_new_button(QString)));
     connect(ui->newButton, SIGNAL(clicked()), SLOT(save_new_record()));
     connect(ui->editButton, SIGNAL(clicked()), SLOT(update_record()));
@@ -122,26 +120,12 @@ void ListAgents::check_new_button(QString str)
     ui->newButton->setEnabled(str.length());
 }
 
-int ListAgents::get_selected_id()
-{
-    QModelIndexList list;
-//    int id;
-
-    list = ui->treeView->selectionModel()->selectedIndexes();
-    if (list.count() == 0) {
-//        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
-        return 0;
-    }
-
-    return list.at(0).data((Qt::DisplayRole)).toInt();
-}
-
 void ListAgents::check_select_line()
 {
     QSqlQuery q;
     int id;
 
-    if ((id = get_selected_id()) == 0) {
+    if ((id = ui->tableView->get_selected_id()) == 0) {
 //        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return;
     }
@@ -183,7 +167,7 @@ void ListAgents::update_record()
     QSqlQuery q;
     int id;
 
-    if ((id = get_selected_id()) == 0) {
+    if ((id = ui->tableView->get_selected_id()) == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return;
     }
@@ -209,7 +193,7 @@ void ListAgents::del_record()
     QSqlQuery q;
     int id;
 
-    if ((id = get_selected_id()) == 0) {
+    if ((id = ui->tableView->get_selected_id()) == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return;
     }

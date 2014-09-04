@@ -71,12 +71,17 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="accountsView" name="listAccounts"/>
-     <widget class="QTableView" name="tableView"/>
+     <widget class="MyTableView" name="tableView"/>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>MyTableView</class>
+   <extends>QTableView</extends>
+   <header location="global">mytableview.h</header>
+  </customwidget>
   <customwidget>
    <class>MyDateEdit</class>
    <extends>QDateEdit</extends>

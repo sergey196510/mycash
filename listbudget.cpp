@@ -78,17 +78,9 @@ ListBudget::ListBudget(QWidget *parent) :
 
     model = new ListBudgetModel(db);
     connect(this, SIGNAL(change_data()), model, SLOT(update_list()));
-    ui.tableView->setModel(model);
 
+    ui.tableView->setModel(model);
     ui.tableView->hideColumn(0);
-    ui.tableView->setAlternatingRowColors(true);
-    ui.tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui.tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-//    ui.tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-//    ui.tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui.tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui.tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui.tableView->horizontalHeader()->setStretchLastSection(true);
 
     QAction *nb = new QAction(tr("New budget"), this);
     nb->setToolTip(tr("New budget"));
@@ -125,11 +117,7 @@ void ListBudget::new_budget()
 
 void ListBudget::update_budget()
 {
-    QModelIndexList lst = ui.tableView->selectionModel()->selectedIndexes();
-    int id = 0;
-
-    if (lst.size() > 0)
-        id = lst.at(0).data((Qt::DisplayRole)).toInt();
+    int id = ui.tableView->get_selected_id();
 
     Budget eb(id);
     if (eb.update())
@@ -138,11 +126,7 @@ void ListBudget::update_budget()
 
 void ListBudget::remove_budget()
 {
-    QModelIndexList lst = ui.tableView->selectionModel()->selectedIndexes();
-    int id = 0;
-
-    if (lst.size() > 0)
-        id = lst.at(0).data((Qt::DisplayRole)).toInt();
+    int id = ui.tableView->get_selected_id();
 
     Budget eb(id);
     if (eb.remove())

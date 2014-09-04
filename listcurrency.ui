@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <widget class="QTableView" name="tableView"/>
+    <widget class="MyTableView" name="tableView"/>
    </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -116,6 +116,11 @@
    <class>currencyEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">widgets/currencyedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyTableView</class>
+   <extends>QTableView</extends>
+   <header location="global">mytableview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -206,6 +206,9 @@ ListOperations::ListOperations(QWidget *parent) :
     model = new ListOperationsModel(0, fdate, ldate);
     connect(this, SIGNAL(call_reload_table(int, QDate, QDate)), model, SLOT(reload_data(int, QDate, QDate)));
 
+    ui->tableView->setModel(model);
+    ui->tableView->hideColumn(0);
+
     debt = new QAction(tr("Debet"), this);
     debt->setShortcut(tr("Ctrl+N"));
     debt->setToolTip(tr("Debet operation"));
@@ -235,17 +238,6 @@ ListOperations::ListOperations(QWidget *parent) :
     dele->setText(tr("Delete operation"));
     connect(dele, SIGNAL(triggered()), SLOT(del_operation()));
     acts.append(dele);
-
-    ui->tableView->setModel(model);
-    ui->tableView->hideColumn(0);
-    ui->tableView->setAlternatingRowColors(true);
-    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-//    for (int i = 1; i < 5; i++)
-//        ui->tableView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     ui->tableView->addActions(acts);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -314,24 +306,11 @@ void ListOperations::transfer_operation()
     edit_operation(d);
 }
 
-int ListOperations::get_selected_id()
-{
-    QModelIndexList list;
-
-    list = ui->tableView->selectionModel()->selectedIndexes();
-    if (list.count() == 0) {
-        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
-        return 0;
-    }
-
-    return list.at(0).data((Qt::DisplayRole)).toInt();
-}
-
 void ListOperations::del_operation()
 {
     QSqlQuery q;
     Operation_Data data;
-    int id = get_selected_id();
+    int id = ui->tableView->get_selected_id();
 
     if (id == 0)
         return;
@@ -355,7 +334,7 @@ void ListOperations::del_operation()
 void ListOperations::plann_operation()
 {
     EditOperation pd(2, this);
-    int id = get_selected_id();
+    int id = ui->tableView->get_selected_id();
 
     if (id == 0)
         return;

@@ -24,11 +24,6 @@ QList<Currency> ListCurrencyModel::read_list()
     }
     while (q.next()) {
         Currency data(q.value(0).toInt());
-//        data.id = q.value(0).toInt();
-//        data.name = q.value(1).toString();
-//        data.icod = q.value(2).toInt();
-//        data.scod = q.value(3).toString();
-//        data.kurs = q.value(4).toDouble();
         list.append(data);
     }
 
@@ -123,12 +118,6 @@ ListCurrency::ListCurrency(QWidget *parent) :
         connect(this, SIGNAL(data_change()), model, SLOT(changed_data()));
         ui->tableView->setModel(model);
         ui->tableView->hideColumn(0);
-        ui->tableView->setAlternatingRowColors(true);
-        ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-        ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-        ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-        ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-        ui->tableView->horizontalHeader()->setStretchLastSection(true);
     }
 
 //    ui->treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
@@ -182,24 +171,12 @@ void ListCurrency::new_currency()
     emit data_change();
 }
 
-int ListCurrency::get_selected_id()
-{
-    QModelIndexList list;
-
-    list = ui->tableView->selectionModel()->selectedIndexes();
-    if (list.count() == 0) {
-        return 0;
-    }
-
-    return list.at(0).data((Qt::DisplayRole)).toInt();
-}
-
 void ListCurrency::update_currency()
 {
     QSqlQuery q;
     int id;
 
-    if ((id = get_selected_id()) == 0) {
+    if ((id = ui->tableView->get_selected_id()) == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return;
     }
@@ -222,7 +199,7 @@ void ListCurrency::delete_currency()
     QSqlQuery q;
     int ccod;
 
-    if ((ccod = get_selected_id()) == 0) {
+    if ((ccod = ui->tableView->get_selected_id()) == 0) {
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return;
     }
@@ -261,7 +238,7 @@ void ListCurrency::check_select()
     QSqlQuery q;
     int id;
 
-    if ((id = get_selected_id()) == 0) {
+    if ((id = ui->tableView->get_selected_id()) == 0) {
 //        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return;
     }

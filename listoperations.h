@@ -90,7 +90,6 @@ private slots:
     void print_balance();
     void del_operation();
     void plann_operation();
-    int get_selected_id();
 };
 
 #endif // LISTOPERATIONS_H

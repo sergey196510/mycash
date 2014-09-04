@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <widget class="myTreeView" name="treeView"/>
+    <widget class="MyTableView" name="tableView"/>
    </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -133,13 +133,12 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>myTreeView</class>
-   <extends>QTreeView</extends>
-   <header location="global">mytreeview.h</header>
+   <class>MyTableView</class>
+   <extends>QTableView</extends>
+   <header location="global">mytableview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>treeView</tabstop>
   <tabstop>nameEdit</tabstop>
   <tabstop>cityEdit</tabstop>
   <tabstop>addrEdit</tabstop>

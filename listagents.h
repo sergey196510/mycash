@@ -47,7 +47,6 @@ private:
     QStringList header_data;
     ListAgentsModel *model;
     Database *db;
-    int get_selected_id();
     Globals var;
 
 private slots:
