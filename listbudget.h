@@ -2,6 +2,7 @@
 #define LISTBUDGET_H
 
 #include "ui_listbudget.h"
+#include <QModelIndex>
 #include "QtSql"
 #include "global.h"
 #include "database.h"
@@ -45,6 +46,8 @@ private:
 
 private slots:
     void new_budget();
+    void update_budget();
+    void remove_budget();
 
 signals:
     void change_data();

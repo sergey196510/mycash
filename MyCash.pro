@@ -52,7 +52,8 @@ SOURCES += \
     listbudget.cpp \
     transaction.cpp \
     editbudget.cpp \
-    accountgraph.cpp
+    accountgraph.cpp \
+    budget.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -92,7 +93,8 @@ HEADERS  += \
     listbudget.h \
     transaction.h \
     editbudget.h \
-    accountgraph.h
+    accountgraph.h \
+    budget.h
 
 FORMS    += \
     debetcreditreport.ui \

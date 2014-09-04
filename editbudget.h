@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "global.h"
+//#include "budget.h"
 
 namespace Ui {
 class EditBudget;
@@ -15,7 +16,13 @@ class EditBudget : public QDialog
 public:
     explicit EditBudget(QWidget *parent = 0);
     ~EditBudget();
-    Budget data();
+//    Budget data();
+    int Month();
+    int Account();
+    MyCurrency Summ();
+    void setMonth(int m);
+    void setAccount(int a);
+    void setSumm(MyCurrency s);
 
 private:
     Ui::EditBudget *ui;

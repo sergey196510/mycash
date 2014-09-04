@@ -91,10 +91,20 @@ ListBudget::ListBudget(QWidget *parent) :
     ui.tableView->horizontalHeader()->setStretchLastSection(true);
 
     QAction *nb = new QAction(tr("New budget"), this);
-    nb->setToolTip(tr("New budget line"));
+    nb->setToolTip(tr("New budget"));
     connect(nb, SIGNAL(triggered()), SLOT(new_budget()));
-
     acts.append(nb);
+
+    QAction *ub = new QAction(tr("Update budget"), this);
+    ub->setToolTip(tr("Update budget"));
+    connect(ub, SIGNAL(triggered()), SLOT(update_budget()));
+    acts.append(ub);
+
+    QAction *rb = new QAction(tr("Remove budget"), this);
+    rb->setToolTip(tr("Remove budget"));
+    connect(rb, SIGNAL(triggered()), SLOT(remove_budget()));
+    acts.append(rb);
+
     ui.tableView->addActions(acts);
 
     ui.tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -108,13 +118,33 @@ ListBudget::~ListBudget()
 
 void ListBudget::new_budget()
 {
-    EditBudget eb;
-    Budget data;
+    Budget eb;
+    if (eb.insert())
+        emit change_data();
+}
 
-    if (eb.exec() != QDialog::Accepted)
-        return;
+void ListBudget::update_budget()
+{
+    QModelIndexList lst = ui.tableView->selectionModel()->selectedIndexes();
+    int id = 0;
 
-    data = eb.data();
-    if (data.insert())
+    if (lst.size() > 0)
+        id = lst.at(0).data((Qt::DisplayRole)).toInt();
+
+    Budget eb(id);
+    if (eb.update())
+        emit change_data();
+}
+
+void ListBudget::remove_budget()
+{
+    QModelIndexList lst = ui.tableView->selectionModel()->selectedIndexes();
+    int id = 0;
+
+    if (lst.size() > 0)
+        id = lst.at(0).data((Qt::DisplayRole)).toInt();
+
+    Budget eb(id);
+    if (eb.remove())
         emit change_data();
 }
