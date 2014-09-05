@@ -16,7 +16,7 @@ class Budget
     MyCurrency summ;
 public:
     Budget(int i = 0);
-    int Id() { return id; }
+    int Id() const { return id; }
     int Month() { return mon; }
     int Account() { return account; }
     MyCurrency Summ() { return summ; }

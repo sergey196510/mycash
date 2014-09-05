@@ -25,6 +25,7 @@ public:
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
+    int get_ident(int row);
 
 public slots:
     void change_data();

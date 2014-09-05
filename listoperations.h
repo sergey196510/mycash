@@ -61,6 +61,7 @@ public:
     QAction *debt;
     QAction *cred;
     QAction *tran;
+    QAction *repe;
     QAction *plan;
     QAction *dele;
     QList<QAction*> acts;
@@ -87,6 +88,7 @@ private slots:
     void debet_operation();
     void credit_operation();
     void transfer_operation();
+    void repeat_operation();
     void print_balance();
     void del_operation();
     void plann_operation();

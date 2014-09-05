@@ -4,7 +4,7 @@ ListBudgetModel::ListBudgetModel(Database *d, QObject *parent) :
     QAbstractTableModel(parent)
 {
     db = d;
-    header_data << "" << tr("Month") << tr("Account") << tr("Summ") << tr("Description");
+    header_data << tr("Month") << tr("Account") << tr("Summ") << tr("Description");
     list = db->read_budget_list(0);
     accounts_list = db->get_accounts_list();
 }
@@ -40,19 +40,19 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::DisplayRole) {
+//        if (index.column() == 0) {
+//            Budget data = list.at(index.row());
+//            return data.Id();
+//        }
         if (index.column() == 0) {
-            Budget data = list.at(index.row());
-            return data.Id();
-        }
-        if (index.column() == 1) {
             Budget data = list.at(index.row());
             return QDate::shortMonthName(data.Month());
         }
-        if (index.column() == 2) {
+        if (index.column() == 1) {
             Budget data = list.at(index.row());
             return accounts_list[data.Account()];
         }
-        if (index.column() == 3) {
+        if (index.column() == 2) {
             Budget data = list.at(index.row());
             return data.Summ().toDouble();
         }
@@ -69,6 +69,11 @@ void ListBudgetModel::update_list()
     endResetModel();
 }
 
+int ListBudgetModel::get_id(int row)
+{
+    return list.at(row).Id();
+}
+
 ListBudget::ListBudget(QWidget *parent) :
     QWidget(parent)
 {
@@ -80,7 +85,7 @@ ListBudget::ListBudget(QWidget *parent) :
     connect(this, SIGNAL(change_data()), model, SLOT(update_list()));
 
     ui.tableView->setModel(model);
-    ui.tableView->hideColumn(0);
+//    ui.tableView->hideColumn(0);
 
     QAction *nb = new QAction(tr("New budget"), this);
     nb->setToolTip(tr("New budget"));
@@ -117,7 +122,7 @@ void ListBudget::new_budget()
 
 void ListBudget::update_budget()
 {
-    int id = ui.tableView->get_selected_id();
+    int id = get_selected_id();
 
     Budget eb(id);
     if (eb.update())
@@ -126,9 +131,14 @@ void ListBudget::update_budget()
 
 void ListBudget::remove_budget()
 {
-    int id = ui.tableView->get_selected_id();
+    int id = get_selected_id();
 
     Budget eb(id);
     if (eb.remove())
         emit change_data();
+}
+
+int ListBudget::get_selected_id()
+{
+    return model->get_id(ui.tableView->currentIndex().row());
 }

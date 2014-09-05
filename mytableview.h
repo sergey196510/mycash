@@ -10,7 +10,7 @@ class MyTableView : public QTableView
     Q_OBJECT
 public:
     explicit MyTableView(QWidget *parent = 0);
-    int get_selected_id();
+    virtual int get_selected_id();
 
 protected:
 

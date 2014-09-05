@@ -227,6 +227,12 @@ ListOperations::ListOperations(QWidget *parent) :
     connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
     acts.append(tran);
 
+    repe = new QAction(tr("Repeat"), this);
+    repe->setShortcut(tr("Ctrl+R"));
+    repe->setToolTip(tr("Repeat operation"));
+    connect(repe, SIGNAL(triggered()), SLOT(repeat_operation()));
+    acts.append(repe);
+
     plan = new QAction(tr("Planning operation"), this);
     plan->setShortcut(tr("Ctrl+P"));
     plan->setToolTip(tr("Planning operation"));
@@ -304,6 +310,20 @@ void ListOperations::transfer_operation()
     d.from.append(a);
 
     edit_operation(d);
+}
+
+void ListOperations::repeat_operation()
+{
+    Operation_Data oper;
+    EditOperation pd(1, this);
+    int id = ui->tableView->get_selected_id();
+
+    if (id == 0)
+        return;
+
+    oper = db->get_operation(id);
+    oper.date = QDate::currentDate();
+    edit_operation(oper);
 }
 
 void ListOperations::del_operation()

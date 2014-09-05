@@ -14,6 +14,7 @@ class ListBudgetModel : public QAbstractTableModel
 
 public:
     explicit ListBudgetModel(Database *db, QObject *parent = 0);
+    int get_id(int row);
 
 public slots:
     void update_list();
@@ -43,6 +44,7 @@ private:
     Database *db;
     Ui::ListBudget ui;
     ListBudgetModel *model;
+    int get_selected_id();
 
 private slots:
     void new_budget();

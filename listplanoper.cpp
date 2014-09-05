@@ -156,6 +156,11 @@ void ListPlanOperModel::change_data()
     endResetModel();
 }
 
+int ListPlanOperModel::get_ident(int row)
+{
+    return list.at(row).id;
+}
+
 ListPlanOper::ListPlanOper(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListPlanOper)
