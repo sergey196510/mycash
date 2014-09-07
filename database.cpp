@@ -352,6 +352,7 @@ int Database::new_operation(Operation_Data &data)
     query.prepare("INSERT INTO oper(dt, descr) VALUES(:dt, :descr)");
     query.bindValue(":dt", data.date);
     query.bindValue(":descr", data.descr);
+    qDebug() << query.executedQuery();
     if (!query.exec())
         return 0;
 

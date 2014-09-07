@@ -78,6 +78,7 @@ bool Budget::update()
     eb.setSumm(summ);
     if (eb.exec() != QDialog::Accepted)
         return false;
+    return true;
 }
 
 bool Budget::remove()
