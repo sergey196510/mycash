@@ -268,7 +268,7 @@
     </message>
     <message>
         <source>Rate</source>
-        <translation>Диапазон</translation>
+        <translation>Курс</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add new agent&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
