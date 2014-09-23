@@ -30,10 +30,12 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
 
     ui->treeView->setItemDelegate(new ViewCurrency(1));
     ui->treeView->setModel(model);
-    ui->treeView->expandAll();
+//    ui->treeView->expandAll();
 //    ui->treeView->hideColumn(4);
     ui->treeView->hideColumn(6);
-//    for (int i = 0; i < 5; i++)
+//    ui->treeView->header()->ResizeToContents;
+    for (int i = 0; i < 5; i++)
+        ui->treeView->resizeColumnToContents(i);
 //        ui->treeView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
 
     if (var.ListFont().length() > 0)
