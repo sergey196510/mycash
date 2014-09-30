@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -54,7 +54,8 @@ SOURCES += \
     editbudget.cpp \
     accountgraph.cpp \
     budget.cpp \
-    mytableview.cpp
+    mytableview.cpp \
+    downloader.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -96,7 +97,8 @@ HEADERS  += \
     editbudget.h \
     accountgraph.h \
     budget.h \
-    mytableview.h
+    mytableview.h \
+    downloader.h
 
 FORMS    += \
     debetcreditreport.ui \

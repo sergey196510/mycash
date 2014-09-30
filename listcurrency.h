@@ -6,6 +6,7 @@
 #include <QtSql>
 #include <QMessageBox>
 #include "global.h"
+#include "downloader.h"
 
 namespace Ui {
 class ListCurrency;
@@ -51,6 +52,7 @@ private:
     ListCurrencyModel *model;
     int get_selected_id();
     Globals var;
+    Downloader *ld;
 
 private slots:
     void check_new_button(QString);
@@ -60,6 +62,8 @@ private slots:
     void delete_currency();
     void clear_currency();
     void check_select();
+    void load();
+    void done_load(const QUrl &, const QByteArray &);
 
 signals:
     void data_change();

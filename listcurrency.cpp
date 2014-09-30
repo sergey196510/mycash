@@ -111,6 +111,9 @@ ListCurrency::ListCurrency(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ld = new Downloader(this);
+    connect(ld, &Downloader::done, this, &ListCurrency::done_load);
+
     ui->groupBox->setTitle(tr("Currency"));
 
     if (var.database_Opened()) {
@@ -136,6 +139,7 @@ ListCurrency::ListCurrency(QWidget *parent) :
 
     connect(ui->newButton, SIGNAL(clicked()), SLOT(new_currency()));
     connect(ui->editButton, SIGNAL(clicked()), SLOT(update_currency()));
+    connect(ui->loadButton, &QToolButton::clicked, this, &ListCurrency::load);
     connect(ui->delButton, SIGNAL(clicked()), SLOT(delete_currency()));
     connect(ui->clearButton, SIGNAL(clicked()), SLOT(clear_currency()));
 }
@@ -267,4 +271,20 @@ void ListCurrency::reload_model()
 void ListCurrency::clear_model()
 {
 //    model->clear();
+}
+
+void ListCurrency::load()
+{
+//    QString req = "http://www.micex.ru/issrpc/marketdata/stock/shares/daily/download/micex_stock_shares_2014_09_30.xml?collection_id=12&board_group_id=57&start=0&limit=10000&lang=ru";
+    QString req = "http://www.cbr.ru/scripts/XML_daily.asp";
+    ld->download(req);
+}
+
+void ListCurrency::done_load(const QUrl &url, const QByteArray &array)
+{
+    QString str1 = array;
+    QString str2 = str1.toUtf8();
+
+    ui->textBrowser->clear();
+    ui->textBrowser->append(array);
 }
