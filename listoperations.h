@@ -10,6 +10,7 @@
 #include "widgets/mydateedit.h"
 #include "listaccountsmodel.h"
 #include "accountsview.h"
+#include "editpayment.h"
 
 namespace Ui {
 class ListOperations;

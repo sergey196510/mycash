@@ -55,7 +55,8 @@ SOURCES += \
     accountgraph.cpp \
     budget.cpp \
     mytableview.cpp \
-    downloader.cpp
+    downloader.cpp \
+    editpayment.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -98,7 +99,8 @@ HEADERS  += \
     accountgraph.h \
     budget.h \
     mytableview.h \
-    downloader.h
+    downloader.h \
+    editpayment.h
 
 FORMS    += \
     debetcreditreport.ui \
@@ -118,7 +120,8 @@ FORMS    += \
     selectaccount.ui \
     settings.ui \
     listbudget.ui \
-    editbudget.ui
+    editbudget.ui \
+    editpayment.ui
 
 TRANSLATIONS += \
     mycash_ru.ts

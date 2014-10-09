@@ -266,8 +266,11 @@ ListOperations::~ListOperations()
 void ListOperations::edit_operation(Operation_Data &d)
 {
     EditOperation eo(1, this);
+    EditPayment ep;
     QModelIndex idx = ui->tableView->currentIndex();
     Operation_Data data;
+
+    ep.exec();
 
     eo.setdata(d);
     if (eo.exec() == QDialog::Accepted) {
