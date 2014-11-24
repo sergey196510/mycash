@@ -11,6 +11,11 @@ accountsView::accountsView(QWidget *parent) :
 //    setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
+accountsView::~accountsView()
+{
+    delete model;
+}
+
 int accountsView::value()
 {
     QModelIndexList list;

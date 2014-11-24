@@ -25,9 +25,18 @@ Settings::Settings(QWidget *parent) :
     ui->cancelButton->setText(tr("Cancel Alt+Q"));
     ui->cancelButton->setShortcut(tr("Alt+Q"));
 
+    ui->checkBox->setChecked(var.ProxyEnable());
+    ui->serverEdit->setText(var.ProxyServer());
+    ui->portEdit->setText(tr("%1").arg(var.ProxyPort()));
+    ui->userEdit->setText(var.ProxyUser());
+    ui->passwordEdit->setText(var.ProxyPassword());
+
+    proxy_click();
+
 //    connect(ui->correctButton, SIGNAL(clicked()), SLOT(correct_account()));
 //    connect(ui->initialButton, SIGNAL(clicked()), SLOT(initial_account()));
     connect(ui->acceptButton, SIGNAL(clicked()), SLOT(accept_values()));
+    connect(ui->checkBox, SIGNAL(clicked()), SLOT(proxy_click()));
 }
 
 Settings::~Settings()
@@ -44,6 +53,12 @@ void Settings::accept_values()
     var.setCorrectAccount(ui->correctWidget->value());
     var.setInitialAccount(ui->initialWidget->value());
     var.setPrecision(ui->precisionBox->value());
+
+    var.setProxyEnable(ui->checkBox->isChecked());
+    var.setProxyServer(ui->serverEdit->text());
+    var.setProxyPort(ui->portEdit->text().toInt());
+    var.setProxyUser(ui->userEdit->text());
+    var.setProxyPassword(ui->passwordEdit->text());
 }
 
 void Settings::check_down()
@@ -52,30 +67,14 @@ void Settings::check_down()
     isdown = !isdown;
 }
 
-/*
-void Settings::correct_account()
+void Settings::proxy_click()
 {
-//    SelectAccount *selacc = new SelectAccount(ui->correctLine);
-
-    selacc->setWindowTitle(tr("Correct Account"));
-    selacc->setValue(var.CorrectAccount());
-    if (selacc->exec() == QDialog::Accepted) {
-        Account_Data data = db->get_account_data(selacc->value());
-//        ui->correctLine->setText(data.name);
-        var.setCorrectAccount(selacc->value());
-    }
+    ui->label_5->setEnabled(ui->checkBox->isChecked());
+    ui->label_6->setEnabled(ui->checkBox->isChecked());
+    ui->label_7->setEnabled(ui->checkBox->isChecked());
+    ui->label_8->setEnabled(ui->checkBox->isChecked());
+    ui->serverEdit->setEnabled(ui->checkBox->isChecked());
+    ui->portEdit->setEnabled(ui->checkBox->isChecked());
+    ui->userEdit->setEnabled(ui->checkBox->isChecked());
+    ui->passwordEdit->setEnabled(ui->checkBox->isChecked());
 }
-
-void Settings::initial_account()
-{
-    SelectAccount *iniacc = new SelectAccount(ui->initialLine);
-
-    iniacc->setWindowTitle(tr("Initial Account"));
-    iniacc->setValue(var.InitialAccount());
-    if (iniacc->exec() == QDialog::Accepted) {
-        Account_Data data = db->get_account_data(iniacc->value());
-        ui->initialLine->setText(data.name);
-        var.setInitialAccount(iniacc->value());
-    }
-}
-*/

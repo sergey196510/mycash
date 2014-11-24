@@ -7,6 +7,11 @@ summAccount::summAccount(int type)
     value = db->get_account_summ(type);
 }
 
+summAccount::~summAccount()
+{
+    delete db;
+}
+
 QString summAccount::text()
 {
 //    return QString("%1").arg(value);

@@ -4,7 +4,9 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QNetworkProxy>
 #include <QUrl>
+#include "global.h"
 
 class Downloader : public QObject
 {
@@ -12,6 +14,7 @@ class Downloader : public QObject
 
 private:
     QNetworkAccessManager *m_pnam;
+    QNetworkProxy proxy;
 
 public:
     Downloader(QObject *pobj = 0);
@@ -25,6 +28,7 @@ signals:
 
 private slots:
     void slotFinished(QNetworkReply *);
+    void proxyAuth(QNetworkProxy,QAuthenticator*);
 };
 
 #endif // DOWNLOADER_H

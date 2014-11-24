@@ -177,29 +177,36 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(0);
 
+    // новая плановая операция
     tran = new QAction(tr("New plan operation"), this);
     acts.append(tran);
     connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
 
+    // выполнение плановой операции
     comm = new QAction(tr("Commit this operation"), this);
     acts.append(comm);
     comm->setEnabled(false);
     connect(comm, SIGNAL(triggered()), SLOT(commit_oper()));
 
+    // редактирование плановой операции
     upd = new QAction(tr("Update this operation"), this);
     acts.append(upd);
     upd->setEnabled(false);
     connect(upd, SIGNAL(triggered()), SLOT(update_oper()));
 
+    // удаление плановой операции
     delo = new QAction(tr("Delete selected operation"), this);
     delo->setEnabled(false);
     acts.append(delo);
     connect(delo, SIGNAL(triggered()), SLOT(del_oper()));
 
+    // отметить плановую операцию как выполненную без фактического исполнения
     can = new QAction(tr("Cancel selected operation"), this);
     can->setEnabled(false);
     acts.append(can);
     connect(can, SIGNAL(triggered()), SLOT(cancel_oper()));
+
+    // отмена выполненной плановой операции
 
     ui->tableView->addActions(acts);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -217,6 +224,7 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
 ListPlanOper::~ListPlanOper()
 {
     delete ui;
+    delete model;
     delete db;
 }
 

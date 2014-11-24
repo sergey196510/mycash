@@ -29,6 +29,7 @@ private:
 private slots:
     void accept_values();
     void check_down();
+    void proxy_click();
 //    void correct_account();
 //    void initial_account();
 };

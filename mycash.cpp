@@ -134,6 +134,11 @@ void MyCash::readsettings()
     var.setCorrectAccount(settings.value("correct_account").toInt());
     var.setInitialAccount(settings.value("initial_account").toInt());
     var.setPrecision(settings.value("precision", 2).toInt());
+    var.setProxyEnable(settings.value("proxy_enable", 0).toInt());
+    var.setProxyServer(settings.value("proxy_server", "").toString());
+    var.setProxyPort(settings.value("proxy_port", 0).toInt());
+    var.setProxyUser(settings.value("proxy_user", "").toString());
+    var.setProxyPassword(settings.value("proxy_password", "").toString());
 //    var.setListFont(settings.value("list_font").toString());
 //    fnt = settings.value("operations_font");
 //    var.setSymbol(db->scod_list[var.Currency()]);
@@ -149,6 +154,11 @@ void MyCash::writesettings()
     settings.setValue("correct_account", var.CorrectAccount());
     settings.setValue("initial_account", var.InitialAccount());
     settings.setValue("precision", var.Precision());
+    settings.setValue("proxy_enable", var.ProxyEnable());
+    settings.setValue("proxy_server", var.ProxyServer());
+    settings.setValue("proxy_port", var.ProxyPort());
+    settings.setValue("proxy_user", var.ProxyUser());
+    settings.setValue("proxy_password", var.ProxyPassword());
 //    settings.setValue("list_font", var.ListFont());
 //    settings.setValue("operations_font", fnt);
 }

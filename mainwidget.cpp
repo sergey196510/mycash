@@ -15,6 +15,7 @@ MainWidgetModel::MainWidgetModel(Database *d, QObject *parent) :
 MainWidgetModel::~MainWidgetModel()
 {
 //    delete db;
+    delete var;
 }
 
 QVariant MainWidgetModel::headerData(int section,Qt::Orientation orientation, int role) const

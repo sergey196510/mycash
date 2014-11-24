@@ -11,6 +11,7 @@ class AccountOper2 : public QLineEdit
     Q_OBJECT
 public:
     explicit AccountOper2(QWidget *parent = 0);
+    ~AccountOper2();
     void setValue(int);
     int value() { return val; }
 

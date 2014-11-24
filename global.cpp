@@ -35,3 +35,9 @@ QString Globals::symbol = "";
 QString Globals::list_font = "";
 QString Globals::version = "0.1";
 bool Globals::database_opened = false;
+
+int Globals::proxy_enable = 0;
+QString Globals::proxy_server = "";
+int Globals::proxy_port = 0;
+QString Globals::proxy_user = "";
+QString Globals::proxy_password = "";

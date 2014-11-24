@@ -41,6 +41,11 @@ class Globals {
     static QString version;
     static bool database_opened;
     static Font font;
+    static int proxy_enable;
+    static QString proxy_server;
+    static int proxy_port;
+    static QString proxy_user;
+    static QString proxy_password;
 public:
     int Account() { return account; }
     void setAccount(int i) { account = i; }
@@ -60,6 +65,16 @@ public:
     void setListFont(QString s) { list_font = s; }
     QString Version() { return version; }
     void setVersion(QString v) { version = v; }
+    int ProxyEnable() { return proxy_enable; }
+    void setProxyEnable(int i) { proxy_enable = i;}
+    QString ProxyServer() { return proxy_server; }
+    int ProxyPort() { return proxy_port; }
+    QString ProxyUser() { return proxy_user; }
+    QString ProxyPassword() { return proxy_password; }
+    void setProxyServer(QString i) { proxy_server=i; }
+    void setProxyPort(int i) { proxy_port=i; }
+    void setProxyUser(QString i) { proxy_user=i; }
+    void setProxyPassword(QString i) { proxy_password=i; }
     bool database_Opened() { return database_opened; }
     void database_Open() { database_opened = true; }
     void database_Close() { database_opened = false; }
@@ -174,6 +189,7 @@ class Currency {
     int icod;
     QString scod;
     double kurs;
+    int nominal;
 public:
     Currency(int i = 0)
     {
@@ -182,10 +198,11 @@ public:
         icod = 0;
         scod.clear();
         kurs = 0;
+        nominal = 1;
 
         if (id != 0) {
             QSqlQuery q;
-            q.prepare("SELECT name, icod, scod, kurs FROM currency WHERE id=:id");
+            q.prepare("SELECT name,icod,scod,kurs,nominal FROM currency WHERE id=:id");
             q.bindValue(":id", id);
             if (!q.exec()) {
                 qDebug() << q.lastError();
@@ -195,14 +212,40 @@ public:
                 icod = q.value(1).toInt();
                 scod = q.value(2).toString();
                 kurs = q.value(3).toDouble();
+                nominal = q.value(4).toInt();
             }
         }
     }
-    int Id() { return id; }
-    QString Name() { return name; }
-    int ICod() { return icod; }
-    QString SCod() { return scod; }
-    double Kurs() { return kurs; }
+    bool load(QString scod) {
+        QSqlQuery q;
+        q.prepare("SELECT name,icod,id,kurs,nominal FROM currency WHERE scod=:scod");
+        q.bindValue(":scod", scod);
+        if (!q.exec()) {
+            qDebug() << q.lastError();
+            return false;
+        }
+        if (q.next()) {
+            name = q.value(0).toString();
+            icod = q.value(1).toInt();
+            id = q.value(2).toInt();
+            kurs = q.value(3).toDouble();
+            nominal = q.value(4).toInt();
+            return true;
+        }
+        return false;
+    }
+
+    int Id()                { return id;      }
+    QString Name()          { return name;    }
+    int ICod()              { return icod;    }
+    QString SCod()          { return scod;    }
+    double Kurs()           { return kurs;    }
+    int Nominal()           { return nominal; }
+    void setICod(int i)     { icod = i;       }
+    void setSCod(QString i) { scod = i;       }
+    void setName(QString i) { name = i;       }
+    void setNominal(int i)  { nominal = i;    }
+    void setKurs(double i)  { kurs = i;       }
 };
 
 #endif

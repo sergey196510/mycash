@@ -51,6 +51,8 @@ void AccountOper::select_account()
         ui->name->setText(data.name);
         emit changed_value();
     }
+
+    delete acc;
 }
 
 int AccountOper::value()

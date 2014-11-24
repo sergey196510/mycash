@@ -14,6 +14,7 @@ private:
 public:
     summAccount() { value = 0; }
     summAccount(int);
+    ~summAccount();
     QString text();
     MyCurrency Value();
 };

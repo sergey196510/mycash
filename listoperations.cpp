@@ -8,6 +8,7 @@ ListOperationsModel::ListOperationsModel(int account, QDate fdate, QDate ldate, 
     header_data << "" << tr("Date") << tr("Account") << tr("Debet") << tr("Credit") << tr("Description");
     list = read_list(account, fdate, ldate);
     accounts_list = db->get_accounts_list();
+    var = new Globals;
 }
 
 ListOperationsModel::~ListOperationsModel()
@@ -259,7 +260,16 @@ ListOperations::ListOperations(QWidget *parent) :
 
 ListOperations::~ListOperations()
 {
+    acts.clear();
+    delete dele;
+    delete plan;
+    delete repe;
+    delete tran;
+    delete cred;
+    delete debt;
+
     delete ui;
+    delete model;
     delete db;
 }
 

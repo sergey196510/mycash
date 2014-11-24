@@ -5,8 +5,10 @@
 #include <QWidget>
 #include <QtSql>
 #include <QMessageBox>
+#include <QtXml/QtXml>
 #include "global.h"
 #include "downloader.h"
+#include "transaction.h"
 
 namespace Ui {
 class ListCurrency;
@@ -48,11 +50,16 @@ public slots:
     void clear_model();
 
 private:
+    QList<Currency> list;
+    bool item_flag;
+    Currency item;
     Ui::ListCurrency *ui;
     ListCurrencyModel *model;
     int get_selected_id();
     Globals var;
     Downloader *ld;
+    void traverseNode(const QDomNode &);
+    bool update_database();
 
 private slots:
     void check_new_button(QString);
@@ -64,6 +71,7 @@ private slots:
     void check_select();
     void load();
     void done_load(const QUrl &, const QByteArray &);
+    void eror_load();
 
 signals:
     void data_change();

@@ -236,6 +236,7 @@ ListSeparateOper::ListSeparateOper(QWidget *parent) :
 ListSeparateOper::~ListSeparateOper()
 {
     delete ui;
+    delete model;
 }
 
 QList<account_summ> ListSeparateOper::data()

@@ -15,6 +15,7 @@ private:
 
 public:
     explicit accountsView(QWidget *parent = 0);
+    ~accountsView();
     int value();
     void setValue(int);
     void reload();

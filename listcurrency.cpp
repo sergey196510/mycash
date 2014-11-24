@@ -4,12 +4,13 @@
 ListCurrencyModel::ListCurrencyModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
-    header_data << tr("") << tr("Name") << tr("Icod") << tr("Scod") << tr("Kurs");
+    header_data << tr("") << tr("Name") << tr("Icod") << tr("Scod") << tr("Nominal") << tr("Kurs");
     list = read_list();
 }
 
 ListCurrencyModel::~ListCurrencyModel()
 {
+    list.clear();
 }
 
 QList<Currency> ListCurrencyModel::read_list()
@@ -17,7 +18,7 @@ QList<Currency> ListCurrencyModel::read_list()
     QSqlQuery q;
     QList<Currency> list;
 
-    q.prepare("SELECT id, name, icod, scod, kurs FROM currency ORDER BY name");
+    q.prepare("SELECT id FROM currency ORDER BY name");
     if (!q.exec()) {
         qDebug() << q.lastError();
         return list;
@@ -64,7 +65,11 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
             Currency data = list.at(index.row());
             return data.SCod();
         }
-        else if (index.column() == 4) {
+        if (index.column() == 4) {
+            Currency data = list.at(index.row());
+            return data.Nominal();
+        }
+        if (index.column() == 5) {
             Currency data = list.at(index.row());
             return default_locale->toString(data.Kurs());
         }
@@ -72,7 +77,7 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
             return QVariant();
 
         case Qt::TextAlignmentRole:
-            if (index.column() == 4)
+            if (index.column() == 2 || index.column() == 4 || index.column() == 5)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
     case Qt::TextColorRole:
@@ -112,12 +117,16 @@ ListCurrency::ListCurrency(QWidget *parent) :
     ui->setupUi(this);
 
     ld = new Downloader(this);
-    connect(ld, &Downloader::done, this, &ListCurrency::done_load);
+    connect(ld, SIGNAL(done(QUrl,QByteArray)), SLOT(done_load(QUrl,QByteArray)));
+//    connect(ld, &Downloader::done, this, &ListCurrency::done_load);
+    connect(ld, &Downloader::error, this, &ListCurrency::eror_load);
+
+    dumpObjectInfo();
 
     ui->groupBox->setTitle(tr("Currency"));
 
     if (var.database_Opened()) {
-        model = new ListCurrencyModel;
+        model = new ListCurrencyModel(this);
         connect(this, SIGNAL(data_change()), model, SLOT(changed_data()));
         ui->tableView->setModel(model);
         ui->tableView->hideColumn(0);
@@ -146,6 +155,7 @@ ListCurrency::ListCurrency(QWidget *parent) :
 
 ListCurrency::~ListCurrency()
 {
+    delete ld;
     delete model;
     delete ui;
 }
@@ -166,9 +176,11 @@ void ListCurrency::new_currency()
 {
     QSqlQuery q;
 
-    q.prepare("INSERT INTO currency(name, scod, kurs) VALUES(:name, :scod, :kurs)");
+    q.prepare("INSERT INTO currency(name, icod, scod, nominal, kurs) VALUES(:name, :icod, :scod, :nominal, :kurs)");
     q.bindValue(":name", ui->nameEdit->text());
+    q.bindValue(":icod", ui->numberEdit->text().toInt());
     q.bindValue(":scod", ui->symbolEdit->text());
+    q.bindValue(":nominal", ui->nominalEdit->text().toInt());
     q.bindValue(":kurs", ui->kursEdit->value());
     q.exec();
 
@@ -185,9 +197,11 @@ void ListCurrency::update_currency()
         return;
     }
 
-    q.prepare("UPDATE currency SET name = :name, scod = :scod, kurs = :kurs WHERE id = :id");
+    q.prepare("UPDATE currency SET name = :name, icod = :icod, scod = :scod, nominal = :nominal, kurs = :kurs WHERE id = :id");
     q.bindValue(":name", ui->nameEdit->text());
+    q.bindValue(":icod", ui->numberEdit->text().toInt());
     q.bindValue(":scod", ui->symbolEdit->text());
+    q.bindValue(":nominal", ui->nominalEdit->text().toInt());
     q.bindValue(":kurs", ui->kursEdit->value());
     q.bindValue(":id", id);
     if (!q.exec()) {
@@ -233,7 +247,9 @@ void ListCurrency::delete_currency()
 void ListCurrency::clear_currency()
 {
     ui->nameEdit->clear();
+    ui->numberEdit->clear();
     ui->symbolEdit->clear();
+    ui->nominalEdit->clear();
     ui->kursEdit->clear();
 }
 
@@ -247,16 +263,17 @@ void ListCurrency::check_select()
         return;
     }
 
-
-    q.prepare("SELECT name, scod, kurs FROM currency WHERE id = :id");
+    q.prepare("SELECT name, icod, scod, nominal, kurs FROM currency WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec() || !q.next()) {
         qDebug() << q.lastError();
         return;
     }
     ui->nameEdit->setText(q.value(0).toString());
-    ui->symbolEdit->setText(q.value(1).toString());
-    ui->kursEdit->setValue(q.value(2).toDouble());
+    ui->numberEdit->setText(q.value(1).toString());
+    ui->symbolEdit->setText(q.value(2).toString());
+    ui->nominalEdit->setText(q.value(3).toString());
+    ui->kursEdit->setValue(q.value(4).toDouble());
 
     ui->editButton->setEnabled(true);
     ui->delButton->setEnabled(true);
@@ -278,13 +295,87 @@ void ListCurrency::load()
 //    QString req = "http://www.micex.ru/issrpc/marketdata/stock/shares/daily/download/micex_stock_shares_2014_09_30.xml?collection_id=12&board_group_id=57&start=0&limit=10000&lang=ru";
     QString req = "http://www.cbr.ru/scripts/XML_daily.asp";
     ld->download(req);
+//    qDebug() << "load";
 }
 
 void ListCurrency::done_load(const QUrl &url, const QByteArray &array)
 {
+    QDomDocument domDoc;
     QString str1 = array;
     QString str2 = str1.toUtf8();
 
     ui->textBrowser->clear();
     ui->textBrowser->append(array);
+
+    item_flag = false;
+    list.clear();
+    if (domDoc.setContent(array)) {
+        QDomElement domElement = domDoc.documentElement();
+        traverseNode(domElement);
+        if (item_flag)
+            list.append(item);
+        update_database();
+    }
+}
+
+void ListCurrency::traverseNode(const QDomNode &node)
+{
+    QDomNode domNode = node.firstChild();
+
+    while (!domNode.isNull()) {
+        if (domNode.isElement()) {
+            QDomElement domElement = domNode.toElement();
+            if (!domElement.isNull()) {
+                if (domElement.tagName() != "Valute") {
+                    qDebug() << domElement.tagName() << ":\t" << domElement.text();
+                    if (domElement.tagName() == "NumCode")
+                        item.setICod(domElement.text().toInt());
+                    if (domElement.tagName() == "CharCode")
+                        item.setSCod(domElement.text());
+                    if (domElement.tagName() == "Nominal")
+                        item.setNominal(domElement.text().toInt());
+                    if (domElement.tagName() == "Name")
+                        item.setName(domElement.text());
+                    if (domElement.tagName() == "Value") {
+//                        qDebug() << domElement.text() << default_locale->toDouble(domElement.text());
+                        item.setKurs(default_locale->toDouble(domElement.text()));
+                    }
+                    item_flag = true;
+                }
+                else {
+//                    qDebug() << "--------------";
+                    if (item_flag) {
+//                        qDebug() << item.ICod() << item.SCod() << item.Name() << item.Nominal() << item.Kurs();
+                        list.append(item);
+                        item_flag = false;
+                    }
+                }
+            }
+        }
+        traverseNode(domNode);
+        domNode = domNode.nextSibling();
+    }
+}
+
+bool ListCurrency::update_database()
+{
+    Currency data;
+    QList<Currency>::iterator i;
+    Transaction tr;
+
+    tr.begin();
+
+    for (i = list.begin(); i != list.end(); i++) {
+        data = *i;
+        qDebug() << data.ICod() << data.SCod() << data.Name() << data.Nominal() << data.Kurs();
+    }
+
+    tr.commit();
+    emit data_change();
+    return true;
+}
+
+void ListCurrency::eror_load()
+{
+//    qDebug() << "Error load";
 }

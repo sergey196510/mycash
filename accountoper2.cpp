@@ -12,6 +12,11 @@ AccountOper2::AccountOper2(QWidget *parent) :
 //    connect(this, SIGNAL(textChanged()), SLOT(select_account()));
 }
 
+AccountOper2::~AccountOper2()
+{
+    delete db;
+}
+
 void AccountOper2::select_account()
 {
     SelectAccount *acc = new SelectAccount(this);
