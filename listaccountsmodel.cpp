@@ -37,7 +37,7 @@ MyCurrency ListAccountsModel::get_reserv(int id)
 
     for (i = plan_list.begin(); i != plan_list.end(); i++) {
         oper = *i;
-        if (oper.from.at(0).account() == id) {
+        if (oper.from.at(0).account().Id() == id) {
             as = oper.from.at(0);
             summ += as.balance();
         }

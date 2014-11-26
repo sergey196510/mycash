@@ -385,7 +385,7 @@ bool Database::new_account_oper(QString table, const int o_id, account_summ &acc
     qDebug() << acc.balance().toDouble();
     str = QString("INSERT INTO %1(a_id, o_id, summ, direction, agent) VALUES(%2, %3, %4, %5, %6)")
             .arg(table)
-            .arg(acc.account())
+            .arg(acc.account().Id())
             .arg(o_id)
             .arg(acc.balance().toDouble())
             .arg(direction)
@@ -424,9 +424,9 @@ bool Database::del_operation(int id)
     list = get_account_oper_list(id,Direction::from);
     for (i = list.begin(); i != list.end(); i++) {
         account_summ acc;
-        acc.set_account(i.key());
         Account data;
         data.read(i.key());
+        acc.set_account(data);
         acc.set_balance((data.Top() == Account_Type::passive ||
                         data.Top() == Account_Type::debet ||
                         data.Top() == Account_Type::initial) ?
@@ -441,7 +441,9 @@ bool Database::del_operation(int id)
     list = get_account_oper_list(id,Direction::to);
     for (i = list.begin(); i != list.end(); i++) {
         account_summ acc;
-        acc.set_account(i.key());
+        Account data;
+        data.read(i.key());
+        acc.set_account(data);
         acc.set_balance(-i.value());
         if (change_account_balance(acc) == false) {
             tr.rollback();
@@ -483,7 +485,7 @@ bool Database::change_account_balance(account_summ &acc)
     summ = acc.balance() * flag;
 
     query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
-    query.bindValue(":id", acc.account());
+    query.bindValue(":id", acc.account().Id());
     query.bindValue(":summ", summ.toDouble());
     if (!query.exec()) {
         return false;
@@ -509,7 +511,7 @@ bool Database::save_operation(Operation_Data &oper)
     for (i = oper.from.begin(); i != oper.from.end(); i++) {
         account_summ d = *i;
         Account data;
-        data.read(d.account());
+        data.read(d.account().Id());
         if (data.Top() == Account_Type::debet && oper.agent)
             data.setAgent(oper.agent);
         if (new_account_oper("account_oper", oper_id, d, Direction::from, data.Agent()) == false) {
@@ -531,7 +533,7 @@ bool Database::save_operation(Operation_Data &oper)
     for (i = oper.to.begin(); i != oper.to.end(); i++) {
         account_summ d = *i;
         Account data;
-        data.read(d.account());
+        data.read(d.account().Id());
         if (data.Top() == Account_Type::credit && oper.agent)
             data.setAgent(oper.agent);
         if (new_account_oper("account_oper", oper_id, d, Direction::to, data.Agent()) == false) {
@@ -570,7 +572,7 @@ bool Database::add_budget(account_summ &d)
 
     for (i = list.begin(); i != list.end(); i++) {
         Budget data = *i;
-        if (find_budget_id(data.Account(), d.account())) {
+        if (find_budget_id(data.Account(), d.account().Id())) {
             int id = data.Id();
             qDebug() << id;
         }
@@ -621,7 +623,9 @@ Operation_Data Database::get_operation(int id)
     list = get_account_oper_list(q.value(0).toInt(), Direction::from);
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
-        d.set_account(i.key());
+        Account acc;
+        acc.read(i.key());
+        d.set_account(acc);
         d.set_balance(i.value());
         data.from.append(d);
     }
@@ -629,7 +633,9 @@ Operation_Data Database::get_operation(int id)
     list = get_account_oper_list(q.value(0).toInt(), Direction::to);
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
-        d.set_account(i.key());
+        Account acc;
+        acc.read(i.key());
+        d.set_account(acc);
         d.set_balance(i.value());
         data.to.append(d);
     }
@@ -859,7 +865,7 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
             Account acc;
             acc.read(i.key());
             account_summ d;
-            d.set_account(i.key());
+            d.set_account(acc);
             d.set_balance(i.value());
             data.from.append(d);
             if (acc.Top() == Account_Type::active) {
@@ -873,7 +879,7 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
             Account acc;
             acc.read(i.key());
             account_summ d;
-            d.set_account(i.key());
+            d.set_account(acc);
             d.set_balance(i.value());
             data.to.append(d);
             if (acc.Top() == Account_Type::credit)

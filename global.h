@@ -89,22 +89,8 @@ public:
     static const int cancelled;
 };
 
-class account_summ {
-    int acc;
-    MyCurrency s;
-public:
-    account_summ() {
-        acc = 0;
-        s = 0;
-    };
-    int account() const { return acc; }
-//    double balance() const { return s; }
-    MyCurrency balance() const { return s; }
-    void set_account(int val) { acc = val; }
-    void set_balance(double val) { s = val; }
-};
-
 class Account {
+    int id;
     QString name;
     int type;
     int curr;
@@ -118,6 +104,7 @@ class Account {
     QDate dt;
 public:
     Account() {
+        id = 0;
         name.clear();
         type = 0;
         curr = 0;
@@ -191,6 +178,7 @@ public:
     void setHidden(bool h) { hidden = h; }
     void setDate(QDate d) { dt = d; }
     void setTop(int t) { top = t; }
+    int Id() { return id; }
     int Agent() { return agent; }
     int Top() { return top; }
     MyCurrency Balance() { return balance; }
@@ -202,6 +190,21 @@ public:
     bool Hidden() { return hidden; }
     QDate Date() { return dt; }
     int System() { return system; }
+};
+
+class account_summ {
+    Account acc;
+    MyCurrency s;
+public:
+    account_summ() {
+//        acc = 0;
+//        s = 0;
+    };
+    Account account() const { return acc; }
+//    double balance() const { return s; }
+    MyCurrency balance() const { return s; }
+    void set_account(Account val) { acc = val; }
+    void set_balance(MyCurrency val) { s = val; }
 };
 
 struct Operation_Data {
