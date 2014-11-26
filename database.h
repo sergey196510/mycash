@@ -19,7 +19,7 @@ public:
     double get_account_summ(int);
     double get_operation_summ(int);
 //    Account get_account(int);
-    int get_account_curr(int);
+//    int get_account_curr(int);
 //    QString get_agent_name(int);
 //    QString get_currency_scod(int);
     QMap<int,QString> get_accounts_list();

@@ -132,6 +132,7 @@ QMap<QString,double> Database::get_opersummbyaccount_list(int top, int m1, int y
     return list;
 }
 
+/*
 int Database::get_account_curr(int id)
 {
     QSqlQuery query;
@@ -144,6 +145,7 @@ int Database::get_account_curr(int id)
         return query.value(0).toInt();
     return 0;
 }
+*/
 
 QString Database::get_parent_account(int id)
 {

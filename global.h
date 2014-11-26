@@ -262,7 +262,7 @@ public:
             return q.value(0).toInt();
         return 0;
     }
-    bool read(int id) {
+    bool read(int) {
         return true;
     }
 

@@ -7,7 +7,8 @@ EditOperation::EditOperation(int type, QWidget *parent) :
     ui(new Ui::EditOperation)
 {
     ui->setupUi(this);
-    int ccod;
+//    int ccod;
+    Account acc;
     QString from, to, to2;
 
     if (type == 1) {
@@ -42,10 +43,10 @@ EditOperation::EditOperation(int type, QWidget *parent) :
 
 //    list = db->get_currency_list();
 
-    ccod = db->get_account_curr(ui->fromWidget->value());
-    from = Currency(ccod).SCod();
-    ccod = db->get_account_curr(ui->toWidget->value());
-    to = Currency(ccod).SCod();
+    acc.read(ui->fromWidget->value());
+    from = Currency(acc.Curr()).SCod();
+    acc.read(ui->toWidget->value());
+    to = Currency(acc.Curr()).SCod();
 //    to2 = db->get_account_scod(ui->to2Widget->value());
 
     ui->from_cod->setText(from);
@@ -80,7 +81,7 @@ EditOperation::~EditOperation()
 
 void EditOperation::check_Ok()
 {
-    int ccod;
+    Account acc;
     QString from, to, to2;
     double kurs;
 
@@ -107,10 +108,10 @@ void EditOperation::check_Ok()
     else
         ui->toSpinBox->setEnabled(true);
 
-    ccod = db->get_account_curr(ui->fromWidget->value());
-    from = Currency(ccod).SCod();
-    ccod = db->get_account_curr(ui->toWidget->value());
-    to = Currency(ccod).SCod();
+    acc.read(ui->fromWidget->value());
+    from = Currency(acc.Curr()).SCod();
+    acc.read(ui->toWidget->value());
+    to = Currency(acc.Curr()).SCod();
 //    to2 = db->get_account_scod(ui->to2Widget->value());
 
     ui->from_cod->setText(from);
