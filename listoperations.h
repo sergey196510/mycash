@@ -11,6 +11,7 @@
 #include "listaccountsmodel.h"
 #include "accountsview.h"
 #include "editpayment.h"
+#include "currency.h"
 
 namespace Ui {
 class ListOperations;

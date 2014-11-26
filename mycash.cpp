@@ -44,7 +44,8 @@ MyCash::MyCash(QWidget *parent) :
     connect(curr, SIGNAL(currentIndexChanged(int)), SLOT(update_curr()));
 
 //    var.setSymbol(db->scod_list[var.Currency()]);
-    var.setSymbol(db->scod_list[var.Currency()]);
+//    var.setSymbol(db->scod_list[var.Currency()]);
+//    var.setSymbol(Currency(var.Currency()));
 
     list_home();
 
@@ -361,10 +362,10 @@ void MyCash::aboutProgram()
 void MyCash::update_curr()
 {
     var.setCurrency(curr->value());
-    var.setSymbol(db->scod_list[var.Currency()]);
+//    var.setSymbol(db->scod_list[var.Currency()]);
 
 //    QMap<QString,double> list = db->get_currency_list();
-    var.setKurs(db->currency_list[var.Symbol()]);
+//    var.setKurs(db->currency_list[var.Symbol()]);
 
     emit update_currency();
 }
@@ -391,7 +392,7 @@ void MyCash::check_plan_oper()
 //    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
     QList<Operation_Data> list = db->get_plan_oper_list(0);
     QList<Operation_Data>::iterator i;
-    Account_Data from, to;
+    Account from, to;
 
 //    qDebug() << mon << year;
 
@@ -401,24 +402,24 @@ void MyCash::check_plan_oper()
             continue;
         if (data.status != Plan_Status::expired)
             continue;
-        from = db->get_account_data(data.from.at(0).account());
-        to = db->get_account_data(data.to.at(0).account());
+        from.read(data.from.at(0).account());
+        to.read(data.to.at(0).account());
 
         int r = QMessageBox::question(0,
                                       tr("Plan operation"),
                                       tr("Commit plan operation\nFrom: %1, To: %2")
-                                      .arg(from.name)
-                                      .arg(to.name),
+                                      .arg(from.Name())
+                                      .arg(to.Name()),
                                       QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::No);
         if (r == QMessageBox::No)
             continue;
 
-        if (from.top == Account_Type::active && from.balance < data.to.at(0).balance().toDouble()) {
+        if (from.Top() == Account_Type::active && from.Balance() < data.to.at(0).balance().toDouble()) {
             QMessageBox::warning(0,
                                  tr("Plan operation"),
                                  tr("Plan operation\nFrom: %1, To: %2\nNedostatocjno sredstv")
-                                 .arg(from.name)
-                                 .arg(to.name));
+                                 .arg(from.Name())
+                                 .arg(to.Name()));
             continue;
         }
 

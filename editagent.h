@@ -15,7 +15,7 @@ class EditAgent : public QDialog
 public:
     explicit EditAgent(QString title, QWidget *parent = 0);
     ~EditAgent();
-    agent_data data();
+    Agent data();
 
 private:
     Ui::EditAgent *ui;

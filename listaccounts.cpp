@@ -139,37 +139,38 @@ void ListAccounts::new_account()
     Globals var;
     EditAccount *ea = new EditAccount(1, this);
     int id = get_selected_id();
-    Account_Data data;
+    Account data;
     Operation_Data oper;
     account_summ a;
     int acc;
 
-    data.curr = var.Currency();
-    data.parent = id;
+    data.setCurr(var.Currency());
+    data.setParent(id);
     ea->setData(data);
 
     if (ea->exec() == QDialog::Accepted) {
         data = ea->data();
-        Account_Data parent = db->get_account_data(data.parent);
+        Account parent;
         Transaction t;
 
 //        qDebug() << data.top << parent.top;
 
         t.begin();
 
-        if (data.name.length() == 0) {
+        parent.read(data.Parent());
+        if (data.Name().length() == 0) {
             t.rollback();
             return;
         }
 
-        data.top = parent.top;
-        acc = db->new_account(data);
+        data.setTop(parent.Top());
+        acc = data.insert();
         if (acc == 0) {
             t.rollback();
             return;
         }
 
-        if (data.balance.toDouble() == 0) {
+        if (data.Balance().toDouble() == 0) {
             t.commit();
             reload_model();
             return;
@@ -183,15 +184,15 @@ void ListAccounts::new_account()
             return;
         }
 
-        oper.date = data.dt;
+        oper.date = data.Date();
         oper.descr = tr("Primary balance");
 
         a.set_account(var.InitialAccount());
-        a.set_balance(data.balance.toDouble());
+        a.set_balance(data.Balance().toDouble());
         oper.from.append(a);
 
         a.set_account(acc);
-        a.set_balance(data.balance.toDouble());
+        a.set_balance(data.Balance().toDouble());
         oper.to.append(a);
 
         db->save_operation(oper);
@@ -205,7 +206,7 @@ void ListAccounts::change_account()
 {
     QSqlQuery q;
     EditAccount *ac = new EditAccount(1, this);
-    Account_Data data;
+    Account data;
     int id = get_selected_id();
 
     if (id == 0) {
@@ -213,7 +214,7 @@ void ListAccounts::change_account()
         return;
     }
 
-    data = db->get_account_data(id);
+    data.read(id);
     ac->setData(data);
     if (ac->exec() != QDialog::Accepted)
         return;
@@ -221,12 +222,12 @@ void ListAccounts::change_account()
     data = ac->data();
 
     q.prepare("UPDATE account SET name=:name, type=:type, descr=:descr, ccod=:ccod, hidden=:hidden, parent=:parent WHERE id=:id");
-    q.bindValue(":name", data.name);
-    q.bindValue(":type", data.type);
-    q.bindValue(":descr", data.descr);
-    q.bindValue(":ccod", data.curr);
-    q.bindValue(":hidden", (data.hidden == false) ? 0 : 1);
-    q.bindValue(":parent", data.parent);
+    q.bindValue(":name", data.Name());
+    q.bindValue(":type", data.Type());
+    q.bindValue(":descr", data.Descr());
+    q.bindValue(":ccod", data.Curr());
+    q.bindValue(":hidden", (data.Hidden() == false) ? 0 : 1);
+    q.bindValue(":parent", data.Parent());
     q.bindValue(":id", id);
     if (!q.exec())
         qDebug() << q.lastError().text();
@@ -250,7 +251,7 @@ void ListAccounts::correct_balance()
 {
     CorrectBalance *cb = new CorrectBalance(this);
     int id = get_selected_id();
-    Account_Data data;
+    Account data;
     account_summ a;
 
     if (id == 0) {
@@ -258,16 +259,16 @@ void ListAccounts::correct_balance()
         return;
     }
 
-    data = db->get_account_data(id);
-    if (data.top != 1 && data.top != 2) {
+    data.read(id);
+    if (data.Top() != 1 && data.Top() != 2) {
 	QMessageBox::critical(this, tr("Account"),
                                  tr("You can correct balans only active or passive accounts"));
 	return;
     }
 
-    cb->setBalance(data.balance.toDouble());
+    cb->setBalance(data.Balance().toDouble());
     if (cb->exec() == QDialog::Accepted) {
-        MyCurrency current_balance = data.balance;
+        MyCurrency current_balance = data.Balance();
         MyCurrency new_balance = cb->balance();
 
         Operation_Data od;
@@ -306,16 +307,16 @@ void ListAccounts::del_account()
 {
     QSqlQuery q;
     int id = get_selected_id();
-    Account_Data data;
+    Account data;
 
     if (id == 0) {
         QMessageBox::critical(this, "Operation cancellation", "Nothing selected");
         return;
     }
 
-    data = db->get_account_data(id);
+    data.read(id);
 
-    if (data.system == 1) {
+    if (data.System() == 1) {
         QMessageBox::critical(this, tr("Account"),
                                      tr("You can't delete system account"));
         return;

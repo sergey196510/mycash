@@ -7,6 +7,7 @@ EditOperation::EditOperation(int type, QWidget *parent) :
     ui(new Ui::EditOperation)
 {
     ui->setupUi(this);
+    int ccod;
     QString from, to, to2;
 
     if (type == 1) {
@@ -41,8 +42,10 @@ EditOperation::EditOperation(int type, QWidget *parent) :
 
 //    list = db->get_currency_list();
 
-    from = db->get_account_scod(ui->fromWidget->value());
-    to = db->get_account_scod(ui->toWidget->value());
+    ccod = db->get_account_curr(ui->fromWidget->value());
+    from = Currency(ccod).SCod();
+    ccod = db->get_account_curr(ui->toWidget->value());
+    to = Currency(ccod).SCod();
 //    to2 = db->get_account_scod(ui->to2Widget->value());
 
     ui->from_cod->setText(from);
@@ -77,6 +80,7 @@ EditOperation::~EditOperation()
 
 void EditOperation::check_Ok()
 {
+    int ccod;
     QString from, to, to2;
     double kurs;
 
@@ -103,8 +107,10 @@ void EditOperation::check_Ok()
     else
         ui->toSpinBox->setEnabled(true);
 
-    from = db->get_account_scod(ui->fromWidget->value());
-    to = db->get_account_scod(ui->toWidget->value());
+    ccod = db->get_account_curr(ui->fromWidget->value());
+    from = Currency(ccod).SCod();
+    ccod = db->get_account_curr(ui->toWidget->value());
+    to = Currency(ccod).SCod();
 //    to2 = db->get_account_scod(ui->to2Widget->value());
 
     ui->from_cod->setText(from);
@@ -123,12 +129,13 @@ void EditOperation::check_Ok()
 void EditOperation::check_balance(QString value)
 {
 //    double balance;
-    Account_Data data = db->get_account_data(ui->fromWidget->value());
+    Account data;
 
-    if (data.type != 1)
+    data.read(ui->fromWidget->value());
+    if (data.Type() != 1)
         return;
 
-    if (value.toDouble() > data.balance.toDouble())
+    if (value.toDouble() > data.Balance().toDouble())
         ui->warning->show();
     else
         ui->warning->hide();
@@ -162,7 +169,7 @@ Operation_Data EditOperation::data()
 
 void EditOperation::setdata(Operation_Data &d)
 {
-    Account_Data data;
+    Account data;
     QList<account_summ>::iterator i;
 
     ui->dayBox->setCurrentIndex(d.day);
@@ -209,11 +216,11 @@ void EditOperation::separate_account()
 int EditOperation::new_agent()
 {
     EditAgent *agent = new EditAgent(tr("Agent"), this);
-    agent_data data;
+    Agent data;
 
     if (agent->exec() == QDialog::Accepted) {
         data = agent->data();
-        int id = db->new_agent(data);
+        int id = data.insert();
         ui->agent_comboBox->load();
         ui->agent_comboBox->setValue(id);
     }

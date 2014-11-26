@@ -3,6 +3,7 @@
 
 #include <QtGui>
 #include "database.h"
+#include "currency.h"
 
 class ViewCurrency : public QItemDelegate
 {

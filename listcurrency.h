@@ -9,6 +9,7 @@
 #include "global.h"
 #include "downloader.h"
 #include "transaction.h"
+#include "currency.h"
 
 namespace Ui {
 class ListCurrency;

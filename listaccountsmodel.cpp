@@ -25,13 +25,14 @@ void ViewCurrency::paint(QPainter *painter, const QStyleOptionViewItem &option, 
 
 MyCurrency ListAccountsModel::get_reserv(int id)
 {
-    Account_Data acc = db->get_account_data(id);
+    Account acc;
     QList<Operation_Data>::iterator i;
     Operation_Data oper;
     account_summ as;
     MyCurrency summ = 0;
 
-    if (acc.top != Account_Type::active)
+    acc.read(id);
+    if (acc.Top() != Account_Type::active)
         return 0;
 
     for (i = plan_list.begin(); i != plan_list.end(); i++) {
@@ -192,7 +193,8 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
                 return QVariant();
         else if (index.column() == 3) {
 //            return db->get_currency_scod(value.toInt());
-            return db->scod_list[value.toInt()];
+//            return db->scod_list[value.toInt()];
+            return Currency(value.toInt()).SCod();
         }
         else if (index.column() == 4) {
             return (value.toBool() == false) ? QVariant() : tr("H");

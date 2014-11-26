@@ -6,6 +6,7 @@
 #include "global.h"
 #include "database.h"
 #include "summaccount.h"
+#include "currency.h"
 
 namespace Ui {
 class MainWidget;

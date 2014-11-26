@@ -18,8 +18,8 @@ class ListAgentsModel : public QAbstractTableModel
 
 private:
     QStringList header_data;
-    QList<agent_data> list;
-    QList<agent_data> read_list();
+    QList<Agent> list;
+    QList<Agent> read_list();
 
 public:
     explicit ListAgentsModel(QObject *parent = 0);

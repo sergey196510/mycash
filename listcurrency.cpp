@@ -190,6 +190,7 @@ void ListCurrency::new_currency()
 void ListCurrency::update_currency()
 {
     QSqlQuery q;
+    Currency item;
     int id;
 
     if ((id = ui->tableView->get_selected_id()) == 0) {
@@ -197,19 +198,28 @@ void ListCurrency::update_currency()
         return;
     }
 
-    q.prepare("UPDATE currency SET name = :name, icod = :icod, scod = :scod, nominal = :nominal, kurs = :kurs WHERE id = :id");
-    q.bindValue(":name", ui->nameEdit->text());
-    q.bindValue(":icod", ui->numberEdit->text().toInt());
-    q.bindValue(":scod", ui->symbolEdit->text());
-    q.bindValue(":nominal", ui->nominalEdit->text().toInt());
-    q.bindValue(":kurs", ui->kursEdit->value());
-    q.bindValue(":id", id);
-    if (!q.exec()) {
-        qDebug() << q.lastError();
-        return;
-    }
+    item.setName(ui->nameEdit->text());
+    item.setICod(ui->numberEdit->text().toInt());
+    item.setSCod(ui->symbolEdit->text());
+    item.setNominal(ui->nominalEdit->text().toInt());
+    item.setKurs(ui->kursEdit->value());
+    item.setId(id);
+    if (item.update())
+        emit data_change();
 
-    emit data_change();
+//    q.prepare("UPDATE currency SET name = :name, icod = :icod, scod = :scod, nominal = :nominal, kurs = :kurs WHERE id = :id");
+//    q.bindValue(":name", ui->nameEdit->text());
+//    q.bindValue(":icod", ui->numberEdit->text().toInt());
+//    q.bindValue(":scod", ui->symbolEdit->text());
+//    q.bindValue(":nominal", ui->nominalEdit->text().toInt());
+//    q.bindValue(":kurs", ui->kursEdit->value());
+//    q.bindValue(":id", id);
+//    if (!q.exec()) {
+//        qDebug() << q.lastError();
+//        return;
+//    }
+
+//    emit data_change();
 }
 
 void ListCurrency::delete_currency()
@@ -327,7 +337,7 @@ void ListCurrency::traverseNode(const QDomNode &node)
             QDomElement domElement = domNode.toElement();
             if (!domElement.isNull()) {
                 if (domElement.tagName() != "Valute") {
-                    qDebug() << domElement.tagName() << ":\t" << domElement.text();
+//                    qDebug() << domElement.tagName() << ":\t" << domElement.text();
                     if (domElement.tagName() == "NumCode")
                         item.setICod(domElement.text().toInt());
                     if (domElement.tagName() == "CharCode")
@@ -359,7 +369,7 @@ void ListCurrency::traverseNode(const QDomNode &node)
 
 bool ListCurrency::update_database()
 {
-    Currency data;
+    Currency data, item;
     QList<Currency>::iterator i;
     Transaction tr;
 
@@ -367,7 +377,14 @@ bool ListCurrency::update_database()
 
     for (i = list.begin(); i != list.end(); i++) {
         data = *i;
-        qDebug() << data.ICod() << data.SCod() << data.Name() << data.Nominal() << data.Kurs();
+//        qDebug() << data.ICod() << data.SCod() << data.Name() << data.Nominal() << data.Kurs();
+        if (item.load(data.SCod())) {
+            item.setKurs(data.Kurs());
+            item.setName(data.Name());
+            item.setICod(data.ICod());
+            item.setNominal(data.Nominal());
+            item.update();
+        }
     }
 
     tr.commit();

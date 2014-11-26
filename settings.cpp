@@ -6,7 +6,7 @@ Settings::Settings(QWidget *parent) :
     ui(new Ui::Settings)
 {
     QFont fnt;
-    Account_Data data;
+    Account data;
     ui->setupUi(this);
     db = new Database;
 

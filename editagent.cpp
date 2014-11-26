@@ -19,15 +19,15 @@ EditAgent::~EditAgent()
     delete ui;
 }
 
-agent_data EditAgent::data()
+Agent EditAgent::data()
 {
-    agent_data data;
+    Agent data;
 
-    data.set_name(ui->nameEdit->text());
-    data.set_city(ui->cityEdit->text());
-    data.set_address(ui->addrEdit->text());
-    data.set_phone(ui->phoneEdit->text());
-    data.set_contact(ui->contactEdit->text());
+    data.set_Name(ui->nameEdit->text());
+    data.set_City(ui->cityEdit->text());
+    data.set_Address(ui->addrEdit->text());
+    data.set_Phone(ui->phoneEdit->text());
+    data.set_Contact(ui->contactEdit->text());
 
     return data;
 }

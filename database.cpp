@@ -4,21 +4,22 @@
 Database::Database()
 {
 //    opened = false;
-    scod_list = get_scod_list();
+//    scod_list2 = get_scod_list();
     currency_list = get_currency_list();
 }
 
-double Database::convert_currency(double val, int icod)
+double Database::convert_currency(double val, int id)
 {
-    QString scod = scod_list[icod];
-    double account_kurs = currency_list[scod];
-    double global_kurs = currency_list[var.Symbol()];
-    double kurs = account_kurs / global_kurs;
+//    QString scod = scod_list2[id];
+//    double account_kurs = currency_list[scod];
+//    double global_kurs = currency_list[var.Symbol()];
+    double global_kurs = Currency(id).Kurs();
+//    double kurs = account_kurs / global_kurs;
 
     if (global_kurs == 0)
         return 0;
 
-    return val * kurs;
+    return 0;
 }
 
 double Database::get_account_summ(int id)
@@ -131,16 +132,16 @@ QMap<QString,double> Database::get_opersummbyaccount_list(int top, int m1, int y
     return list;
 }
 
-QString Database::get_account_scod(int id)
+int Database::get_account_curr(int id)
 {
     QSqlQuery query;
 
-    query.prepare("SELECT c.scod FROM account a, currency c WHERE a.id = :id AND a.ccod = c.id");
+    query.prepare("SELECT ccod FROM account a WHERE id = :id");
     query.bindValue(":id", id);
     if (!query.exec())
         return 0;
     if (query.next())
-        return query.value(0).toString();
+        return query.value(0).toInt();
     return 0;
 }
 
@@ -230,9 +231,10 @@ QMap<int,double> Database::get_account_oper_list(int oper, int type)
     return list;
 }
 
-Account_Data Database::get_account_data(int id)
+/*
+Account Database::get_account(int id)
 {
-    Account_Data data;
+    Account data;
     QSqlQuery q;
 
     q.prepare("SELECT name,type,balance,descr,ccod,hidden,parent,top,system FROM account WHERE id = :id");
@@ -254,7 +256,9 @@ Account_Data Database::get_account_data(int id)
     }
     return data;
 }
+*/
 
+/*
 QString Database::get_agent_name(int id)
 {
     QSqlQuery q;
@@ -267,7 +271,9 @@ QString Database::get_agent_name(int id)
 	return q.value(0).toString();
     return 0;
 }
+*/
 
+/*
 QMap<int,QString> Database::get_scod_list()
 {
     QMap<int,QString> list;
@@ -282,6 +288,7 @@ QMap<int,QString> Database::get_scod_list()
 
     return list;
 }
+*/
 
 QMap<QString,double> Database::get_currency_list()
 {
@@ -298,6 +305,7 @@ QMap<QString,double> Database::get_currency_list()
     return list;
 }
 
+/*
 int Database::new_account(Account_Data &data)
 {
     QSqlQuery q;
@@ -322,7 +330,9 @@ int Database::new_account(Account_Data &data)
         return q.value(0).toInt();
     return 0;
 }
+*/
 
+/*
 int Database::new_agent(agent_data &data) {
     QSqlQuery q;
 
@@ -344,6 +354,7 @@ int Database::new_agent(agent_data &data) {
         return q.value(0).toInt();
     return 0;
 }
+*/
 
 int Database::new_operation(Operation_Data &data)
 {
@@ -412,8 +423,13 @@ bool Database::del_operation(int id)
     for (i = list.begin(); i != list.end(); i++) {
         account_summ acc;
         acc.set_account(i.key());
-        Account_Data data = get_account_data(i.key());
-        acc.set_balance((data.top == Account_Type::passive || data.top == Account_Type::debet || data.top == Account_Type::initial) ? -i.value() : i.value());
+        Account data;
+        data.read(i.key());
+        acc.set_balance((data.Top() == Account_Type::passive ||
+                        data.Top() == Account_Type::debet ||
+                        data.Top() == Account_Type::initial) ?
+                           -i.value() :
+                           i.value());
         if (change_account_balance(acc) == false) {
             tr.rollback();
             return false;
@@ -452,7 +468,7 @@ bool Database::change_account_balance(account_summ &acc)
 {
     QSqlQuery query;
     MyCurrency summ;
-    Account_Data data;
+//    Account data;
     int flag = 1;
 
 //    data = get_account_data(acc.account());
@@ -490,43 +506,45 @@ bool Database::save_operation(Operation_Data &oper)
     }
     for (i = oper.from.begin(); i != oper.from.end(); i++) {
         account_summ d = *i;
-        Account_Data data = get_account_data(d.account());
-        if (data.top == Account_Type::debet && oper.agent)
-            data.agent = oper.agent;
-        if (new_account_oper("account_oper", oper_id, d, Direction::from, data.agent) == false) {
+        Account data;
+        data.read(d.account());
+        if (data.Top() == Account_Type::debet && oper.agent)
+            data.setAgent(oper.agent);
+        if (new_account_oper("account_oper", oper_id, d, Direction::from, data.Agent()) == false) {
             tr.rollback();
             return false;
         }
-        if (data.top == Account_Type::active ||
-                data.top == Account_Type::credit)
+        if (data.Top() == Account_Type::active ||
+                data.Top() == Account_Type::credit)
             d.set_balance(-d.balance().toDouble()); // сменить знак
         if (change_account_balance(d) == false) {
             tr.rollback();
             return false;
         }
-        if (data.top == Account_Type::debet) {
+        if (data.Top() == Account_Type::debet) {
             add_budget(d);
         }
         from += abs(d.balance().toDouble());
     }
     for (i = oper.to.begin(); i != oper.to.end(); i++) {
         account_summ d = *i;
-        Account_Data data = get_account_data(d.account());
-        if (data.top == Account_Type::credit && oper.agent)
-            data.agent = oper.agent;
-        if (new_account_oper("account_oper", oper_id, d, Direction::to, data.agent) == false) {
+        Account data;
+        data.read(d.account());
+        if (data.Top() == Account_Type::credit && oper.agent)
+            data.setAgent(oper.agent);
+        if (new_account_oper("account_oper", oper_id, d, Direction::to, data.Agent()) == false) {
             tr.rollback();
             return false;
         }
-        if (data.top == Account_Type::passive ||
-                data.top == Account_Type::debet ||
-                data.top == Account_Type::initial)
+        if (data.Top() == Account_Type::passive ||
+                data.Top() == Account_Type::debet ||
+                data.Top() == Account_Type::initial)
             d.set_balance(-d.balance().toDouble()); // сменить знак
         if (change_account_balance(d) == false) {
             tr.rollback();
             return false;
         }
-        if (data.top == Account_Type::credit) {
+        if (data.Top() == Account_Type::credit) {
             add_budget(d);
         }
         to += abs(d.balance().toDouble());
@@ -836,25 +854,27 @@ Operation_Data Database::get_plan_oper_data(int id, QDate oper_date)
         bool from_top = false;
         list = get_plan_account_oper_list(q.value(0).toInt(), Direction::from);
         for (i = list.begin(); i != list.end(); i++) {
-            Account_Data acc = get_account_data(i.key());
+            Account acc;
+            acc.read(i.key());
             account_summ d;
             d.set_account(i.key());
             d.set_balance(i.value());
             data.from.append(d);
-            if (acc.top == Account_Type::active) {
+            if (acc.Top() == Account_Type::active) {
                 from_top = true;
-                summ_from += acc.balance;
+                summ_from += acc.Balance();
             }
         }
 
         list = get_plan_account_oper_list(q.value(0).toInt(), Direction::to);
         for (i = list.begin(); i != list.end(); i++) {
-            Account_Data acc = get_account_data(i.key());
+            Account acc;
+            acc.read(i.key());
             account_summ d;
             d.set_account(i.key());
             d.set_balance(i.value());
             data.to.append(d);
-            if (acc.top == Account_Type::credit)
+            if (acc.Top() == Account_Type::credit)
                 summ_to += i.value();
         }
         if (from_top == true && (data.status == Plan_Status::minimum || data.status == Plan_Status::expired) && summ_from < summ_to)

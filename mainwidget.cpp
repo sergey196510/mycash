@@ -69,7 +69,7 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
             Operation_Data data = list.at(index.row());
             QMap<int,double> oper = db->get_plan_account_oper_list(data.id,2);
             QMap<int,double>::iterator i = oper.begin();
-            return default_locale->toString(i.value()/var->Kurs(),'f',2);
+            return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
         }
         else if (index.column() == 7) {
             Operation_Data data = list.at(index.row());
@@ -163,10 +163,10 @@ void MainWidget::reload_model()
     summAccount active(Account_Type::active), passive(Account_Type::passive);
     double saldo;
 
-    ui->active_value->setText(active.text() + " " + var.Symbol());
-    ui->passive_value->setText(passive.text() + " " + var.Symbol());
+    ui->active_value->setText(active.text() + " " + Currency(var.Currency()).SCod());
+    ui->passive_value->setText(passive.text() + " " + Currency(var.Currency()).SCod());
     saldo = active.Value()-passive.Value();
-    ui->saldo_value->setText(QString("%1 %2").arg(default_locale->toString(saldo,'f',2)).arg(var.Symbol()));
+    ui->saldo_value->setText(QString("%1 %2").arg(default_locale->toString(saldo,'f',2)).arg(Currency(var.Currency()).SCod()));
 }
 
 void MainWidget::clear_model()

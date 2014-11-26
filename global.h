@@ -34,9 +34,9 @@ class Globals {
     static int currency;
     static int correct_account;
     static int initial_account;
-    static double kurs;
+//    static double kurs;
     static int precision;
-    static QString symbol;
+//    static QString symbol;
     static QString list_font;
     static QString version;
     static bool database_opened;
@@ -55,12 +55,12 @@ public:
     void setCorrectAccount(int i) { correct_account = i; }
     int InitialAccount() { return initial_account; }
     void setInitialAccount(int i) { initial_account = i; }
-    double Kurs() { return kurs; }
-    void setKurs(double i) { kurs = i; }
+//    double Kurs() { return kurs; }
+//    void setKurs(double i) { kurs = i; }
     int Precision() { return precision; }
     void setPrecision(int i) { precision = i; }
-    QString Symbol() { return symbol; }
-    void setSymbol(QString s) { symbol = s; }
+//    QString Symbol() { return symbol; }
+//    void setSymbol(QString s) { symbol = s; }
     QString ListFont() { return list_font; }
     void setListFont(QString s) { list_font = s; }
     QString Version() { return version; }
@@ -104,7 +104,7 @@ public:
     void set_balance(double val) { s = val; }
 };
 
-struct Account_Data {
+class Account {
     QString name;
     int type;
     int curr;
@@ -116,7 +116,8 @@ struct Account_Data {
     int agent;
     QString descr;
     QDate dt;
-    Account_Data() {
+public:
+    Account() {
         name.clear();
         type = 0;
         curr = 0;
@@ -129,6 +130,78 @@ struct Account_Data {
         descr.clear();
         dt = QDate::currentDate();
     }
+    bool read(int id)
+    {
+        QSqlQuery q;
+
+        if (id == 0)
+            return false;
+
+        q.prepare("SELECT name,type,balance,descr,ccod,hidden,parent,top,system FROM account WHERE id = :id");
+        q.bindValue(":id", id);
+        if (!q.exec()) {
+            qDebug() << "SELECT Error:" << q.lastError().text();
+            return false;
+        }
+        if (q.next()) {
+            name = q.value(0).toString();
+            type = q.value(1).toInt();
+            balance = q.value(2).toDouble();
+            descr = q.value(3).toString();
+            curr = q.value(4).toInt();
+            hidden = q.value(5).toInt();
+            parent = q.value(6).toInt();
+            top = q.value(7).toInt();
+            system = q.value(8).toInt();
+            return true;
+        }
+        return false;
+    }
+    int insert()
+    {
+        QSqlQuery q;
+
+        q.prepare("INSERT INTO account(name, type, ccod, balance, descr, hidden, parent, top, dt) VALUES(:name, :type, :ccod, :balance, :descr, :hidden, :parent, :top, :dt)");
+        q.bindValue(":name",    name);
+        q.bindValue(":type",    type);
+        q.bindValue(":ccod",    curr);
+        q.bindValue(":balance", 0);
+        q.bindValue(":descr",   descr);
+        q.bindValue(":hidden",  (hidden == false) ? 0 : 1);
+        q.bindValue(":parent",  parent);
+        q.bindValue(":top",     top);
+        q.bindValue(":dt", dt);
+        if (!q.exec())
+            return 0;
+
+        q.prepare("SELECT MAX(id) FROM account");
+        if (!q.exec())
+            return 0;
+        if (q.next())
+            return q.value(0).toInt();
+        return 0;
+    }
+    void setBalance(MyCurrency bal) { balance = bal; }
+    void setAgent(int a) { agent = a; }
+    void setCurr(int c) { curr = c; }
+    void setName(QString n) { name = n; }
+    void setDescr(QString n) { descr = n; }
+    void setType(int t) { type = t; }
+    void setParent(int p) { parent = p; }
+    void setHidden(bool h) { hidden = h; }
+    void setDate(QDate d) { dt = d; }
+    void setTop(int t) { top = t; }
+    int Agent() { return agent; }
+    int Top() { return top; }
+    MyCurrency Balance() { return balance; }
+    int Type() { return type; }
+    QString Name() { return name; }
+    QString Descr() { return descr; }
+    int Curr() { return curr; }
+    int Parent() { return parent; }
+    bool Hidden() { return hidden; }
+    QDate Date() { return dt; }
+    int System() { return system; }
 };
 
 struct Operation_Data {
@@ -152,100 +225,59 @@ struct Operation_Data {
     }
 };
 
-class agent_data {
+class Agent {
     int id;
-    QString nm;
-    QString ct;
-    QString addr;
-    QString ph;
-    QString cont;
+    QString name;
+    QString city;
+    QString address;
+    QString phone;
+    QString contact;
 public:
-    agent_data() {
+    Agent() {
         id = 0;
-        nm.clear();
-        ct.clear();
-        addr.clear();
-        ph.clear();
-        cont.clear();
+        name.clear();
+        city.clear();
+        address.clear();
+        phone.clear();
+        contact.clear();
+    }
+    int insert() {
+        QSqlQuery q;
+
+        q.prepare("INSERT INTO agent(name, city, address, phone, contact) VALUES(:name, :city, :address, :phone, :contact)");
+        q.bindValue(":name", name);
+        q.bindValue(":city", city);
+        q.bindValue(":address", address);
+        q.bindValue(":phone", phone);
+        q.bindValue(":contact", contact);
+        if (!q.exec()) {
+            qDebug() << "Insert error" << q.lastError().text();
+            return 0;
+        }
+
+        q.prepare("SELECT MAX(id) FROM agent");
+        if (!q.exec())
+            return 0;
+        if (q.next())
+            return q.value(0).toInt();
+        return 0;
+    }
+    bool read(int id) {
+        return true;
     }
 
     int Id() { return id; }
-    QString name() { return nm; }
-    QString city() { return ct; }
-    QString address() { return addr; }
-    QString phone() { return ph; }
-    QString contact() { return cont; }
-    void set_id(int i) { id = i; }
-    void set_name(QString s) { nm = s; }
-    void set_city(QString s) { ct = s; }
-    void set_address(QString s) { addr = s; }
-    void set_phone(QString s) { ph = s; }
-    void set_contact(QString s) { cont = s; }
-};
-
-class Currency {
-    int id;
-    QString name;
-    int icod;
-    QString scod;
-    double kurs;
-    int nominal;
-public:
-    Currency(int i = 0)
-    {
-        id = i;
-        name.clear();
-        icod = 0;
-        scod.clear();
-        kurs = 0;
-        nominal = 1;
-
-        if (id != 0) {
-            QSqlQuery q;
-            q.prepare("SELECT name,icod,scod,kurs,nominal FROM currency WHERE id=:id");
-            q.bindValue(":id", id);
-            if (!q.exec()) {
-                qDebug() << q.lastError();
-            }
-            if (q.next()) {
-                name = q.value(0).toString();
-                icod = q.value(1).toInt();
-                scod = q.value(2).toString();
-                kurs = q.value(3).toDouble();
-                nominal = q.value(4).toInt();
-            }
-        }
-    }
-    bool load(QString scod) {
-        QSqlQuery q;
-        q.prepare("SELECT name,icod,id,kurs,nominal FROM currency WHERE scod=:scod");
-        q.bindValue(":scod", scod);
-        if (!q.exec()) {
-            qDebug() << q.lastError();
-            return false;
-        }
-        if (q.next()) {
-            name = q.value(0).toString();
-            icod = q.value(1).toInt();
-            id = q.value(2).toInt();
-            kurs = q.value(3).toDouble();
-            nominal = q.value(4).toInt();
-            return true;
-        }
-        return false;
-    }
-
-    int Id()                { return id;      }
-    QString Name()          { return name;    }
-    int ICod()              { return icod;    }
-    QString SCod()          { return scod;    }
-    double Kurs()           { return kurs;    }
-    int Nominal()           { return nominal; }
-    void setICod(int i)     { icod = i;       }
-    void setSCod(QString i) { scod = i;       }
-    void setName(QString i) { name = i;       }
-    void setNominal(int i)  { nominal = i;    }
-    void setKurs(double i)  { kurs = i;       }
+    QString Name() { return name; }
+    QString City() { return city; }
+    QString Address() { return address; }
+    QString Phone() { return phone; }
+    QString Contact() { return contact; }
+    void set_Id(int i) { id = i; }
+    void set_Name(QString s) { name = s; }
+    void set_City(QString s) { city = s; }
+    void set_Address(QString s) { address = s; }
+    void set_Phone(QString s) { phone = s; }
+    void set_Contact(QString s) { contact = s; }
 };
 
 #endif

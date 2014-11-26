@@ -32,13 +32,14 @@ int SelectAccount::value()
 void SelectAccount::new_account()
 {
     EditAccount *acc = new EditAccount(1, this);
-    Account_Data data;
+    Account data;
 
     if (acc->exec() == QDialog::Accepted) {
         data = acc->data();
-        Account_Data parent = db->get_account_data(data.parent);
-        data.top = parent.top;
-        if (db->new_account(data))
+        Account parent;
+        parent.read(data.Parent());
+        data.setTop(parent.Top());
+        if (data.insert())
             ui->treeView->reload();
     }
 }

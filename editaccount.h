@@ -25,8 +25,8 @@ public:
 //    double balance();
 //    bool hidden();
 //    QString descr();
-    Account_Data data();
-    void setData(Account_Data &data);
+    Account data();
+    void setData(Account &data);
     
 private:
     Ui::EditAccount *ui;

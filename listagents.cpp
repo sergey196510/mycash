@@ -39,15 +39,15 @@ QVariant ListAgentsModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::DisplayRole) {
-        agent_data data = list.at(index.row());
+        Agent data = list.at(index.row());
         if (index.column() == 0)
             return data.Id();
         else if (index.column() == 1)
-            return data.name();
+            return data.Name();
         else if (index.column() == 2)
-            return data.city();
+            return data.City();
         else if (index.column() == 3)
-            return data.address();
+            return data.Address();
         else
             return QVariant();
     }
@@ -55,11 +55,11 @@ QVariant ListAgentsModel::data(const QModelIndex &index, int role) const
         return QVariant();
 }
 
-QList<agent_data> ListAgentsModel::read_list()
+QList<Agent> ListAgentsModel::read_list()
 {
     QSqlQuery q;
-    agent_data data;
-    QList<agent_data> list;
+    Agent data;
+    QList<Agent> list;
 
     q.prepare("SELECT id,name,city,address FROM agent ORDER BY name");
     if (!q.exec()) {
@@ -67,10 +67,10 @@ QList<agent_data> ListAgentsModel::read_list()
         return list;
     }
     while (q.next()) {
-        data.set_id(q.value(0).toInt());
-        data.set_name(q.value(1).toString());
-        data.set_city(q.value(2).toString());
-        data.set_address(q.value(3).toString());
+        data.set_Id(q.value(0).toInt());
+        data.set_Name(q.value(1).toString());
+        data.set_City(q.value(2).toString());
+        data.set_Address(q.value(3).toString());
         list.append(data);
     }
 
@@ -148,15 +148,15 @@ void ListAgents::check_select_line()
 void ListAgents::save_new_record()
 {
     QSqlQuery q;
-    agent_data data;
+    Agent data;
 
-    data.set_name(ui->nameEdit->text());
-    data.set_city(ui->cityEdit->text());
-    data.set_address(ui->addrEdit->text());
-    data.set_phone(ui->phoneEdit->text());
-    data.set_contact(ui->contactEdit->text());
+    data.set_Name(ui->nameEdit->text());
+    data.set_City(ui->cityEdit->text());
+    data.set_Address(ui->addrEdit->text());
+    data.set_Phone(ui->phoneEdit->text());
+    data.set_Contact(ui->contactEdit->text());
 
-    if (db->new_agent(data) == 0)
+    if (data.insert() == 0)
         return;
 
     reload_model();
@@ -198,7 +198,9 @@ void ListAgents::del_record()
         return;
     }
 
-    QString name = db->get_agent_name(id);
+    Agent item;
+    item.read(id);
+    QString name = item.Name();
 
     int r = QMessageBox::warning(this, tr("Agent"),
                                  tr("You want delete agent %1?").arg(name),

@@ -122,13 +122,13 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
         }
         else if (index.column() == col_Debet) {
             if (from.account() != current_account)
-                return default_locale->toString(to.balance().toDouble()/var->Kurs(),'f',2);
+                return default_locale->toString(to.balance().toDouble()/Currency(var->Currency()).Kurs(),'f',2);
             else
                 return QVariant();
         }
         else if (index.column() == col_Credit) {
             if (to.account() != current_account)
-                return default_locale->toString(from.balance().toDouble()/var->Kurs(),'f',2);
+                return default_locale->toString(from.balance().toDouble()/Currency(var->Currency()).Kurs(),'f',2);
             else
                 return QVariant();
         }

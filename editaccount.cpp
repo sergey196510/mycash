@@ -77,31 +77,31 @@ QString EditAccount::descr()
 }
 */
 
-Account_Data EditAccount::data()
+Account EditAccount::data()
 {
-    Account_Data d;
+    Account d;
 
-    d.name = ui->nameEdit->text();
-    d.type = ui->typeBox->value();
-    d.curr = ui->currencyBox->value();
-    d.balance = ui->balanceSpinBox->value();
-    d.descr = ui->descrEdit->text();
-    d.hidden = ui->hiddenBox->isChecked();
-    d.parent = ui->accountWidget->value();
-    d.dt = ui->dateEdit->value();
+    d.setName(ui->nameEdit->text());
+    d.setType(ui->typeBox->value());
+    d.setCurr(ui->currencyBox->value());
+    d.setBalance(ui->balanceSpinBox->value());
+    d.setDescr(ui->descrEdit->text());
+    d.setHidden(ui->hiddenBox->isChecked());
+    d.setParent(ui->accountWidget->value());
+    d.setDate(ui->dateEdit->value());
 
     return d;
 }
 
-void EditAccount::setData(Account_Data &data)
+void EditAccount::setData(Account &data)
 {
-    ui->nameEdit->setText(data.name);
-    ui->typeBox->setValue(data.type);
-    ui->currencyBox->setValue(data.curr);
-    ui->balanceSpinBox->setValue(data.balance.toDouble());
-    ui->descrEdit->setText(data.descr);
-    ui->hiddenBox->setChecked(data.hidden);
-    ui->accountWidget->setValue(data.parent);
+    ui->nameEdit->setText(data.Name());
+    ui->typeBox->setValue(data.Type());
+    ui->currencyBox->setValue(data.Curr());
+    ui->balanceSpinBox->setValue(data.Balance().toDouble());
+    ui->descrEdit->setText(data.Descr());
+    ui->hiddenBox->setChecked(data.Hidden());
+    ui->accountWidget->setValue(data.Parent());
     if (ui->accountWidget->value() != 1) {
         ui->typeBox->setEnabled(false);
     }
@@ -133,9 +133,10 @@ bool EditAccount::nameFind(QString name)
 
 void EditAccount::parentCheck()
 {
-    Account_Data data = db->get_account_data(ui->accountWidget->value());
+    Account data;
+    data.read(ui->accountWidget->value());
 //    qDebug() << data.top;
-    if (data.top == 1) {
+    if (data.Top() == 1) {
         ui->typeBox->setEnabled(true);
     }
     else

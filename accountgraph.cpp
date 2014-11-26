@@ -15,7 +15,7 @@ AccountGraph::~AccountGraph()
 void AccountGraph::calc_array(int id)
 {
     QSqlQuery q, q2;
-    Account_Data data;
+    Account data;
     QStack<SbD> stack1, stack2, stack3;
 //    QList<SbD> summ;
 //    QMap<QDate,MyCurrency> result;
@@ -31,8 +31,8 @@ void AccountGraph::calc_array(int id)
     isFree = false;
 
     list.clear();
-    data = db->get_account_data(id);
-    if (data.top != Account_Type::active) {
+    data.read(id);
+    if (data.Top() != Account_Type::active) {
         update();
         return;
     }
@@ -88,7 +88,7 @@ void AccountGraph::calc_array(int id)
 //    qDebug() << stack2.size() << stack3.size();
 
     //расчет баланса по дням от текущего
-    MyCurrency balance = data.balance;
+    MyCurrency balance = data.Balance();
     SbD val1 = stack1.pop();
     QDate dt1 = val1.dt;
     SbD val2 = stack2.pop();

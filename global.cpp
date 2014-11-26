@@ -30,8 +30,8 @@ const int Plan_Status::minimum = 3;
 const int Plan_Status::expired = 4;
 const int Plan_Status::cancelled = 5;
 
-double Globals::kurs = 1;
-QString Globals::symbol = "";
+//double Globals::kurs = 1;
+//QString Globals::symbol = "";
 QString Globals::list_font = "";
 QString Globals::version = "0.1";
 bool Globals::database_opened = false;

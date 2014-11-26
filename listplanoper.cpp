@@ -64,7 +64,7 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
             data = list.at(index.row());
             QMap<int,double> oper = db->get_plan_account_oper_list(data.id,2);
             QMap<int,double>::iterator i = oper.begin();
-            return default_locale->toString(i.value()/var->Kurs(),'f',2);
+            return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
         }
         else if (index.column() == 7) {
             data = list.at(index.row());
