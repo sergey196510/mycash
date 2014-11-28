@@ -142,59 +142,67 @@ void EditOperation::check_balance(QString value)
         ui->warning->hide();
 }
 
-Operation_Data EditOperation::data()
+Operation EditOperation::data()
 {
-    Operation_Data d;
+    Account acc;
+    Operation d;
     account_summ a;
+    QList<account_summ> lst;
 
-    d.day = ui->dayBox->currentIndex();
-    d.month = ui->monBox->currentIndex();
-    d.year = ui->yearBox->value();
-    d.agent = ui->agent_comboBox->value();
-    d.kurs = ui->kursEdit->value();
-    d.auto_exec = ui->autoBox->isChecked();
+    d.setDay(ui->dayBox->currentIndex());
+    d.setMonth(ui->monBox->currentIndex());
+    d.setYear(ui->yearBox->value());
+    d.setAgent(ui->agent_comboBox->value());
+    d.setKurs(ui->kursEdit->value());
+    d.setAuto(ui->autoBox->isChecked());
 
-    a.set_account(ui->fromWidget->value());
+    acc.read(ui->fromWidget->value());
+    a.set_account(acc);
     a.set_balance(ui->fromSpinBox->value());
-    d.from.append(a);
+    lst.clear();
+    lst.append(a);
+    d.setFrom(lst);
 
-    a.set_account(ui->toWidget->value());
+    acc.read(ui->toWidget->value());
+    a.set_account(acc);
     a.set_balance(ui->toSpinBox->value());
-    d.to.append(a);
+    lst.clear();
+    lst.append(a);
+    d.setTo(lst);
 
-    d.date = ui->dateEdit->value();
-    d.descr = ui->descrEdit->text();
+    d.setDate(ui->dateEdit->value());
+    d.setDescr(ui->descrEdit->text());
 
     return d;
 }
 
-void EditOperation::setdata(Operation_Data &d)
+void EditOperation::setdata(Operation &d)
 {
     Account data;
     QList<account_summ>::iterator i;
 
-    ui->dayBox->setCurrentIndex(d.day);
-    ui->monBox->setCurrentIndex(d.month);
-    ui->yearBox->setValue(d.year);
-    ui->autoBox->setChecked(d.auto_exec);
+    ui->dayBox->setCurrentIndex(d.Day());
+    ui->monBox->setCurrentIndex(d.Month());
+    ui->yearBox->setValue(d.Year());
+    ui->autoBox->setChecked(d.Auto());
 
-    if (!d.from.empty()) {
-        i = d.from.begin();
+    if (!d.From().empty()) {
+        i = d.From().begin();
         account_summ a = *i;
-        ui->fromWidget->setValue(a.account());
+        ui->fromWidget->setValue(a.account().Id());
         ui->fromSpinBox->setValue(a.balance().toDouble());
     }
 
-    if (!d.to.empty()) {
-        i = d.to.begin();
+    if (!d.To().empty()) {
+        i = d.To().begin();
         account_summ a = *i;
-        ui->toWidget->setValue(a.account());
+        ui->toWidget->setValue(a.account().Id());
         ui->toSpinBox->setValue(a.balance().toDouble());
     }
 
-    ui->agent_comboBox->setValue(d.agent);
-    ui->kursEdit->setValue(d.kurs);
-    ui->descrEdit->setText(d.descr);
+    ui->agent_comboBox->setValue(d.Agent());
+    ui->kursEdit->setValue(d.Kurs());
+    ui->descrEdit->setText(d.Descr());
 
     ui->fromSpinBox->setEnabled(ui->fromWidget->value());
     ui->toSpinBox->setEnabled(ui->toWidget->value());

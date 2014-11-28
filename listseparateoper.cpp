@@ -61,6 +61,7 @@ void AccountDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionVi
 ListSeparateOperModel::ListSeparateOperModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
+    Account a;
     account_summ data;
     Database db;
 
@@ -70,15 +71,18 @@ ListSeparateOperModel::ListSeparateOperModel(QObject *parent) :
 
     insertColumns(0,2);
 
-    data.set_account(1);
+    a.read(1);
+    data.set_account(a);
     data.set_balance(10);
     list.append(data);
 
-    data.set_account(2);
+    a.read(2);
+    data.set_account(a);
     data.set_balance(20);
     list.append(data);
 
-    data.set_account(0);
+    a.read(0);
+    data.set_account(a);
     data.set_balance(0);
     list.append(data);
 }
@@ -111,7 +115,7 @@ QVariant ListSeparateOperModel::data(const QModelIndex &index, int role) const
             return QVariant();
         account_summ data = list.at(index.row());
         if (index.column() == 0)
-            return acc_list[data.account()];
+            return acc_list[data.account().Id()];
         else if (index.column() == 1)
             return data.balance().toDouble();
     }

@@ -356,15 +356,14 @@ int Database::new_agent(agent_data &data) {
         return q.value(0).toInt();
     return 0;
 }
-*/
 
-int Database::new_operation(Operation_Data &data)
+int Database::new_operation(Operation &data)
 {
     QSqlQuery query;
 
     query.prepare("INSERT INTO oper(dt, descr) VALUES(:dt, :descr)");
-    query.bindValue(":dt", data.date);
-    query.bindValue(":descr", data.descr);
+    query.bindValue(":dt", data.Date());
+    query.bindValue(":descr", data.Descr());
     qDebug() << query.executedQuery();
     if (!query.exec())
         return 0;
@@ -398,6 +397,7 @@ bool Database::new_account_oper(QString table, const int o_id, account_summ &acc
 
     return true;
 }
+*/
 
 bool Database::del_account_oper(int id)
 {
@@ -411,6 +411,7 @@ bool Database::del_account_oper(int id)
     return true;
 }
 
+/*
 bool Database::del_operation(int id)
 {
     QSqlQuery q;
@@ -494,7 +495,7 @@ bool Database::change_account_balance(account_summ &acc)
     return true;
 }
 
-bool Database::save_operation(Operation_Data &oper)
+bool Database::save_operation(Operation &oper)
 {
     QSqlQuery q;
     int oper_id;
@@ -563,6 +564,7 @@ bool Database::save_operation(Operation_Data &oper)
     tr.commit();
     return true;
 }
+*/
 
 bool Database::add_budget(account_summ &d)
 {
@@ -604,10 +606,11 @@ bool Database::find_budget_id(int budget, int acc)
     return false;
 }
 
-Operation_Data Database::get_operation(int id)
+/*
+Operation Database::get_operation(int id)
 {
     QSqlQuery q;
-    Operation_Data data;
+    Operation data;
     QMap<int,double> list;
     QMap<int,double>::iterator i;
 
@@ -745,6 +748,7 @@ bool Database::update_plan_oper(Operation_Data &data)
     tr.commit();
     return true;
 }
+*/
 
 bool Database::new_mon_oper(int p_id, int status)
 {
@@ -766,6 +770,7 @@ bool Database::new_mon_oper(int p_id, int status)
     return true;
 }
 
+/*
 QList<Operation_Data> Database::get_plan_oper_list(int status)
 {
     QList<Operation_Data> list;
@@ -912,3 +917,4 @@ int Database::find_oper_by_plan(int plan, int mon, int year)
             return Plan_Status::cancelled;
         return 0;
 }
+*/

@@ -57,7 +57,8 @@ SOURCES += \
     mytableview.cpp \
     downloader.cpp \
     editpayment.cpp \
-    currency.cpp
+    currency.cpp \
+    operation.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -102,7 +103,8 @@ HEADERS  += \
     mytableview.h \
     downloader.h \
     editpayment.h \
-    currency.h
+    currency.h \
+    operation.h
 
 FORMS    += \
     debetcreditreport.ui \

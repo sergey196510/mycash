@@ -124,20 +124,19 @@ void ListAgents::check_select_line()
 {
     QSqlQuery q;
     int id;
+    Agent a;
 
     if ((id = ui->tableView->get_selected_id()) == 0) {
 //        QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return;
     }
 
-    q.prepare("SELECT name,city,address,phone,contact FROM agent WHERE id = :id");
-    q.bindValue(":id", id);
-    if (q.exec() && q.next()) {
-        ui->nameEdit->setText(q.value(0).toString());
-        ui->cityEdit->setText(q.value(1).toString());
-        ui->addrEdit->setText(q.value(2).toString());
-        ui->phoneEdit->setText(q.value(3).toString());
-        ui->contactEdit->setText(q.value(4).toString());
+    if (a.read(id)) {
+        ui->nameEdit->setText(a.Name());
+        ui->cityEdit->setText(a.City());
+        ui->addrEdit->setText(a.Address());
+        ui->phoneEdit->setText(a.Phone());
+        ui->contactEdit->setText(a.Contact());
     }
 
     ui->editButton->setEnabled(true);
@@ -165,6 +164,7 @@ void ListAgents::save_new_record()
 void ListAgents::update_record()
 {
     QSqlQuery q;
+    Agent a;
     int id;
 
     if ((id = ui->tableView->get_selected_id()) == 0) {
@@ -172,18 +172,13 @@ void ListAgents::update_record()
         return;
     }
 
-    q.prepare("UPDATE agent SET name = :name, city = :city, address = :address, phone = :phone, contact = :contact WHERE id = :id");
-    q.bindValue(":name", ui->nameEdit->text());
-    q.bindValue(":city", ui->cityEdit->text());
-    q.bindValue(":address", ui->addrEdit->text());
-    q.bindValue(":phone", ui->phoneEdit->text());
-    q.bindValue(":contact", ui->contactEdit->text());
-    q.bindValue(":id", id);
-    q.exec();
-    if (!q.exec()) {
-        qDebug() << "Update error";
-        return;
-    }
+    a.set_Id(id);
+    a.set_Name(ui->nameEdit->text());
+    a.set_City(ui->cityEdit->text());
+    a.set_Address(ui->addrEdit->text());
+    a.set_Phone(ui->phoneEdit->text());
+    a.set_Contact(ui->contactEdit->text());
+    a.update();
 
     reload_model();
 }

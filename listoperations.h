@@ -48,8 +48,8 @@ private:
     Globals *var;
     QStringList header_data;
     QMap<int,QString> accounts_list;
-    QList<Operation_Data> list;
-    QList<Operation_Data> read_list(int account, QDate fdate, QDate ldate);
+    QList<Operation> list;
+    QList<Operation> read_list(int account, QDate fdate, QDate ldate);
     int current_account;
 };
 
@@ -81,7 +81,7 @@ private:
     Globals var;
 //    operation_data d;
 //    QMap<QString,double> list;
-    void edit_operation(Operation_Data &);
+    void edit_operation(Operation &);
 
 signals:
     void call_reload_table(int account, QDate fdate, QDate ldate);

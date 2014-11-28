@@ -7,6 +7,7 @@
 #include "database.h"
 #include "summaccount.h"
 #include "currency.h"
+#include "operation.h"
 
 namespace Ui {
 class MainWidget;
@@ -38,7 +39,7 @@ public slots:
 
 private:
     Database *db;
-    QList<Operation_Data> list;
+    QList<Operation> list;
     QMap<int,QString> acc_list;
     QStringList header_data;
     Globals *var;

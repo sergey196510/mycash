@@ -6,6 +6,7 @@
 #include "global.h"
 #include "listseparateoper.h"
 #include "editagent.h"
+#include "operation.h"
 
 namespace Ui {
 class EditOperation;
@@ -18,8 +19,8 @@ class EditOperation : public QDialog
 public:
     explicit EditOperation(int type, QWidget *parent = 0);
     ~EditOperation();
-    Operation_Data data();
-    void setdata(Operation_Data &);
+    Operation data();
+    void setdata(Operation &);
     
 private:
     Ui::EditOperation *ui;

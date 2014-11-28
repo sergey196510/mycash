@@ -1,4 +1,5 @@
 #include "listaccountsmodel.h"
+#include "operation.h"
 
 ViewCurrency::ViewCurrency(int col, QObject *parent) :
     QItemDelegate(parent)
@@ -26,8 +27,8 @@ void ViewCurrency::paint(QPainter *painter, const QStyleOptionViewItem &option, 
 MyCurrency ListAccountsModel::get_reserv(int id)
 {
     Account acc;
-    QList<Operation_Data>::iterator i;
-    Operation_Data oper;
+    QList<Operation>::iterator i;
+    Operation oper;
     account_summ as;
     MyCurrency summ = 0;
 
@@ -37,8 +38,8 @@ MyCurrency ListAccountsModel::get_reserv(int id)
 
     for (i = plan_list.begin(); i != plan_list.end(); i++) {
         oper = *i;
-        if (oper.from.at(0).account().Id() == id) {
-            as = oper.from.at(0);
+        if (oper.From().at(0).account().Id() == id) {
+            as = oper.From().at(0);
             summ += as.balance();
         }
     }
@@ -164,7 +165,9 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
     QStandardItemModel(parent)
 {
     db = new Database;
-    plan_list = db->get_plan_oper_list(1);
+    Operation op;
+
+    plan_list = op.get_plan_oper_list(1);
 }
 
 ListAccountsModel::~ListAccountsModel()

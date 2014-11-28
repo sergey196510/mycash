@@ -139,9 +139,10 @@ void ListAccounts::new_account()
     Globals var;
     EditAccount *ea = new EditAccount(1, this);
     int id = get_selected_id();
-    Account data;
-    Operation_Data oper;
+    Account data, d;
+    Operation oper;
     account_summ a;
+    QList<account_summ> lst;
     int acc;
 
     data.setCurr(var.Currency());
@@ -184,18 +185,24 @@ void ListAccounts::new_account()
             return;
         }
 
-        oper.date = data.Date();
-        oper.descr = tr("Primary balance");
+        oper.setDate(data.Date());
+        oper.setDescr(tr("Primary balance"));
 
-        a.set_account(var.InitialAccount());
+        d.read(var.InitialAccount());
+        a.set_account(d);
         a.set_balance(data.Balance().toDouble());
-        oper.from.append(a);
+        lst.clear();
+        lst.append(a);
+        oper.setFrom(lst);
 
-        a.set_account(acc);
+        d.read(acc);
+        a.set_account(d);
         a.set_balance(data.Balance().toDouble());
-        oper.to.append(a);
+        lst.clear();
+        lst.append(a);
+        oper.setTo(lst);
 
-        db->save_operation(oper);
+        oper.save_operation();
         t.commit();
 
         reload_model();
@@ -271,33 +278,48 @@ void ListAccounts::correct_balance()
         MyCurrency current_balance = data.Balance();
         MyCurrency new_balance = cb->balance();
 
-        Operation_Data od;
-        od.date = cb->date();
-        od.agent = 0;
-        od.descr = tr("correct");
+        Operation od;
+        QList<account_summ> lst;
+        od.setDate(cb->date());
+//        od.agent = 0;
+        od.setDescr(tr("correct"));
         if (new_balance < current_balance) {
             double summ = current_balance-new_balance;
+            Account d;
 
-            a.set_account(id);
+            d.read(id);
+            a.set_account(d);
             a.set_balance(summ);
-            od.from.append(a);
+            lst.clear();
+            lst.append(a);
+            od.setFrom(lst);
 
-            a.set_account(cb->account());
+            d.read(cb->account());
+            a.set_account(d);
             a.set_balance(summ);
-            od.to.append(a);
+            lst.clear();
+            lst.append(a);
+            od.setTo(lst);
         }
         else {
             double summ = new_balance-current_balance;
+            Account d;
 
-            a.set_account(cb->account());
+            d.read(cb->account());
+            a.set_account(d);
             a.set_balance(summ);
-            od.from.append(a);
+            lst.clear();
+            lst.append(a);
+            od.setFrom(lst);
 
-            a.set_account(id);
+            d.read(id);
+            a.set_account(d);
             a.set_balance(summ);
-            od.to.append(a);
+            lst.clear();
+            lst.append(a);
+            od.setTo(lst);
         }
-        db->save_operation(od);
+        od.save_operation();
 
         reload_model();
     }

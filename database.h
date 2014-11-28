@@ -5,6 +5,7 @@
 #include "global.h"
 #include "budget.h"
 #include "currency.h"
+//#include "operation.h"
 
 class Database
 {
@@ -29,24 +30,24 @@ public:
     QMap<QString,double> get_currency_list();
     QMap<QString,double> get_opersummbyaccount_list(int type,int month,int year);
     QMap<int,double> get_account_oper_list(int, int);
-    QMap<int,double> get_plan_account_oper_list(int, int);
-    QList<Operation_Data> get_plan_oper_list(int status);
+//    QMap<int,double> get_plan_account_oper_list(int, int);
+//    QList<Operation> get_plan_oper_list(int status);
 //    int     new_account(Account &);
 //    int     new_agent(agent_data &);
-    int     new_operation(Operation_Data &);
-    bool    del_operation(int);
-    bool    new_account_oper(const QString, const int oper, account_summ &, const int direction, const int agent = 0);
+//    int     new_operation(Operation &);
+//    bool    del_operation(int);
+//    bool    new_account_oper(const QString, const int oper, account_summ &, const int direction, const int agent = 0);
     bool    del_account_oper(int);
-    bool    change_account_balance(account_summ &);
-    bool    save_operation(Operation_Data &);
-    int     new_plan_oper(Operation_Data &data);
-    bool    update_plan_oper(Operation_Data &data);
+//    bool    change_account_balance(account_summ &);
+//    bool    save_operation(Operation &);
+//    int     new_plan_oper(Operation &data);
+//    bool    update_plan_oper(Operation &data);
     bool    new_mon_oper(int p_id, int status);
     bool    add_budget(account_summ &d);
     bool    find_budget_id(int, int);
-    Operation_Data get_operation(int);
-    Operation_Data get_plan_oper_data(int,QDate dt);
-    int find_oper_by_plan(int plan, int mon, int year);
+//    Operation get_operation(int);
+//    Operation get_plan_oper_data(int,QDate dt);
+//    int find_oper_by_plan(int plan, int mon, int year);
 //    QMap<int,QString> scod_list2;
     QMap<QString,double> currency_list;
 };

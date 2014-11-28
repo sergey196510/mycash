@@ -117,10 +117,11 @@ public:
         descr.clear();
         dt = QDate::currentDate();
     }
-    bool read(int id)
+    bool read(int i)
     {
         QSqlQuery q;
 
+        id = i;
         if (id == 0)
             return false;
 
@@ -131,6 +132,7 @@ public:
             return false;
         }
         if (q.next()) {
+//            id = i;
             name = q.value(0).toString();
             type = q.value(1).toInt();
             balance = q.value(2).toDouble();
@@ -207,27 +209,6 @@ public:
     void set_balance(MyCurrency val) { s = val; }
 };
 
-struct Operation_Data {
-    int id;
-    int day,month,year;
-    int agent;
-    double kurs;
-    QList<account_summ> from;
-    QList<account_summ> to;
-//    int plan_id;
-    QDate date;
-    QString descr;
-    int status;
-    int auto_exec;
-    Operation_Data() {
-        id = day = month = year = 0;
-        agent = 0;
-        auto_exec = 0;
-        date = QDate::currentDate();
-        descr.clear();
-    }
-};
-
 class Agent {
     int id;
     QString name;
@@ -265,7 +246,40 @@ public:
             return q.value(0).toInt();
         return 0;
     }
-    bool read(int) {
+    bool read(int i) {
+        QSqlQuery q;
+
+        id = i;
+        q.prepare("SELECT name,city,address,phone,contact FROM agent WHERE id = :id");
+        q.bindValue(":id", id);
+        if (q.exec() && q.next()) {
+            name = q.value(0).toString();
+            city = q.value(1).toString();
+            address = q.value(2).toString();
+            phone = q.value(3).toString();
+            contact = q.value(4).toString();
+            return true;
+        }
+        return false;
+    }
+    bool update() {
+        QSqlQuery q;
+
+        if (id == 0)
+            return false;
+
+        q.prepare("UPDATE agent SET name = :name, city = :city, address = :address, phone = :phone, contact = :contact WHERE id = :id");
+        q.bindValue(":name", name);
+        q.bindValue(":city", city);
+        q.bindValue(":address", address);
+        q.bindValue(":phone", phone);
+        q.bindValue(":contact", contact);
+        q.bindValue(":id", id);
+        q.exec();
+        if (!q.exec()) {
+            qDebug() << q.lastError();
+            return false;
+        }
         return true;
     }
 

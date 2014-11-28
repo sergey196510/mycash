@@ -16,59 +16,59 @@ ListPlanOperModel::~ListPlanOperModel()
     delete var;
 }
 
-QList<Operation_Data> ListPlanOperModel::read_list()
+QList<Operation> ListPlanOperModel::read_list()
 {
-    QList<Operation_Data> list = db->get_plan_oper_list(0);
+    QList<Operation> list = Operation().get_plan_oper_list(0);
     return list;
 }
 
 QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
 {
-    Operation_Data data;
+    Operation data;
 
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 0) {
             data = list.at(index.row());
-            return data.id;
+            return data.Id();
         }
         else if (index.column() == 1) {
             data = list.at(index.row());
-            return data.day;
+            return data.Day();
         }
         else if (index.column() == 2) {
             data = list.at(index.row());
-            if (data.month)
-                return data.month;
+            if (data.Month())
+                return data.Month();
             else
                 return QVariant();
         }
         else if (index.column() == 3) {
             data = list.at(index.row());
-            if (data.year)
-                return data.year;
+            if (data.Year())
+                return data.Year();
             else
                 return QVariant();
         }
         else if (index.column() == 4) {
             data = list.at(index.row());
-            return acc_list[data.from.at(0).account()];
+            return acc_list[data.From().at(0).account().Id()];
         }
         else if (index.column() == 5) {
             data = list.at(index.row());
-            QMap<int,double> oper = db->get_plan_account_oper_list(data.id,2);
+            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
             QMap<int,double>::iterator i = oper.begin();
             return acc_list[i.key()];
         }
         else if (index.column() == 6) {
             data = list.at(index.row());
-            QMap<int,double> oper = db->get_plan_account_oper_list(data.id,2);
+            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
             QMap<int,double>::iterator i = oper.begin();
             return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
         }
         else if (index.column() == 7) {
             data = list.at(index.row());
-            if (data.auto_exec == 1)
+            if (data.Auto() == 1)
                 return tr("Y");
             else
                 return QVariant();
@@ -84,7 +84,7 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
 //        }
         else if (index.column() == 8) {
             data = list.at(index.row());
-            return data.descr;
+            return data.Descr();
         }
         else
             return QVariant();
@@ -103,18 +103,18 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
 
     case Qt::TextColorRole:
         data = list.at(index.row());
-        if (data.status == Plan_Status::committed)
+        if (data.Status() == Plan_Status::committed)
             return QVariant(QColor(Qt::gray));
-        else if (data.status == Plan_Status::cancelled)
+        else if (data.Status() == Plan_Status::cancelled)
             return QVariant(QColor(Qt::gray));
         else
             return QVariant();
 
     case Qt::BackgroundColorRole:
         data = list.at(index.row());
-        if (data.status == Plan_Status::minimum)
+        if (data.Status() == Plan_Status::minimum)
             return QVariant(QColor(Qt::yellow));
-        else if (data.status == Plan_Status::expired)
+        else if (data.Status() == Plan_Status::expired)
             return QVariant(QColor(Qt::red));
         else
             return QVariant();
@@ -152,13 +152,13 @@ void ListPlanOperModel::change_data()
 {
     beginResetModel();
     list.clear();
-    list = db->get_plan_oper_list(0);
+    list = Operation().get_plan_oper_list(0);
     endResetModel();
 }
 
 int ListPlanOperModel::get_ident(int row)
 {
-    return list.at(row).id;
+    return list.at(row).Id();
 }
 
 ListPlanOper::ListPlanOper(QWidget *parent) :
@@ -233,8 +233,8 @@ void ListPlanOper::new_oper()
     EditOperation *po = new EditOperation(2, this);
 
     if (po->exec() == QDialog::Accepted) {
-        Operation_Data data = po->data();
-        if (db->new_plan_oper(data)) {
+        Operation data = po->data();
+        if (data.new_plan_oper()) {
         }
         emit data_changed();
     }
@@ -262,8 +262,8 @@ QList<int> ListPlanOper::get_selected_id()
 
 void ListPlanOper::commit_oper()
 {
-    Operation_Data pod;
-    Operation_Data od;
+    Operation pod;
+    Operation od;
     EditOperation *eo = new EditOperation(1, this);
     QList<int> id = get_selected_id();
     QList<int>::iterator i;
@@ -273,14 +273,14 @@ void ListPlanOper::commit_oper()
 
     for (i = id.begin(); i != id.end(); i++) {
         int d = *i;
-        pod = db->get_plan_oper_data(d, QDate::currentDate());
+        pod.get_plan_data(d, QDate::currentDate());
 
         eo->setdata(pod);
         if (eo->exec() == QDialog::Rejected)
             continue;
 
         pod = eo->data();
-        db->save_operation(pod);
+        pod.save_operation();
         db->new_mon_oper(d,1);
     }
 
@@ -290,7 +290,7 @@ void ListPlanOper::commit_oper()
 void ListPlanOper::update_oper()
 {
     QSqlQuery q;
-    Operation_Data pod, od;
+    Operation pod, od;
     EditOperation *eo = new EditOperation(2, this);
     QList<int> id = get_selected_id();
     Transaction tr;
@@ -298,7 +298,7 @@ void ListPlanOper::update_oper()
     if (id.size() == 0)
         return;
 
-    pod = db->get_plan_oper_data(id.at(0), QDate::currentDate());
+    pod.get_plan_data(id.at(0), QDate::currentDate());
 
     eo->setdata(pod);
     if (eo->exec() == QDialog::Rejected)
@@ -309,8 +309,8 @@ void ListPlanOper::update_oper()
     od = eo->data();
     delete eo;
 
-    od.id = id.at(0);
-    if (db->update_plan_oper(od)) {
+    od.setId(id.at(0));
+    if (od.update_plan_oper()) {
         tr.commit();
         emit data_changed();
     }

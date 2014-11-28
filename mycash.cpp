@@ -390,20 +390,20 @@ void MyCash::report2()
 void MyCash::check_plan_oper()
 {
 //    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
-    QList<Operation_Data> list = db->get_plan_oper_list(0);
-    QList<Operation_Data>::iterator i;
+    QList<Operation> list = Operation().get_plan_oper_list(0);
+    QList<Operation>::iterator i;
     Account from, to;
 
 //    qDebug() << mon << year;
 
     for (i = list.begin(); i != list.end(); i++) {
-        Operation_Data data = *i;
-          if (data.auto_exec == 0)
+        Operation data = *i;
+          if (data.Auto() == 0)
             continue;
-        if (data.status != Plan_Status::expired)
+        if (data.Status() != Plan_Status::expired)
             continue;
-        from.read(data.from.at(0).account());
-        to.read(data.to.at(0).account());
+        from.read(data.From().at(0).account().Id());
+        to.read(data.To().at(0).account().Id());
 
         int r = QMessageBox::question(0,
                                       tr("Plan operation"),
@@ -414,7 +414,7 @@ void MyCash::check_plan_oper()
         if (r == QMessageBox::No)
             continue;
 
-        if (from.Top() == Account_Type::active && from.Balance() < data.to.at(0).balance().toDouble()) {
+        if (from.Top() == Account_Type::active && from.Balance() < data.To().at(0).balance().toDouble()) {
             QMessageBox::warning(0,
                                  tr("Plan operation"),
                                  tr("Plan operation\nFrom: %1, To: %2\nNedostatocjno sredstv")
@@ -424,12 +424,12 @@ void MyCash::check_plan_oper()
         }
 
         if (r == QMessageBox::Yes) {
-            db->save_operation(data);
-            db->new_mon_oper(data.id,1);
+            data.save_operation();
+            db->new_mon_oper(data.Id(),1);
         }
         else if (r == QMessageBox::Cancel)
-            db->new_mon_oper(data.id,2);
+            db->new_mon_oper(data.Id(),2);
 
-        qDebug() << data.id;
+        qDebug() << data.Id();
     }
 }

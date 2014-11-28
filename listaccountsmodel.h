@@ -4,6 +4,7 @@
 #include <QtGui>
 #include "database.h"
 #include "currency.h"
+#include "operation.h"
 
 class ViewCurrency : public QItemDelegate
 {
@@ -28,7 +29,7 @@ private:
 //    QMap<int,QString> list;
     QMap<int,QModelIndex> list_index;
 //    QMap<QString,double> list_curs;
-    QList<Operation_Data> plan_list;
+    QList<Operation> plan_list;
     Globals var;
     MyCurrency get_reserv(int id);
 
