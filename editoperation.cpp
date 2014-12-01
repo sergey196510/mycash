@@ -187,15 +187,15 @@ void EditOperation::setdata(Operation &d)
     ui->autoBox->setChecked(d.Auto());
 
     if (!d.From().empty()) {
-        i = d.From().begin();
-        account_summ a = *i;
+        account_summ a = d.From().at(0);
+//        account_summ a = *i;
         ui->fromWidget->setValue(a.account().Id());
         ui->fromSpinBox->setValue(a.balance().toDouble());
     }
 
     if (!d.To().empty()) {
-        i = d.To().begin();
-        account_summ a = *i;
+        account_summ a = d.To().at(0);
+//        account_summ a = *i;
         ui->toWidget->setValue(a.account().Id());
         ui->toSpinBox->setValue(a.balance().toDouble());
     }

@@ -7,6 +7,7 @@ Operation::Operation() {
     date = QDate::currentDate();
     descr.clear();
 }
+
 int Operation::new_operation()
 {
     QSqlQuery query;
@@ -32,7 +33,7 @@ bool Operation::save_operation()
     int oper_id;
     QList<account_summ>::iterator i;
     Transaction tr;
-    MyCurrency from = 0, to = 0;
+    MyCurrency mfrom = 0, mto = 0;
 
     tr.begin();
 
@@ -40,10 +41,10 @@ bool Operation::save_operation()
         tr.rollback();
         return false;
     }
-    for (i = From().begin(); i != From().end(); i++) {
+    for (i = from.begin(); i != from.end(); i++) {
         account_summ d = *i;
-        Account data;
-        data.read(d.account().Id());
+        Account data = d.account();
+//        data.read(d.account().Id());
         if (data.Top() == Account_Type::debet && agent)
             data.setAgent(agent);
         if (new_account_oper("account_oper", oper_id, d, Direction::from, data.Agent()) == false) {
@@ -53,19 +54,19 @@ bool Operation::save_operation()
         if (data.Top() == Account_Type::active ||
                 data.Top() == Account_Type::credit)
             d.set_balance(-d.balance().toDouble()); // сменить знак
-        if (change_account_balance(d) == false) {
+        if (data.change_balance(d.balance()) == false) {
             tr.rollback();
             return false;
         }
         if (data.Top() == Account_Type::debet) {
             Database().add_budget(d);
         }
-        from += abs(d.balance().toDouble());
+        mfrom += abs(d.balance().toDouble());
     }
-    for (i = To().begin(); i != To().end(); i++) {
+    for (i = to.begin(); i != to.end(); i++) {
         account_summ d = *i;
-        Account data;
-        data.read(d.account().Id());
+        Account data = d.account();
+//        data.read(d.account().Id());
         if (data.Top() == Account_Type::credit && agent)
             data.setAgent(agent);
         if (new_account_oper("account_oper", oper_id, d, Direction::to, data.Agent()) == false) {
@@ -76,17 +77,17 @@ bool Operation::save_operation()
                 data.Top() == Account_Type::debet ||
                 data.Top() == Account_Type::initial)
             d.set_balance(-d.balance().toDouble()); // сменить знак
-        if (change_account_balance(d) == false) {
+        if (data.change_balance(d.balance()) == false) {
             tr.rollback();
             return false;
         }
         if (data.Top() == Account_Type::credit) {
             Database().add_budget(d);
         }
-        to += abs(d.balance().toDouble());
+        mto += abs(d.balance().toDouble());
     }
 
-    if (from != to) {
+    if (mfrom != mto) {
         qDebug() << "from not equal to";
         tr.rollback();
         return false;
@@ -101,6 +102,7 @@ bool Operation::new_account_oper(QString table, const int o_id, account_summ &ac
     QSqlQuery q;
 
     qDebug() << acc.balance().toDouble();
+    qDebug() << acc.account().Id();
     str = QString("INSERT INTO %1(a_id, o_id, summ, direction, agent) VALUES(%2, %3, %4, %5, %6)")
             .arg(table)
             .arg(acc.account().Id())
@@ -116,19 +118,13 @@ bool Operation::new_account_oper(QString table, const int o_id, account_summ &ac
 
     return true;
 }
+
+/*
 bool Operation::change_account_balance(account_summ &acc)
 {
     QSqlQuery query;
     MyCurrency summ;
-//    Account data;
     int flag = 1;
-
-//    data = get_account_data(acc.account());
-
-//    if (data.top == Account_Type::active || data.top == Account_Type::debet)
-//        flag = 1;
-//    else
-//        flag = -1;
 
     summ = acc.balance() * flag;
 
@@ -141,6 +137,8 @@ bool Operation::change_account_balance(account_summ &acc)
 
     return true;
 }
+*/
+
 bool Operation::insert() {
     QSqlQuery q;
     int oper_id;
@@ -168,7 +166,7 @@ bool Operation::insert() {
         if (data.Top() == Account_Type::active ||
                 data.Top() == Account_Type::credit)
             d.set_balance(-d.balance().toDouble()); // сменить знак
-        if (change_account_balance(d) == false) {
+        if (data.change_balance(d.balance()) == false) {
             tr.rollback();
             return false;
         }
@@ -191,7 +189,7 @@ bool Operation::insert() {
                 data.Top() == Account_Type::debet ||
                 data.Top() == Account_Type::initial)
             d.set_balance(-d.balance().toDouble()); // сменить знак
-        if (change_account_balance(d) == false) {
+        if (data.change_balance(d.balance()) == false) {
             tr.rollback();
             return false;
         }
@@ -210,6 +208,7 @@ bool Operation::insert() {
     tr.commit();
     return true;
 }
+
 int Operation::find_oper_by_plan(int plan, int mon, int year)
 {
         QSqlQuery q;
@@ -230,6 +229,7 @@ int Operation::find_oper_by_plan(int plan, int mon, int year)
             return Plan_Status::cancelled;
         return 0;
 }
+
 QMap<int,double> Operation::get_plan_account_oper_list(int oper, int type)
 {
     QMap<int,double> list;
@@ -248,6 +248,7 @@ QMap<int,double> Operation::get_plan_account_oper_list(int oper, int type)
 
     return list;
 }
+
 bool Operation::get_plan_data(int id, QDate oper_date)
 {
     QSqlQuery q;
@@ -559,7 +560,7 @@ bool Operation::del_operation(int id)
                         data.Top() == Account_Type::initial) ?
                            -i.value() :
                            i.value());
-        if (change_account_balance(acc) == false) {
+        if (data.change_balance(acc.balance()) == false) {
             tr.rollback();
             return false;
         }
@@ -572,7 +573,7 @@ bool Operation::del_operation(int id)
         data.read(i.key());
         acc.set_account(data);
         acc.set_balance(-i.value());
-        if (change_account_balance(acc) == false) {
+        if (data.change_balance(acc.balance()) == false) {
             tr.rollback();
             return false;
         }

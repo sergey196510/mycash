@@ -25,7 +25,7 @@ public:
     bool del_operation(int);
     bool save_operation();
     bool new_account_oper(QString table, const int o_id, account_summ &acc, int direction, int agent = 0);
-    bool change_account_balance(account_summ &acc);
+//    bool change_account_balance(account_summ &acc);
     bool insert();
     int find_oper_by_plan(int plan, int mon, int year);
     QMap<int,double> get_plan_account_oper_list(int oper, int type);

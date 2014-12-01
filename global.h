@@ -170,6 +170,23 @@ public:
             return q.value(0).toInt();
         return 0;
     }
+    bool change_balance(MyCurrency val)
+    {
+        QSqlQuery query;
+        MyCurrency summ;
+        int flag = 1;
+
+        summ = val * flag;
+
+        query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
+        query.bindValue(":id", id);
+        query.bindValue(":summ", summ.toDouble());
+        if (!query.exec()) {
+            return false;
+        }
+
+        return true;
+    }
     void setBalance(MyCurrency bal) { balance = bal; }
     void setAgent(int a) { agent = a; }
     void setCurr(int c) { curr = c; }
