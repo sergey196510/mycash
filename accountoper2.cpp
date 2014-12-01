@@ -5,7 +5,7 @@ AccountOper2::AccountOper2(QWidget *parent) :
 {
     val = 0;
     db = new Database;
-    list = db->get_accounts_list();
+//    list = db->get_accounts_list();
 
     this->setReadOnly(true);
 
@@ -20,6 +20,7 @@ AccountOper2::~AccountOper2()
 void AccountOper2::select_account()
 {
     SelectAccount *acc = new SelectAccount(this);
+    Account item;
 //    QCursor m;
 
 //    qDebug() << m.pos();
@@ -28,15 +29,19 @@ void AccountOper2::select_account()
     acc->move(QCursor().pos());
     if (acc->exec() == QDialog::Accepted) {
         val = acc->value();
-        this->setText(list[val]);
+        item.read(val);
+        this->setText(item.fullName());
         emit changed_value();
     }
 }
 
 void AccountOper2::setValue(int i)
 {
-    val = i;
-    this->setText(list[val]);
+    Account acc;
+
+    acc.read(i);
+//    val = i;
+    this->setText(acc.fullName());
 }
 
 void AccountOper2::mousePressEvent(QMouseEvent *)

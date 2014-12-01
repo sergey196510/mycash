@@ -6,7 +6,7 @@ ListBudgetModel::ListBudgetModel(Database *d, QObject *parent) :
     db = d;
     header_data << tr("Month") << tr("Account") << tr("Summ") << tr("Description");
     list = db->read_budget_list(0);
-    accounts_list = db->get_accounts_list();
+//    accounts_list = db->get_accounts_list();
 }
 
 int ListBudgetModel::rowCount(const QModelIndex &parent) const
@@ -50,7 +50,9 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
         }
         if (index.column() == 1) {
             Budget data = list.at(index.row());
-            return accounts_list[data.Account()];
+            Account acc;
+            acc.read(data.Account());
+            return acc.fullName();
         }
         if (index.column() == 2) {
             Budget data = list.at(index.row());

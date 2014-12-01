@@ -7,7 +7,7 @@ ListPlanOperModel::ListPlanOperModel(Database *d, QObject *parent) :
     db = d;
     header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Auto") << tr("Description");
     list = read_list();
-    acc_list = db->get_accounts_list();
+//    acc_list = db->get_accounts_list();
     var = new Globals;
 }
 

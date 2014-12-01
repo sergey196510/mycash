@@ -8,7 +8,7 @@ MainWidgetModel::MainWidgetModel(Database *d, QObject *parent) :
     db = d;
     list = Operation().get_plan_oper_list(1);
     header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Status") << tr("Descr");
-    acc_list = db->get_accounts_list();
+//    acc_list = db->get_accounts_list();
     var = new Globals;
 }
 

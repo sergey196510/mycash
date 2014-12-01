@@ -40,7 +40,7 @@ public slots:
 private:
     Database *db;
     QList<Operation> list;
-    QMap<int,QString> acc_list;
+//    QMap<int,QString> acc_list;
     QStringList header_data;
     Globals *var;
     int rowCount(const QModelIndex &parent) const;

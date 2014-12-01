@@ -47,7 +47,7 @@ private:
     Database *db;
     Globals *var;
     QStringList header_data;
-    QMap<int,QString> accounts_list;
+//    QMap<int,QString> accounts_list;
     QList<Operation> list;
     QList<Operation> read_list(int account, QDate fdate, QDate ldate);
     int current_account;

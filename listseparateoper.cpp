@@ -67,7 +67,7 @@ ListSeparateOperModel::ListSeparateOperModel(QObject *parent) :
 
     header_data << tr("Account") << tr("Summ");
 
-    acc_list = db.get_accounts_list();
+//    acc_list = db.get_accounts_list();
 
     insertColumns(0,2);
 

@@ -169,6 +169,7 @@ QString Database::get_parent_account(int id)
     return QVariant().toString();
 }
 
+/*
 QMap<int,QString> Database::get_accounts_list()
 {
     QMap<int,QString> list;
@@ -188,6 +189,7 @@ QMap<int,QString> Database::get_accounts_list()
 
     return list;
 }
+*/
 
 QList<Budget> Database::read_budget_list(int mon)
 {

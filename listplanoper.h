@@ -34,7 +34,7 @@ private:
     Globals *var;
     QStringList header_data;
     QList<Operation> list;
-    QMap<int,QString> acc_list;
+//    QMap<int,QString> acc_list;
     QMap<QString,double> currency;
     QString symbol;
     Database *db;

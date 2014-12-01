@@ -22,7 +22,7 @@ public slots:
 private:
     Database *db;
     QList<Budget> list;
-    QMap<int,QString> accounts_list;
+//    QMap<int,QString> accounts_list;
     QStringList header_data;
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;

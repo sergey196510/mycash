@@ -7,7 +7,7 @@ ListOperationsModel::ListOperationsModel(int account, QDate fdate, QDate ldate, 
 {
     header_data << "" << tr("Date") << tr("Account") << tr("Debet") << tr("Credit") << tr("Description");
     list = read_list(account, fdate, ldate);
-    accounts_list = db->get_accounts_list();
+//    accounts_list = db->get_accounts_list();
     var = new Globals;
 }
 
@@ -123,11 +123,11 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
 //            qDebug() << current_account << from.account() << to.account();
             if (from.account().Id() == current_account) {
 //                qDebug() << "from";
-                return accounts_list[to.account().Id()];
+                return to.account().fullName();
             }
             else {
 //                qDebug() << "to";
-                return accounts_list[from.account().Id()];
+                return from.account().fullName();
             }
         }
         else if (index.column() == col_Debet) {

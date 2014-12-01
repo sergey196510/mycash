@@ -342,7 +342,6 @@ bool Operation::get_plan_data(int _i, QDate oper_date)
 QList<Operation> Operation::get_plan_oper_list(int status)
 {
     QList<Operation> list;
-    Operation oper;
     QSqlQuery q;
 
     q.prepare("SELECT id,dt FROM plan_oper ORDER BY day");
@@ -351,6 +350,7 @@ QList<Operation> Operation::get_plan_oper_list(int status)
         return list;
     }
     while (q.next()) {
+        Operation oper;
         oper.get_plan_data(q.value(0).toInt(), q.value(1).toDate());
         if (status && (oper.Status() == Plan_Status::actual || oper.Status() == Plan_Status::committed || oper.Status() == Plan_Status::cancelled))
             continue;

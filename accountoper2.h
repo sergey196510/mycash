@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include "database.h"
 #include "selectaccount.h"
+#include "account.h"
 
 class AccountOper2 : public QLineEdit
 {
@@ -27,7 +28,7 @@ public slots:
 private:
     int val;
     Database *db;
-    QMap<int,QString> list;
+//    QMap<int,QString> list;
 
 private slots:
     void select_account();
