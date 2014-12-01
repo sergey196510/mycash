@@ -147,7 +147,7 @@ Operation EditOperation::data()
     Account acc;
     Operation d;
     account_summ a;
-    QList<account_summ> lst;
+//    QList<account_summ> lst;
 
     d.setDay(ui->dayBox->currentIndex());
     d.setMonth(ui->monBox->currentIndex());
@@ -159,16 +159,12 @@ Operation EditOperation::data()
     acc.read(ui->fromWidget->value());
     a.set_account(acc);
     a.set_balance(ui->fromSpinBox->value());
-    lst.clear();
-    lst.append(a);
-    d.setFrom(lst);
+    d.append_from(a);
 
     acc.read(ui->toWidget->value());
     a.set_account(acc);
     a.set_balance(ui->toSpinBox->value());
-    lst.clear();
-    lst.append(a);
-    d.setTo(lst);
+    d.append_to(a);
 
     d.setDate(ui->dateEdit->value());
     d.setDescr(ui->descrEdit->text());

@@ -57,13 +57,15 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
         }
         else if (index.column() == 4) {
             Operation data = list.at(index.row());
-            return acc_list[data.From().at(0).account().Id()];
+            return data.From().at(0).account().fullName();
+//            return acc_list[data.From().at(0).account().Id()];
         }
         else if (index.column() == 5) {
             Operation data = list.at(index.row());
-            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
-            QMap<int,double>::iterator i = oper.begin();
-            return acc_list[i.key()];
+            return data.To().at(0).account().fullName();
+//            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
+//            QMap<int,double>::iterator i = oper.begin();
+//            return acc_list[i.key()];
         }
         else if (index.column() == 6) {
             Operation data = list.at(index.row());

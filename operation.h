@@ -34,6 +34,8 @@ public:
     int new_plan_oper();
     bool read(int id);
     bool update_plan_oper();
+    void append_from(account_summ &);
+    void append_to( account_summ &);
 
     int Day() { return day; }
     int Month() { return month; }

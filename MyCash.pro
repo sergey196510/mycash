@@ -58,7 +58,8 @@ SOURCES += \
     downloader.cpp \
     editpayment.cpp \
     currency.cpp \
-    operation.cpp
+    operation.cpp \
+    account.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -104,7 +105,8 @@ HEADERS  += \
     downloader.h \
     editpayment.h \
     currency.h \
-    operation.h
+    operation.h \
+    account.h
 
 FORMS    += \
     debetcreditreport.ui \

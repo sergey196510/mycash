@@ -249,7 +249,7 @@ QMap<int,double> Operation::get_plan_account_oper_list(int oper, int type)
     return list;
 }
 
-bool Operation::get_plan_data(int id, QDate oper_date)
+bool Operation::get_plan_data(int _i, QDate oper_date)
 {
     QSqlQuery q;
 //    Account_Data acc;
@@ -260,6 +260,10 @@ bool Operation::get_plan_data(int id, QDate oper_date)
     MyCurrency summ_from = 0, summ_to = 0;
 //    Operation data;
 
+    id = _i;
+    if (id == 0)
+        return false;
+
     q.prepare("SELECT id, day, month, year, descr, auto FROM plan_oper WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec()) {
@@ -267,7 +271,7 @@ bool Operation::get_plan_data(int id, QDate oper_date)
         return false;
     }
     if (q.next()) {
-        id = q.value(0).toInt();
+//        id = q.value(0).toInt();
         day = q.value(1).toInt();
         month = q.value(2).toInt();
         year = q.value(3).toInt();
@@ -310,7 +314,7 @@ bool Operation::get_plan_data(int id, QDate oper_date)
             account_summ d;
             d.set_account(acc);
             d.set_balance(i.value());
-            from.append(d);
+            append_from(d);
             if (acc.Top() == Account_Type::active) {
                 from_top = true;
                 summ_from += acc.Balance();
@@ -324,7 +328,7 @@ bool Operation::get_plan_data(int id, QDate oper_date)
             account_summ d;
             d.set_account(acc);
             d.set_balance(i.value());
-            to.append(d);
+            append_to(d);
             if (acc.Top() == Account_Type::credit)
                 summ_to += i.value();
         }
@@ -432,7 +436,7 @@ bool Operation::read(int id)
         acc.read(i.key());
         d.set_account(acc);
         d.set_balance(i.value());
-        from.append(d);
+        append_from(d);
     }
 
     list = Database().get_account_oper_list(q.value(0).toInt(), Direction::to);
@@ -442,7 +446,7 @@ bool Operation::read(int id)
         acc.read(i.key());
         d.set_account(acc);
         d.set_balance(i.value());
-        to.append(d);
+        append_to(d);
     }
 
     return true;
@@ -594,4 +598,14 @@ bool Operation::del_operation(int id)
     tr.commit();
 
     return true;
+}
+
+void Operation::append_from(account_summ &as)
+{
+    from.append(as);
+}
+
+void Operation::append_to(account_summ &as)
+{
+    to.append(as);
 }

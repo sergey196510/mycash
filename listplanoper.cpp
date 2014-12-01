@@ -52,19 +52,18 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
         }
         else if (index.column() == 4) {
             data = list.at(index.row());
-            return acc_list[data.From().at(0).account().Id()];
+            return data.From().at(0).account().fullName();
         }
         else if (index.column() == 5) {
             data = list.at(index.row());
-            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
-            QMap<int,double>::iterator i = oper.begin();
-            return acc_list[i.key()];
+            return data.To().at(0).account().fullName();
         }
         else if (index.column() == 6) {
             data = list.at(index.row());
-            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
-            QMap<int,double>::iterator i = oper.begin();
-            return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
+            return data.From().at(0).balance().toDouble();
+//            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
+//            QMap<int,double>::iterator i = oper.begin();
+//            return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
         }
         else if (index.column() == 7) {
             data = list.at(index.row());
@@ -73,15 +72,6 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
             else
                 return QVariant();
         }
-//        else if (index.column() == 7) {
-//            operation_data data = list.at(index.row());
-//            if (data.status == Plan_Status::expired)
-//                return tr("Expired");
-//            else if (data.status == Plan_Status::minimum)
-//                return tr("<3 days");
-//            else
-//                return QVariant();
-//        }
         else if (index.column() == 8) {
             data = list.at(index.row());
             return data.Descr();
