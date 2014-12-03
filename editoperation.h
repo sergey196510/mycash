@@ -12,12 +12,12 @@ namespace Ui {
 class EditOperation;
 }
 
-class EditOperation : public QDialog
+class EditOperation : public QWidget
 {
     Q_OBJECT
     
 public:
-    explicit EditOperation(int type, QWidget *parent = 0);
+    explicit EditOperation(QWidget *parent = 0);
     ~EditOperation();
     Operation data();
     void setdata(Operation &);

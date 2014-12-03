@@ -29,7 +29,7 @@ public:
 //    QMap<int,QString> get_scod_list();
     QMap<QString,double> get_currency_list();
     QMap<QString,double> get_opersummbyaccount_list(int type,int month,int year);
-    QMap<int,double> get_account_oper_list(int, int);
+//    QMap<int,double> get_account_oper_list(int, int);
 //    QMap<int,double> get_plan_account_oper_list(int, int);
 //    QList<Operation> get_plan_oper_list(int status);
 //    int     new_account(Account &);

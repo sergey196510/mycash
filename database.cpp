@@ -216,6 +216,7 @@ QList<Budget> Database::read_budget_list(int mon)
     return list;
 }
 
+/*
 QMap<int,double> Database::get_account_oper_list(int oper, int type)
 {
     QMap<int,double> list;
@@ -234,6 +235,7 @@ QMap<int,double> Database::get_account_oper_list(int oper, int type)
 
     return list;
 }
+*/
 
 /*
 Account Database::get_account(int id)
@@ -576,7 +578,7 @@ bool Database::add_budget(account_summ &d)
 
     for (i = list.begin(); i != list.end(); i++) {
         Budget data = *i;
-        if (find_budget_id(data.Account(), d.account().Id())) {
+        if (find_budget_id(data.account().Id(), d.account().Id())) {
             int id = data.Id();
             qDebug() << id;
         }

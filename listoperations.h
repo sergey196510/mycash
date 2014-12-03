@@ -6,12 +6,13 @@
 #include <QtSql>
 #include <QMessageBox>
 #include "database.h"
-#include "editoperation.h"
+#include "regoperation.h"
 #include "widgets/mydateedit.h"
 #include "listaccountsmodel.h"
 #include "accountsview.h"
 #include "editpayment.h"
 #include "currency.h"
+#include "editplanoperation.h"
 
 namespace Ui {
 class ListOperations;

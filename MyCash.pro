@@ -59,7 +59,9 @@ SOURCES += \
     editpayment.cpp \
     currency.cpp \
     operation.cpp \
-    account.cpp
+    account.cpp \
+    regoperation.cpp \
+    editplanoperation.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -106,7 +108,9 @@ HEADERS  += \
     editpayment.h \
     currency.h \
     operation.h \
-    account.h
+    account.h \
+    regoperation.h \
+    editplanoperation.h
 
 FORMS    += \
     debetcreditreport.ui \
@@ -127,7 +131,9 @@ FORMS    += \
     settings.ui \
     listbudget.ui \
     editbudget.ui \
-    editpayment.ui
+    editpayment.ui \
+    regoperation.ui \
+    editplanoperation.ui
 
 TRANSLATIONS += \
     mycash_ru.ts

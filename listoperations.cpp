@@ -287,14 +287,14 @@ ListOperations::~ListOperations()
 
 void ListOperations::edit_operation(Operation &d)
 {
-    EditOperation eo(1, this);
+    RegOperation eo(this);
     EditPayment ep;
     QModelIndex idx = ui->tableView->currentIndex();
     Operation data;
 
     ep.exec();
 
-    eo.setdata(d);
+    eo.setData(d);
     if (eo.exec() == QDialog::Accepted) {
         data = eo.data();
 
@@ -355,7 +355,7 @@ void ListOperations::transfer_operation()
 void ListOperations::repeat_operation()
 {
     Operation oper;
-    EditOperation pd(1, this);
+    RegOperation pd(this);
     int id = ui->tableView->get_selected_id();
 
     if (id == 0)
@@ -393,19 +393,19 @@ void ListOperations::del_operation()
 
 void ListOperations::plann_operation()
 {
-    EditOperation pd(2, this);
+    EditPlanOperation pd(this);
     int id = ui->tableView->get_selected_id();
 
     if (id == 0)
         return;
 
-    Operation data;
-    data.read(id);
+    PlanOperation data;
+    data.read(id, QDate::currentDate());
     data.setDay(QDate::currentDate().day());
 
-    pd.setdata(data);
+    pd.setData(data);
     if (pd.exec() == QDialog::Accepted) {
-        data = pd.data();
+        data = pd.Data();
         int plan = data.new_plan_oper();
         QSqlQuery q;
 

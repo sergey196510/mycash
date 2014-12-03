@@ -7,18 +7,19 @@
 #include <QMessageBox>
 #include "widgets/mycurrency.h"
 #include "editbudget.h"
+#include "account.h"
 
 class Budget
 {
     int id;
     int mon;
-    int account;
+    Account acc;
     MyCurrency summ;
 public:
     Budget(int i = 0);
     int Id() const { return id; }
     int Month() { return mon; }
-    int Account() { return account; }
+    Account account() { return acc; }
     MyCurrency Summ() { return summ; }
     void set_Value(int i, int m, int a, double s);
     bool read(int id);

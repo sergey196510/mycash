@@ -390,14 +390,14 @@ void MyCash::report2()
 void MyCash::check_plan_oper()
 {
 //    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
-    QList<Operation> list = Operation().get_plan_oper_list(0);
-    QList<Operation>::iterator i;
+    QList<PlanOperation> list = PlanOperation().get_plan_oper_list(0);
+    QList<PlanOperation>::iterator i;
     Account from, to;
 
 //    qDebug() << mon << year;
 
     for (i = list.begin(); i != list.end(); i++) {
-        Operation data = *i;
+        PlanOperation data = *i;
           if (data.Auto() == 0)
             continue;
         if (data.Status() != Plan_Status::expired)

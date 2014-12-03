@@ -1,9 +1,10 @@
 #include "operation.h"
 
 Operation::Operation() {
-    id = day = month = year = 0;
+    id = 0;
+//    day = month = year = 0;
     agent = 0;
-    auto_exec = 0;
+//    auto_exec = 0;
     date = QDate::currentDate();
     descr.clear();
 }
@@ -230,6 +231,27 @@ int Operation::find_oper_by_plan(int plan, int mon, int year)
         return 0;
 }
 
+QMap<int,double> Operation::get_account_oper_list(int oper, int type, QString table)
+{
+    QMap<int,double> list;
+    QSqlQuery q;
+
+    QString query = QString("SELECT a_id,summ FROM %1 WHERE o_id = %2 AND direction = %3")
+            .arg(table)
+            .arg(oper)
+            .arg(type);
+    if (!q.exec(query)) {
+        qDebug() << q.lastError().text();
+        return list;
+    }
+    while (q.next()) {
+        list[q.value(0).toInt()] = q.value(1).toDouble();
+    }
+
+    return list;
+}
+
+/*
 QMap<int,double> Operation::get_plan_account_oper_list(int oper, int type)
 {
     QMap<int,double> list;
@@ -248,8 +270,9 @@ QMap<int,double> Operation::get_plan_account_oper_list(int oper, int type)
 
     return list;
 }
+*/
 
-bool Operation::get_plan_data(int _i, QDate oper_date)
+bool PlanOperation::read(int _i, QDate oper_date)
 {
     QSqlQuery q;
 //    Account_Data acc;
@@ -274,7 +297,7 @@ bool Operation::get_plan_data(int _i, QDate oper_date)
 //        id = q.value(0).toInt();
         day = q.value(1).toInt();
         month = q.value(2).toInt();
-        year = q.value(3).toInt();
+//        year = q.value(3).toInt();
         descr = q.value(4).toString();
         auto_exec = q.value(5).toInt();
         date = oper_date;
@@ -307,7 +330,7 @@ bool Operation::get_plan_data(int _i, QDate oper_date)
             status = Plan_Status::actual;
 
         bool from_top = false;
-        list = get_plan_account_oper_list(q.value(0).toInt(), Direction::from);
+        list = get_account_oper_list(q.value(0).toInt(), Direction::from, "plan_oper_acc");
         for (i = list.begin(); i != list.end(); i++) {
             Account acc;
             acc.read(i.key());
@@ -321,7 +344,7 @@ bool Operation::get_plan_data(int _i, QDate oper_date)
             }
         }
 
-        list = get_plan_account_oper_list(q.value(0).toInt(), Direction::to);
+        list = get_account_oper_list(q.value(0).toInt(), Direction::to, "plan_oper_acc");
         for (i = list.begin(); i != list.end(); i++) {
             Account acc;
             acc.read(i.key());
@@ -339,9 +362,9 @@ bool Operation::get_plan_data(int _i, QDate oper_date)
     return true;
 }
 
-QList<Operation> Operation::get_plan_oper_list(int status)
+QList<PlanOperation> PlanOperation::get_plan_oper_list(int status)
 {
-    QList<Operation> list;
+    QList<PlanOperation> list;
     QSqlQuery q;
 
     q.prepare("SELECT id,dt FROM plan_oper ORDER BY day");
@@ -350,8 +373,8 @@ QList<Operation> Operation::get_plan_oper_list(int status)
         return list;
     }
     while (q.next()) {
-        Operation oper;
-        oper.get_plan_data(q.value(0).toInt(), q.value(1).toDate());
+        PlanOperation oper;
+        oper.read(q.value(0).toInt(), q.value(1).toDate());
         if (status && (oper.Status() == Plan_Status::actual || oper.Status() == Plan_Status::committed || oper.Status() == Plan_Status::cancelled))
             continue;
         list.append(oper);
@@ -360,7 +383,7 @@ QList<Operation> Operation::get_plan_oper_list(int status)
     return list;
 }
 
-int Operation::new_plan_oper()
+int PlanOperation::new_plan_oper()
 {
     QSqlQuery q;
     int id = 0;
@@ -372,7 +395,7 @@ int Operation::new_plan_oper()
     q.prepare("INSERT INTO plan_oper(day, month, year, descr, dt, auto) VALUES(:day, :month, :year, :descr, :dt, :auto)");
     q.bindValue(":day", day);
     q.bindValue(":month", month);
-    q.bindValue(":year", year);
+//    q.bindValue(":year", year);
     q.bindValue(":descr", descr);
     q.bindValue(":dt", date.toString("yyyy-MM-dd"));
     q.bindValue(":auto", auto_exec);
@@ -429,7 +452,7 @@ bool Operation::read(int id)
     date =      q.value(2).toDate();
     descr =     q.value(3).toString();
 
-    list = Database().get_account_oper_list(q.value(0).toInt(), Direction::from);
+    list = get_account_oper_list(q.value(0).toInt(), Direction::from, "account_oper");
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         Account acc;
@@ -439,7 +462,7 @@ bool Operation::read(int id)
         append_from(d);
     }
 
-    list = Database().get_account_oper_list(q.value(0).toInt(), Direction::to);
+    list = get_account_oper_list(q.value(0).toInt(), Direction::to, "account_oper");
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         Account acc;
@@ -452,7 +475,7 @@ bool Operation::read(int id)
     return true;
 }
 
-bool Operation::update_plan_oper()
+bool PlanOperation::update_plan_oper()
 {
     QSqlQuery q;
     QList<account_summ>::iterator i;
@@ -471,7 +494,7 @@ bool Operation::update_plan_oper()
     q.prepare("UPDATE plan_oper SET day=:day, month=:month, year=:year, descr=:descr, auto=:auto WHERE id=:id");
     q.bindValue(":day", day);
     q.bindValue(":month", month);
-    q.bindValue(":year", year);
+//    q.bindValue(":year", year);
     q.bindValue(":descr", descr);
     q.bindValue(":auto", auto_exec);
     q.bindValue(":id", id);
@@ -553,7 +576,7 @@ bool Operation::del_operation(int id)
 
     tr.begin();
 
-    list = Database().get_account_oper_list(id,Direction::from);
+    list = get_account_oper_list(id,Direction::from, "account_oper");
     for (i = list.begin(); i != list.end(); i++) {
         account_summ acc;
         Account data;
@@ -570,7 +593,7 @@ bool Operation::del_operation(int id)
         }
     }
 
-    list = Database().get_account_oper_list(id,Direction::to);
+    list = get_account_oper_list(id,Direction::to, "account_oper");
     for (i = list.begin(); i != list.end(); i++) {
         account_summ acc;
         Account data;

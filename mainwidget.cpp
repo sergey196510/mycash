@@ -6,7 +6,7 @@ MainWidgetModel::MainWidgetModel(Database *d, QObject *parent) :
     QAbstractTableModel(parent)
 {
     db = d;
-    list = Operation().get_plan_oper_list(1);
+    list = PlanOperation().get_plan_oper_list(1);
     header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Status") << tr("Descr");
 //    acc_list = db->get_accounts_list();
     var = new Globals;
@@ -34,47 +34,48 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
     switch (role) {
         case Qt::DisplayRole:
         if (index.column() == 0) {
-            Operation data = list.at(index.row());
+            PlanOperation data = list.at(index.row());
             return data.Id();
         }
         else if (index.column() == 1) {
-            Operation data = list.at(index.row());
+            PlanOperation data = list.at(index.row());
             return data.Day();
         }
         else if (index.column() == 2) {
-            Operation data = list.at(index.row());
+            PlanOperation data = list.at(index.row());
             if (data.Month())
                 return data.Month();
             else
                 return "";
         }
         else if (index.column() == 3) {
-            Operation data = list.at(index.row());
-            if (data.Year())
-                return data.Year();
-            else
-                return "";
+            PlanOperation data = list.at(index.row());
+//            if (data.Year())
+//                return data.Year();
+//            else
+                return QVariant();
         }
         else if (index.column() == 4) {
-            Operation data = list.at(index.row());
+            PlanOperation data = list.at(index.row());
             return data.From().at(0).account().fullName();
 //            return acc_list[data.From().at(0).account().Id()];
         }
         else if (index.column() == 5) {
-            Operation data = list.at(index.row());
+            PlanOperation data = list.at(index.row());
             return data.To().at(0).account().fullName();
 //            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
 //            QMap<int,double>::iterator i = oper.begin();
 //            return acc_list[i.key()];
         }
         else if (index.column() == 6) {
-            Operation data = list.at(index.row());
-            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
-            QMap<int,double>::iterator i = oper.begin();
-            return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
+            PlanOperation data = list.at(index.row());
+            return default_locale->toString(data.From().at(0).balance().toDouble(),'f',2);
+//            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
+//            QMap<int,double>::iterator i = oper.begin();
+//            return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
         }
         else if (index.column() == 7) {
-            Operation data = list.at(index.row());
+            PlanOperation data = list.at(index.row());
             if (data.Status() == Plan_Status::expired)
                 return tr("Expired");
             else if (data.Status() == Plan_Status::minimum)
@@ -83,7 +84,7 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
                 return QVariant();
         }
         else if (index.column() == 8) {
-            Operation data = list.at(index.row());
+            PlanOperation data = list.at(index.row());
             return data.Descr();
         }
         else
@@ -100,7 +101,7 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
     case Qt::BackgroundColorRole:
-        Operation data = list.at(index.row());
+        PlanOperation data = list.at(index.row());
         if (data.Status() == Plan_Status::minimum)
             return QVariant(QColor(Qt::yellow));
         if (data.Status() == Plan_Status::expired)

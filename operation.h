@@ -7,9 +7,10 @@
 #include "widgets/mycurrency.h"
 #include "transaction.h"
 
-class Operation {
+class Operation
+{
+protected:
     int id;
-    int day,month,year;
     int agent;
     double kurs;
     QList<account_summ> from;
@@ -18,7 +19,6 @@ class Operation {
     QDate date;
     QString descr;
     int status;
-    int auto_exec;
 public:
     Operation();
     int new_operation();
@@ -28,24 +28,17 @@ public:
 //    bool change_account_balance(account_summ &acc);
     bool insert();
     int find_oper_by_plan(int plan, int mon, int year);
-    QMap<int,double> get_plan_account_oper_list(int oper, int type);
-    bool get_plan_data(int id, QDate oper_date);
-    QList<Operation> get_plan_oper_list(int status);
-    int new_plan_oper();
-    bool read(int id);
-    bool update_plan_oper();
+    QMap<int,double> get_account_oper_list(int oper, int type, QString);
+//    QMap<int,double> get_plan_account_oper_list(int oper, int type);
+    virtual bool read(int id);
     void append_from(account_summ &);
     void append_to( account_summ &);
 
-    int Day() { return day; }
-    int Month() { return month; }
-    int Year() { return year; }
     QDate Date() { return date; }
     QString Descr() { return descr; }
     QList<account_summ> From() { return from; }
     QList<account_summ> To() { return to; }
     int Id() const { return id; }
-    int Auto() { return auto_exec; }
     int Agent() { return agent; }
     int Status() { return status; }
     double Kurs() { return kurs; }
@@ -54,11 +47,30 @@ public:
     void setDescr(QString d) { descr = d; }
     void setFrom(QList<account_summ> l) { from = l; }
     void setTo(QList<account_summ> l) { to = l; }
-    void setDay(int d) { day = d; }
-    void setMonth(int m) { month = m; }
-    void setYear(int y) { year = y; }
     void setAgent(int a) { agent = a; }
     void setKurs(double k) { kurs = k; }
+};
+
+class PlanOperation : public Operation
+{
+    int day,month;
+    int auto_exec;
+public:
+    PlanOperation() {
+        day = month = auto_exec = 0;
+    }
+
+    QList<PlanOperation> get_plan_oper_list(int status);
+    bool read(int id, QDate oper_date);
+    int new_plan_oper();
+    bool update_plan_oper();
+    int Day() { return day; }
+    int Month() { return month; }
+//    int Year() { return year; }
+    int Auto() { return auto_exec; }
+    void setDay(int d) { day = d; }
+    void setMonth(int m) { month = m; }
+//    void setYear(int y) { year = y; }
     void setAuto(int a) { auto_exec = a; }
 };
 

@@ -8,6 +8,8 @@
 #include "database.h"
 #include "global.h"
 #include "editoperation.h"
+#include "editplanoperation.h"
+#include "regoperation.h"
 #include "transaction.h"
 
 namespace Ui {
@@ -33,14 +35,14 @@ public slots:
 private:
     Globals *var;
     QStringList header_data;
-    QList<Operation> list;
+    QList<PlanOperation> list;
 //    QMap<int,QString> acc_list;
     QMap<QString,double> currency;
     QString symbol;
     Database *db;
 
 private slots:
-    QList<Operation> read_list();
+    QList<PlanOperation> read_list();
 };
 
 class ListPlanOper : public QWidget

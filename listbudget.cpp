@@ -51,7 +51,7 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
         if (index.column() == 1) {
             Budget data = list.at(index.row());
             Account acc;
-            acc.read(data.Account());
+            acc.read(data.account().Id());
             return acc.fullName();
         }
         if (index.column() == 2) {

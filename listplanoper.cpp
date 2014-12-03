@@ -16,15 +16,15 @@ ListPlanOperModel::~ListPlanOperModel()
     delete var;
 }
 
-QList<Operation> ListPlanOperModel::read_list()
+QList<PlanOperation> ListPlanOperModel::read_list()
 {
-    QList<Operation> list = Operation().get_plan_oper_list(0);
+    QList<PlanOperation> list = PlanOperation().get_plan_oper_list(0);
     return list;
 }
 
 QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
 {
-    Operation data;
+    PlanOperation data;
 
     switch (role) {
         case Qt::DisplayRole:
@@ -45,9 +45,9 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
         }
         else if (index.column() == 3) {
             data = list.at(index.row());
-            if (data.Year())
-                return data.Year();
-            else
+//            if (data.Year())
+//                return data.Year();
+//            else
                 return QVariant();
         }
         else if (index.column() == 4) {
@@ -60,7 +60,7 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
         }
         else if (index.column() == 6) {
             data = list.at(index.row());
-            return data.From().at(0).balance().toDouble();
+            return default_locale->toString(data.From().at(0).balance().toDouble(),'f',2);
 //            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
 //            QMap<int,double>::iterator i = oper.begin();
 //            return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
@@ -142,7 +142,7 @@ void ListPlanOperModel::change_data()
 {
     beginResetModel();
     list.clear();
-    list = Operation().get_plan_oper_list(0);
+    list = PlanOperation().get_plan_oper_list(0);
     endResetModel();
 }
 
@@ -220,10 +220,10 @@ ListPlanOper::~ListPlanOper()
 
 void ListPlanOper::new_oper()
 {
-    EditOperation *po = new EditOperation(2, this);
+    EditPlanOperation *po = new EditPlanOperation(this);
 
     if (po->exec() == QDialog::Accepted) {
-        Operation data = po->data();
+        PlanOperation data = po->Data();
         if (data.new_plan_oper()) {
         }
         emit data_changed();
@@ -252,9 +252,9 @@ QList<int> ListPlanOper::get_selected_id()
 
 void ListPlanOper::commit_oper()
 {
-    Operation pod;
+    PlanOperation pod;
     Operation od;
-    EditOperation *eo = new EditOperation(1, this);
+    RegOperation *eo = new RegOperation(this);
     QList<int> id = get_selected_id();
     QList<int>::iterator i;
 
@@ -263,14 +263,15 @@ void ListPlanOper::commit_oper()
 
     for (i = id.begin(); i != id.end(); i++) {
         int d = *i;
-        pod.get_plan_data(d, QDate::currentDate());
+        pod.read(d, QDate::currentDate());
 
-        eo->setdata(pod);
+        eo->setData(pod);
         if (eo->exec() == QDialog::Rejected)
             continue;
 
-        pod = eo->data();
-        pod.save_operation();
+        od = eo->data();
+        od.insert();
+//        pod.save_operation();
         db->new_mon_oper(d,1);
     }
 
@@ -280,23 +281,23 @@ void ListPlanOper::commit_oper()
 void ListPlanOper::update_oper()
 {
     QSqlQuery q;
-    Operation pod, od;
-    EditOperation *eo = new EditOperation(2, this);
+    PlanOperation pod, od;
+    EditPlanOperation *eo = new EditPlanOperation(this);
     QList<int> id = get_selected_id();
     Transaction tr;
 
     if (id.size() == 0)
         return;
 
-    pod.get_plan_data(id.at(0), QDate::currentDate());
+    pod.read(id.at(0), QDate::currentDate());
 
-    eo->setdata(pod);
+    eo->setData(pod);
     if (eo->exec() == QDialog::Rejected)
         return;
 
     tr.begin();
 
-    od = eo->data();
+    od = eo->Data();
     delete eo;
 
     od.setId(id.at(0));
