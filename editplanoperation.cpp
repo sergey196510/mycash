@@ -47,6 +47,8 @@ PlanOperation EditPlanOperation::Data()
 
 void EditPlanOperation::setData(PlanOperation &d)
 {
+    ui->dayBox->setValue(d.Day());
+    ui->monthBox->setCurrentIndex(d.Month());
     ui->widget->setdata(d);
 }
 

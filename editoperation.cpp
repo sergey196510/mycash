@@ -17,6 +17,9 @@ EditOperation::EditOperation(QWidget *parent) :
 //    acc.read(ui->toWidget->value());
 //    to = Currency(acc.Curr()).SCod();
 
+    ui->fromSpinBox->setEnabled(false);
+    ui->toSpinBox->setEnabled(false);
+
     ui->from_cod->setText(QString());
     ui->to_cod->setText(QString());
 
@@ -89,14 +92,9 @@ Operation EditOperation::data()
     Account acc;
     Operation d;
     account_summ a;
-//    QList<account_summ> lst;
 
-//    d.setDay(ui->dayBox->currentIndex());
-//    d.setMonth(ui->monBox->currentIndex());
-//    d.setYear(ui->yearBox->value());
     d.setAgent(ui->agent_comboBox->value());
     d.setKurs(ui->kursEdit->value());
-//    d.setAuto(ui->autoBox->isChecked());
 
     acc.read(ui->fromWidget->value());
     a.set_account(acc);
@@ -126,6 +124,7 @@ void EditOperation::setdata(Operation &d)
         ui->from_cod->setText(Currency(a.account().Curr()).SCod());
         ui->fromSpinBox->setValue(a.balance().toDouble());
     }
+    ui->fromSpinBox->setEnabled(!d.From().empty());
 
     if (!d.To().empty()) {
         account_summ a = d.To().at(0);
@@ -134,14 +133,11 @@ void EditOperation::setdata(Operation &d)
         ui->to_cod->setText(Currency(a.account().Curr()).SCod());
         ui->toSpinBox->setValue(a.balance().toDouble());
     }
+    ui->toSpinBox->setEnabled(!d.To().empty());
 
     ui->agent_comboBox->setValue(d.Agent());
     ui->kursEdit->setValue(d.Kurs());
     ui->descrEdit->setText(d.Descr());
-
-    qDebug() << ui->fromWidget->value() << ui->toWidget->value();
-    ui->fromSpinBox->setEnabled(ui->fromWidget->value());
-    ui->toSpinBox->setEnabled(ui->toWidget->value());
 
     check_Ok();
 }
