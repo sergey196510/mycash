@@ -298,7 +298,7 @@ void ListOperations::edit_operation(Operation &d)
     if (eo.exec() == QDialog::Accepted) {
         data = eo.data();
 
-        data.save_operation();
+        data.insert();
         ui->tableView->setCurrentIndex(idx);
         reload_model();
     }
@@ -400,19 +400,19 @@ void ListOperations::plann_operation()
         return;
 
     PlanOperation data;
-    data.read(id, QDate::currentDate());
+    data.read(id);
     data.setDay(QDate::currentDate().day());
 
     pd.setData(data);
     if (pd.exec() == QDialog::Accepted) {
         data = pd.Data();
-        int plan = data.new_plan_oper();
+        int plan = data.insert();
         QSqlQuery q;
 
-	if (plan == 0) {
-	    qDebug() << "Error planning operation";
-	    return;
-	}
+        if (plan == 0) {
+            qDebug() << "Error planning operation";
+            return;
+        }
 
         q.prepare("UPDATE operation SET plan_id = :plan WHERE id = :id");
         q.bindValue(":plan", plan);

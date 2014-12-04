@@ -5,7 +5,7 @@ Database::Database()
 {
 //    opened = false;
 //    scod_list2 = get_scod_list();
-    currency_list = get_currency_list();
+//    currency_list = get_currency_list();
 }
 
 double Database::convert_currency(double val, int id)
@@ -296,6 +296,7 @@ QMap<int,QString> Database::get_scod_list()
 }
 */
 
+/*
 QMap<QString,double> Database::get_currency_list()
 {
     QMap<QString,double> list;
@@ -310,6 +311,7 @@ QMap<QString,double> Database::get_currency_list()
 
     return list;
 }
+*/
 
 /*
 int Database::new_account(Account_Data &data)

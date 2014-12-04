@@ -28,6 +28,7 @@ int Operation::new_operation()
     return 0;
 }
 
+/*
 bool Operation::save_operation()
 {
     QSqlQuery q;
@@ -97,6 +98,8 @@ bool Operation::save_operation()
     tr.commit();
     return true;
 }
+*/
+
 bool Operation::new_account_oper(QString table, const int o_id, account_summ &acc, int direction, int agent)
 {
     QString str;
@@ -272,109 +275,19 @@ QMap<int,double> Operation::get_plan_account_oper_list(int oper, int type)
 }
 */
 
-bool PlanOperation::read(int _i, QDate oper_date)
-{
-    QSqlQuery q;
-//    Account_Data acc;
-    QMap<int,double> list;
-    QMap<int,double>::iterator i;
-    QDate curr = QDate::currentDate();
-//    QDate future = curr.addDays(3);
-    MyCurrency summ_from = 0, summ_to = 0;
-//    Operation data;
-
-    id = _i;
-    if (id == 0)
-        return false;
-
-    q.prepare("SELECT id, day, month, year, descr, auto FROM plan_oper WHERE id = :id");
-    q.bindValue(":id", id);
-    if (!q.exec()) {
-        qDebug() << "Select Error:" << q.lastError().text();
-        return false;
-    }
-    if (q.next()) {
-//        id = q.value(0).toInt();
-        day = q.value(1).toInt();
-        month = q.value(2).toInt();
-//        year = q.value(3).toInt();
-        descr = q.value(4).toString();
-        auto_exec = q.value(5).toInt();
-        date = oper_date;
-
-        // поиск близких планвых операций учетом перехода через границу месяца
-        int diff = 0;
-        for (int j = 0; j <= 3; j++) {
-            QDate future = curr.addDays(j);
-            if (day == future.day()) {
-                status = Plan_Status::minimum;
-                diff = 1;
-                break;
-            }
-        }
-        if (diff == 0)
-            diff = day - curr.day();
-
-        QDate dt(curr.year(), curr.month(), day);
-        if (date > dt) {
-            status = Plan_Status::actual;
-        }
-        else if (int stat = find_oper_by_plan(id, curr.month(), curr.year())) {
-            status = stat;
-        }
-        else if (diff == 1)
-            status = Plan_Status::minimum;
-        else if (diff < 0)
-            status = Plan_Status::expired;
-        else
-            status = Plan_Status::actual;
-
-        bool from_top = false;
-        list = get_account_oper_list(q.value(0).toInt(), Direction::from, "plan_oper_acc");
-        for (i = list.begin(); i != list.end(); i++) {
-            Account acc;
-            acc.read(i.key());
-            account_summ d;
-            d.set_account(acc);
-            d.set_balance(i.value());
-            append_from(d);
-            if (acc.Top() == Account_Type::active) {
-                from_top = true;
-                summ_from += acc.Balance();
-            }
-        }
-
-        list = get_account_oper_list(q.value(0).toInt(), Direction::to, "plan_oper_acc");
-        for (i = list.begin(); i != list.end(); i++) {
-            Account acc;
-            acc.read(i.key());
-            account_summ d;
-            d.set_account(acc);
-            d.set_balance(i.value());
-            append_to(d);
-            if (acc.Top() == Account_Type::credit)
-                summ_to += i.value();
-        }
-        if (from_top == true && (status == Plan_Status::minimum || status == Plan_Status::expired) && summ_from < summ_to)
-            descr += QObject::tr(" [Nedostatochno sredstv]");
-    }
-
-    return true;
-}
-
-QList<PlanOperation> PlanOperation::get_plan_oper_list(int status)
+QList<PlanOperation> PlanOperation::get_list(int status)
 {
     QList<PlanOperation> list;
     QSqlQuery q;
 
-    q.prepare("SELECT id,dt FROM plan_oper ORDER BY day");
+    q.prepare("SELECT id,dt FROM plan_oper ORDER BY day,month");
     if (!q.exec()) {
         qDebug() << "Select Error:" << q.lastError().text();
         return list;
     }
     while (q.next()) {
         PlanOperation oper;
-        oper.read(q.value(0).toInt(), q.value(1).toDate());
+        oper.read(q.value(0).toInt());
         if (status && (oper.Status() == Plan_Status::actual || oper.Status() == Plan_Status::committed || oper.Status() == Plan_Status::cancelled))
             continue;
         list.append(oper);
@@ -383,7 +296,7 @@ QList<PlanOperation> PlanOperation::get_plan_oper_list(int status)
     return list;
 }
 
-int PlanOperation::new_plan_oper()
+int PlanOperation::insert()
 {
     QSqlQuery q;
     int id = 0;
@@ -392,10 +305,9 @@ int PlanOperation::new_plan_oper()
 
     tr.begin();
 
-    q.prepare("INSERT INTO plan_oper(day, month, year, descr, dt, auto) VALUES(:day, :month, :year, :descr, :dt, :auto)");
+    q.prepare("INSERT INTO plan_oper(day, month, descr, dt, auto) VALUES(:day, :month, :descr, :dt, :auto)");
     q.bindValue(":day", day);
     q.bindValue(":month", month);
-//    q.bindValue(":year", year);
     q.bindValue(":descr", descr);
     q.bindValue(":dt", date.toString("yyyy-MM-dd"));
     q.bindValue(":auto", auto_exec);
@@ -436,23 +348,27 @@ int PlanOperation::new_plan_oper()
     return id;
 }
 
-bool Operation::read(int id)
+bool Operation::read(int _i)
 {
     QSqlQuery q;
 //    Operation data;
     QMap<int,double> list;
     QMap<int,double>::iterator i;
 
-    q.prepare("SELECT id,dt,descr FROM oper WHERE id = :id");
+    id = _i;
+    if (id == 0)
+        return false;
+
+    q.prepare("SELECT dt,descr FROM oper WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec() || !q.next()) {
         return false;
     }
 
-    date =      q.value(2).toDate();
-    descr =     q.value(3).toString();
+    date =  q.value(0).toDate();
+    descr = q.value(1).toString();
 
-    list = get_account_oper_list(q.value(0).toInt(), Direction::from, "account_oper");
+    list = get_account_oper_list(id, Direction::from, "account_oper");
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         Account acc;
@@ -462,7 +378,7 @@ bool Operation::read(int id)
         append_from(d);
     }
 
-    list = get_account_oper_list(q.value(0).toInt(), Direction::to, "account_oper");
+    list = get_account_oper_list(id, Direction::to, "account_oper");
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         Account acc;
@@ -471,6 +387,101 @@ bool Operation::read(int id)
         d.set_balance(i.value());
         append_to(d);
     }
+
+    return true;
+}
+
+void PlanOperation::calcStatus()
+{
+    QDate curr = QDate::currentDate();
+
+    // отработанная операция
+    if (int stat = find_oper_by_plan(id, curr.month(), curr.year())) {
+        status = stat;
+        return;
+    }
+
+    // поиск ближайших операций в будущем
+    for (int j = 0; j <= 3; j++) {
+        QDate future = curr.addDays(j);
+        if (day == future.day()) {
+            status = Plan_Status::minimum;
+            return;
+        }
+    }
+
+    int diff = day - curr.day();
+    QDate dt(curr.year(), curr.month(), day);
+    if (date > dt) {
+        status = Plan_Status::actual;
+    }
+    else if (diff < 0)
+        status = Plan_Status::expired;
+    else
+        status = Plan_Status::actual;
+
+}
+
+bool PlanOperation::read(int _i)
+{
+    QSqlQuery q;
+//    Account_Data acc;
+    QMap<int,double> list;
+    QMap<int,double>::iterator i;
+//    QDate future = curr.addDays(3);
+    MyCurrency summ_from = 0, summ_to = 0;
+//    Operation data;
+
+    id = _i;
+    if (id == 0)
+        return false;
+
+    q.prepare("SELECT day, month, descr, auto FROM plan_oper WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec() || !q.next()) {
+        qDebug() << "Select Error:" << q.lastError().text();
+        return false;
+    }
+
+    //        id = q.value(0).toInt();
+    day = q.value(0).toInt();
+    month = q.value(1).toInt();
+    //        year = q.value(3).toInt();
+    descr = q.value(2).toString();
+    auto_exec = q.value(3).toInt();
+    date = QDate::currentDate();
+
+    calcStatus();
+
+    // поиск близких планвых операций учетом перехода через границу месяца
+    bool from_top = false;
+    list = get_account_oper_list(id, Direction::from, "plan_oper_acc");
+    for (i = list.begin(); i != list.end(); i++) {
+        account_summ d;
+        Account acc;
+        acc.read(i.key());
+        d.set_account(acc);
+        d.set_balance(i.value());
+        append_from(d);
+        if (acc.Top() == Account_Type::active) {
+            from_top = true;
+            summ_from += acc.Balance();
+        }
+    }
+
+    list = get_account_oper_list(id, Direction::to, "plan_oper_acc");
+    for (i = list.begin(); i != list.end(); i++) {
+        account_summ d;
+        Account acc;
+        acc.read(i.key());
+        d.set_account(acc);
+        d.set_balance(i.value());
+        append_to(d);
+        if (acc.Top() == Account_Type::credit)
+            summ_to += i.value();
+    }
+    if (from_top == true && (status == Plan_Status::minimum || status == Plan_Status::expired) && summ_from < summ_to)
+        descr += QObject::tr(" [Nedostatochno sredstv]");
 
     return true;
 }

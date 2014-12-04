@@ -202,7 +202,7 @@ void ListAccounts::new_account()
         lst.append(a);
         oper.setTo(lst);
 
-        oper.save_operation();
+        oper.insert();
         t.commit();
 
         reload_model();
@@ -319,7 +319,7 @@ void ListAccounts::correct_balance()
             lst.append(a);
             od.setTo(lst);
         }
-        od.save_operation();
+        od.insert();
 
         reload_model();
     }

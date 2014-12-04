@@ -9,6 +9,8 @@
 
 class Operation
 {
+private:
+    QString table;
 protected:
     int id;
     int agent;
@@ -23,7 +25,7 @@ public:
     Operation();
     int new_operation();
     bool del_operation(int);
-    bool save_operation();
+//    bool save_operation();
     bool new_account_oper(QString table, const int o_id, account_summ &acc, int direction, int agent = 0);
 //    bool change_account_balance(account_summ &acc);
     bool insert();
@@ -53,6 +55,8 @@ public:
 
 class PlanOperation : public Operation
 {
+private:
+    QString table;
     int day,month;
     int auto_exec;
 public:
@@ -60,17 +64,16 @@ public:
         day = month = auto_exec = 0;
     }
 
-    QList<PlanOperation> get_plan_oper_list(int status);
-    bool read(int id, QDate oper_date);
-    int new_plan_oper();
+    QList<PlanOperation> get_list(int status);
+    bool read(int id);
+    int insert();
     bool update_plan_oper();
     int Day() { return day; }
     int Month() { return month; }
-//    int Year() { return year; }
     int Auto() { return auto_exec; }
+    void calcStatus();
     void setDay(int d) { day = d; }
     void setMonth(int m) { month = m; }
-//    void setYear(int y) { year = y; }
     void setAuto(int a) { auto_exec = a; }
 };
 

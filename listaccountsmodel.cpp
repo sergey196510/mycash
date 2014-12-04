@@ -167,7 +167,7 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
     db = new Database;
     PlanOperation op;
 
-    plan_list = op.get_plan_oper_list(1);
+    plan_list = op.get_list(1);
 }
 
 ListAccountsModel::~ListAccountsModel()

@@ -18,7 +18,7 @@ ListPlanOperModel::~ListPlanOperModel()
 
 QList<PlanOperation> ListPlanOperModel::read_list()
 {
-    QList<PlanOperation> list = PlanOperation().get_plan_oper_list(0);
+    QList<PlanOperation> list = PlanOperation().get_list(0);
     return list;
 }
 
@@ -142,7 +142,7 @@ void ListPlanOperModel::change_data()
 {
     beginResetModel();
     list.clear();
-    list = PlanOperation().get_plan_oper_list(0);
+    list = PlanOperation().get_list(0);
     endResetModel();
 }
 
@@ -224,7 +224,7 @@ void ListPlanOper::new_oper()
 
     if (po->exec() == QDialog::Accepted) {
         PlanOperation data = po->Data();
-        if (data.new_plan_oper()) {
+        if (data.insert()) {
         }
         emit data_changed();
     }
@@ -263,7 +263,7 @@ void ListPlanOper::commit_oper()
 
     for (i = id.begin(); i != id.end(); i++) {
         int d = *i;
-        pod.read(d, QDate::currentDate());
+        pod.read(d);
 
         eo->setData(pod);
         if (eo->exec() == QDialog::Rejected)
@@ -289,7 +289,7 @@ void ListPlanOper::update_oper()
     if (id.size() == 0)
         return;
 
-    pod.read(id.at(0), QDate::currentDate());
+    pod.read(id.at(0));
 
     eo->setData(pod);
     if (eo->exec() == QDialog::Rejected)
@@ -310,18 +310,32 @@ void ListPlanOper::update_oper()
 void ListPlanOper::del_oper()
 {
     QSqlQuery q;
+    PlanOperation pop;
     QList<int> id = get_selected_id();
-    Transaction tr;
+    Transaction t;
 
     if (id.size() == 0)
         return;
 
-    tr.begin();
+    pop.read(id.at(0));
+
+    int r = QMessageBox::warning(this, tr("Plan Operation"),
+                                 tr("You want to delete this operation?\n\n"
+                                    "From: %1\n"
+                                    "To:   %2")
+                                 .arg(pop.From().at(0).account().fullName())
+                                 .arg(pop.To().at(0).account().fullName()), \
+                                 QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+    if (r == QMessageBox::No)
+        return;
+
+    t.begin();
 
     q.prepare("DELETE FROM plan_oper_acc WHERE o_id = :id");
     q.bindValue(":id", id.at(0));
     if (!q.exec()) {
-        tr.rollback();
+        t.rollback();
         qDebug() << "Error DELETE:" << q.lastError().text();
         return;
     }
@@ -329,12 +343,12 @@ void ListPlanOper::del_oper()
     q.prepare("DELETE FROM plan_oper WHERE id = :id");
     q.bindValue(":id", id.at(0));
     if (!q.exec()) {
-        tr.rollback();
+        t.rollback();
         qDebug() << "Error DELETE:" << q.lastError().text();
         return;
     }
 
-    tr.commit();
+    t.commit();
     emit data_changed();
 }
 

@@ -27,7 +27,7 @@ public:
     QList<Budget> read_budget_list(int mon = 0);
     QString get_parent_account(int id);
 //    QMap<int,QString> get_scod_list();
-    QMap<QString,double> get_currency_list();
+//    QMap<QString,double> get_currency_list();
     QMap<QString,double> get_opersummbyaccount_list(int type,int month,int year);
 //    QMap<int,double> get_account_oper_list(int, int);
 //    QMap<int,double> get_plan_account_oper_list(int, int);
@@ -49,7 +49,7 @@ public:
 //    Operation get_plan_oper_data(int,QDate dt);
 //    int find_oper_by_plan(int plan, int mon, int year);
 //    QMap<int,QString> scod_list2;
-    QMap<QString,double> currency_list;
+//    QMap<QString,double> currency_list;
 };
 
 #endif // DATABASE_H

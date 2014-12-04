@@ -44,13 +44,14 @@ void EditOperation::check_Ok()
 {
     Account acc;
     QString from, to, to2;
-    double kurs;
+    double kfrom, kto, kurs;
 
     ui->fromSpinBox->setEnabled(ui->fromWidget->value());
     ui->toSpinBox->setEnabled(ui->toWidget->value());
 
     if (acc.read(ui->fromWidget->value())) {
         from = Currency(acc.Curr()).SCod();
+        kfrom = Currency(acc.Curr()).Kurs();
         ui->from_cod->setText(from);
     }
     else
@@ -58,13 +59,14 @@ void EditOperation::check_Ok()
 
     if (acc.read(ui->toWidget->value())) {
         to = Currency(acc.Curr()).SCod();
+        kto = Currency(acc.Curr()).Kurs();
         ui->to_cod->setText(to);
     }
     else
         ui->to_cod->setText(QString());
 
-    if (db->currency_list[from] > 0 && db->currency_list[to] > 0)
-        kurs = db->currency_list[from]/db->currency_list[to];
+    if (kfrom && kto)
+        kurs = kfrom/kto;
     else
         kurs = 0;
 

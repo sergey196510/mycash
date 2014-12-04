@@ -390,20 +390,20 @@ void MyCash::report2()
 void MyCash::check_plan_oper()
 {
 //    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
-    QList<PlanOperation> list = PlanOperation().get_plan_oper_list(0);
+    QList<PlanOperation> list = PlanOperation().get_list(0);
     QList<PlanOperation>::iterator i;
     Account from, to;
 
 //    qDebug() << mon << year;
 
     for (i = list.begin(); i != list.end(); i++) {
-        PlanOperation data = *i;
-          if (data.Auto() == 0)
+        PlanOperation pop = *i;
+          if (pop.Auto() == 0)
             continue;
-        if (data.Status() != Plan_Status::expired)
+        if (pop.Status() != Plan_Status::expired)
             continue;
-        from.read(data.From().at(0).account().Id());
-        to.read(data.To().at(0).account().Id());
+        from.read(pop.From().at(0).account().Id());
+        to.read(pop.To().at(0).account().Id());
 
         int r = QMessageBox::question(0,
                                       tr("Plan operation"),
@@ -414,7 +414,7 @@ void MyCash::check_plan_oper()
         if (r == QMessageBox::No)
             continue;
 
-        if (from.Top() == Account_Type::active && from.Balance() < data.To().at(0).balance().toDouble()) {
+        if (from.Top() == Account_Type::active && from.Balance() < pop.To().at(0).balance().toDouble()) {
             QMessageBox::warning(0,
                                  tr("Plan operation"),
                                  tr("Plan operation\nFrom: %1, To: %2\nNedostatocjno sredstv")
@@ -424,12 +424,12 @@ void MyCash::check_plan_oper()
         }
 
         if (r == QMessageBox::Yes) {
-            data.save_operation();
-            db->new_mon_oper(data.Id(),1);
+            pop.insert();
+            db->new_mon_oper(pop.Id(),1);
         }
         else if (r == QMessageBox::Cancel)
-            db->new_mon_oper(data.Id(),2);
+            db->new_mon_oper(pop.Id(),2);
 
-        qDebug() << data.Id();
+        qDebug() << pop.Id();
     }
 }
