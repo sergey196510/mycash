@@ -2,9 +2,12 @@
 
 summAccount::summAccount(int type)
 {
+    Account acc;
+
     db = new Database;
 
-    value = db->get_account_summ(type);
+    acc.read(type);
+    value = acc.get_summ();
 }
 
 summAccount::~summAccount()

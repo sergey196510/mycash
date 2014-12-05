@@ -22,6 +22,7 @@ double Database::convert_currency(double val, int id)
     return 0;
 }
 
+/*
 double Database::get_account_summ(int id)
 {
     QSqlQuery q;
@@ -55,6 +56,7 @@ double Database::get_account_summ(int id)
     tr.commit();
     return summ;
 }
+*/
 
 double Database::get_operation_summ(int top)
 {
@@ -88,6 +90,7 @@ double Database::get_operation_summ(int top)
     return summ;
 }
 
+/*
 QMap<QString,double> Database::get_opersummbyaccount_list(int top, int m1, int y1)
 {
     QMap<QString,double> list;
@@ -131,6 +134,7 @@ QMap<QString,double> Database::get_opersummbyaccount_list(int top, int m1, int y
 
     return list;
 }
+*/
 
 /*
 int Database::get_account_curr(int id)
@@ -147,6 +151,7 @@ int Database::get_account_curr(int id)
 }
 */
 
+/*
 QString Database::get_parent_account(int id)
 {
     QString name;
@@ -168,6 +173,7 @@ QString Database::get_parent_account(int id)
     }
     return QVariant().toString();
 }
+*/
 
 /*
 QMap<int,QString> Database::get_accounts_list()
@@ -191,7 +197,8 @@ QMap<int,QString> Database::get_accounts_list()
 }
 */
 
-QList<Budget> Database::read_budget_list(int mon)
+/*
+QList<Budget> Database::read_list(int mon)
 {
     QList<Budget> list;
     Budget data;
@@ -215,6 +222,7 @@ QList<Budget> Database::read_budget_list(int mon)
 
     return list;
 }
+*/
 
 /*
 QMap<int,double> Database::get_account_oper_list(int oper, int type)
@@ -572,6 +580,7 @@ bool Database::save_operation(Operation &oper)
 }
 */
 
+/*
 bool Database::add_budget(account_summ &d)
 {
     QSqlQuery q;
@@ -589,7 +598,7 @@ bool Database::add_budget(account_summ &d)
     return true;
 }
 
-bool Database::find_budget_id(int budget, int acc)
+bool Database::find_budget_parent(int budget, int acc)
 {
     QSqlQuery q;
 
@@ -611,6 +620,7 @@ bool Database::find_budget_id(int budget, int acc)
 
     return false;
 }
+*/
 
 /*
 Operation Database::get_operation(int id)

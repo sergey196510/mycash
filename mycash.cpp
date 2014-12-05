@@ -270,7 +270,7 @@ void MyCash::list_home()
     connect(ui->action_Open, SIGNAL(triggered()), mw, SLOT(reload_model()));
     connect(ui->action_Close, SIGNAL(triggered()), mw, SLOT(clear_model()));
     connect(this, SIGNAL(update_currency()), mw, SLOT(reload_model()));
-    curr->setEnabled(true);
+    curr->setEnabled(false);
 
     setCentralWidget(mw);
 }

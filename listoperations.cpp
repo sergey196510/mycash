@@ -425,14 +425,19 @@ void ListOperations::plann_operation()
 void ListOperations::print_balance()
 {
     Globals var;
+    Account acc;
 //    QLocale *lc;
     QFont font;
     font.setBold(true);
     int id = ui->listAccounts->value();
 
+    if (id == 0)
+        return;
+
+    acc.read(id);
     ui->account_ostatok->setFont(font);
     if (id)
-        ui->account_ostatok->setText(default_locale->toCurrencyString(db->get_account_summ(id)));
+        ui->account_ostatok->setText(default_locale->toCurrencyString(acc.get_summ()));
     else
         ui->account_ostatok->clear();
 

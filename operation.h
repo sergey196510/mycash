@@ -66,6 +66,7 @@ public:
 
     QList<PlanOperation> get_list(int status);
     bool read(int id);
+    int new_operation();
     int insert();
     bool update_plan_oper();
     int Day() { return day; }

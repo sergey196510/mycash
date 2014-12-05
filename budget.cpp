@@ -115,3 +115,68 @@ bool Budget::remove()
 
     return false;
 }
+
+QList<Budget> Budget::read_list(int mon)
+{
+    QList<Budget> list;
+    Budget data;
+    QSqlQuery q;
+    QString query;
+
+    if (mon)
+        query = QString("SELECT id,mon,a_id,summ FROM budget_plan WHERE mon=%1 ORDER BY mon,a_id").arg(mon);
+    else
+        query = QString("SELECT id,mon,a_id,summ FROM budget_plan ORDER BY mon,a_id");
+
+    q.prepare(query);
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return list;
+    }
+    while (q.next()) {
+        data.set_Value(q.value(0).toInt(), q.value(1).toInt(), q.value(2).toInt(), q.value(3).toDouble());
+        list.append(data);
+    }
+
+    return list;
+}
+
+bool Budget::add_budget(account_summ &d)
+{
+    QSqlQuery q;
+    QList<Budget> list = read_list(QDate::currentDate().month());
+    QList<Budget>::iterator i;
+
+    for (i = list.begin(); i != list.end(); i++) {
+        Budget data = *i;
+        if (find_parent(data.account().Id(), d.account().Id())) {
+            int id = data.Id();
+            qDebug() << id;
+        }
+    }
+
+    return true;
+}
+
+bool Budget::find_parent(int budget, int acc)
+{
+    QSqlQuery q;
+
+    if (budget == acc)
+        return true;
+
+    q.prepare("SELECT id,parent FROM account WHERE id=:id");
+    q.bindValue(":id",acc);
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return false;
+    }
+    if (q.next()) {
+        if (q.value(1).toInt())
+            return find_parent(budget,q.value(1).toInt());
+//        else
+//            return true;
+    }
+
+    return false;
+}

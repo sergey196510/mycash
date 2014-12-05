@@ -28,77 +28,35 @@ int Operation::new_operation()
     return 0;
 }
 
-/*
-bool Operation::save_operation()
+int PlanOperation::new_operation()
 {
     QSqlQuery q;
-    int oper_id;
-    QList<account_summ>::iterator i;
     Transaction tr;
-    MyCurrency mfrom = 0, mto = 0;
 
     tr.begin();
 
-    if ((oper_id = new_operation()) == 0) {
+    q.prepare("INSERT INTO plan_oper(day, month, descr, dt, auto) VALUES(:day, :month, :descr, :dt, :auto)");
+    q.bindValue(":day", day);
+    q.bindValue(":month", month);
+    q.bindValue(":descr", descr);
+    q.bindValue(":dt", date.toString("yyyy-MM-dd"));
+    q.bindValue(":auto", auto_exec);
+    if (!q.exec()) {
+        qDebug() << "Error Insert:" << q.lastError().text();
         tr.rollback();
-        return false;
-    }
-    for (i = from.begin(); i != from.end(); i++) {
-        account_summ d = *i;
-        Account data = d.account();
-//        data.read(d.account().Id());
-        if (data.Top() == Account_Type::debet && agent)
-            data.setAgent(agent);
-        if (new_account_oper("account_oper", oper_id, d, Direction::from, data.Agent()) == false) {
-            tr.rollback();
-            return false;
-        }
-        if (data.Top() == Account_Type::active ||
-                data.Top() == Account_Type::credit)
-            d.set_balance(-d.balance().toDouble()); // сменить знак
-        if (data.change_balance(d.balance()) == false) {
-            tr.rollback();
-            return false;
-        }
-        if (data.Top() == Account_Type::debet) {
-            Database().add_budget(d);
-        }
-        mfrom += abs(d.balance().toDouble());
-    }
-    for (i = to.begin(); i != to.end(); i++) {
-        account_summ d = *i;
-        Account data = d.account();
-//        data.read(d.account().Id());
-        if (data.Top() == Account_Type::credit && agent)
-            data.setAgent(agent);
-        if (new_account_oper("account_oper", oper_id, d, Direction::to, data.Agent()) == false) {
-            tr.rollback();
-            return false;
-        }
-        if (data.Top() == Account_Type::passive ||
-                data.Top() == Account_Type::debet ||
-                data.Top() == Account_Type::initial)
-            d.set_balance(-d.balance().toDouble()); // сменить знак
-        if (data.change_balance(d.balance()) == false) {
-            tr.rollback();
-            return false;
-        }
-        if (data.Top() == Account_Type::credit) {
-            Database().add_budget(d);
-        }
-        mto += abs(d.balance().toDouble());
+        return 0;
     }
 
-    if (mfrom != mto) {
-        qDebug() << "from not equal to";
+    q.prepare("SELECT MAX(id) FROM plan_oper");
+    if (!q.exec()) {
+        qDebug() << q.lastError().text();
         tr.rollback();
-        return false;
+        return 0;
     }
 
     tr.commit();
-    return true;
+    return q.value(0).toInt();
 }
-*/
 
 bool Operation::new_account_oper(QString table, const int o_id, account_summ &acc, int direction, int agent)
 {
@@ -123,33 +81,13 @@ bool Operation::new_account_oper(QString table, const int o_id, account_summ &ac
     return true;
 }
 
-/*
-bool Operation::change_account_balance(account_summ &acc)
-{
-    QSqlQuery query;
-    MyCurrency summ;
-    int flag = 1;
-
-    summ = acc.balance() * flag;
-
-    query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
-    query.bindValue(":id", acc.account().Id());
-    query.bindValue(":summ", summ.toDouble());
-    if (!query.exec()) {
-        return false;
-    }
-
-    return true;
-}
-*/
-
 bool Operation::insert() {
     QSqlQuery q;
     int oper_id;
     QList<account_summ>::iterator i;
     Transaction tr;
     MyCurrency mfrom = 0, mto = 0;
-    Database *db = new Database;
+//    Database *db = new Database;
 
     tr.begin();
 
@@ -175,7 +113,7 @@ bool Operation::insert() {
             return false;
         }
         if (data.Top() == Account_Type::debet) {
-            db->add_budget(d);
+            Budget().add_budget(d);
         }
         mfrom += abs(d.balance().toDouble());
     }
@@ -198,7 +136,7 @@ bool Operation::insert() {
             return false;
         }
         if (data.Top() == Account_Type::credit) {
-            db->add_budget(d);
+            Budget().add_budget(d);
         }
         mto += abs(d.balance().toDouble());
     }
@@ -211,6 +149,38 @@ bool Operation::insert() {
 
     tr.commit();
     return true;
+}
+
+int PlanOperation::insert()
+{
+    QSqlQuery q;
+    int oper_id = 0;
+    QList<account_summ>::iterator i;
+    Transaction tr;
+
+    tr.begin();
+
+    oper_id = new_operation();
+
+    for (i = from.begin(); i != from.end(); i++) {
+        account_summ d = *i;
+        if (!new_account_oper("plan_oper_acc", oper_id, d, Direction::from)) {
+            qDebug() << q.lastError().text();
+            tr.rollback();
+            return 0;
+        }
+    }
+    for (i = to.begin(); i != to.end(); i++) {
+        account_summ d = *i;
+        if (!new_account_oper("plan_oper_acc", oper_id, d, Direction::to)) {
+            qDebug() << q.lastError().text();
+            tr.rollback();
+            return 0;
+        }
+    }
+
+    tr.commit();
+    return oper_id;
 }
 
 int Operation::find_oper_by_plan(int plan, int mon, int year)
@@ -234,26 +204,6 @@ int Operation::find_oper_by_plan(int plan, int mon, int year)
         return 0;
 }
 
-QMap<int,double> Operation::get_account_oper_list(int oper, int type, QString table)
-{
-    QMap<int,double> list;
-    QSqlQuery q;
-
-    QString query = QString("SELECT a_id,summ FROM %1 WHERE o_id = %2 AND direction = %3")
-            .arg(table)
-            .arg(oper)
-            .arg(type);
-    if (!q.exec(query)) {
-        qDebug() << q.lastError().text();
-        return list;
-    }
-    while (q.next()) {
-        list[q.value(0).toInt()] = q.value(1).toDouble();
-    }
-
-    return list;
-}
-
 /*
 QMap<int,double> Operation::get_plan_account_oper_list(int oper, int type)
 {
@@ -275,6 +225,26 @@ QMap<int,double> Operation::get_plan_account_oper_list(int oper, int type)
 }
 */
 
+QMap<int,double> Operation::get_account_oper_list(int oper, int type, QString table)
+{
+    QMap<int,double> list;
+    QSqlQuery q;
+
+    QString query = QString("SELECT a_id,summ FROM %1 WHERE o_id = %2 AND direction = %3")
+            .arg(table)
+            .arg(oper)
+            .arg(type);
+    if (!q.exec(query)) {
+        qDebug() << q.lastError().text();
+        return list;
+    }
+    while (q.next()) {
+        list[q.value(0).toInt()] = q.value(1).toDouble();
+    }
+
+    return list;
+}
+
 QList<PlanOperation> PlanOperation::get_list(int status)
 {
     QList<PlanOperation> list;
@@ -294,58 +264,6 @@ QList<PlanOperation> PlanOperation::get_list(int status)
     }
 
     return list;
-}
-
-int PlanOperation::insert()
-{
-    QSqlQuery q;
-    int id = 0;
-    QList<account_summ>::iterator i;
-    Transaction tr;
-
-    tr.begin();
-
-    q.prepare("INSERT INTO plan_oper(day, month, descr, dt, auto) VALUES(:day, :month, :descr, :dt, :auto)");
-    q.bindValue(":day", day);
-    q.bindValue(":month", month);
-    q.bindValue(":descr", descr);
-    q.bindValue(":dt", date.toString("yyyy-MM-dd"));
-    q.bindValue(":auto", auto_exec);
-    if (!q.exec()) {
-        qDebug() << "Error Insert:" << q.lastError().text();
-        tr.rollback();
-        return 0;
-    }
-
-    q.prepare("SELECT MAX(id) FROM plan_oper");
-    if (!q.exec()) {
-        qDebug() << q.lastError().text();
-        tr.rollback();
-        return 0;
-    }
-
-    if (q.next()) {
-        id = q.value(0).toInt();
-        for (i = from.begin(); i != from.end(); i++) {
-            account_summ d = *i;
-            if (!new_account_oper("plan_oper_acc", id, d, Direction::from)) {
-                qDebug() << q.lastError().text();
-                tr.rollback();
-                return 0;
-            }
-        }
-        for (i = to.begin(); i != to.end(); i++) {
-            account_summ d = *i;
-            if (!new_account_oper("plan_oper_acc", id, d, Direction::to)) {
-                qDebug() << q.lastError().text();
-                tr.rollback();
-                return 0;
-            }
-        }
-    }
-
-    tr.commit();
-    return id;
 }
 
 bool Operation::read(int _i)
@@ -436,7 +354,7 @@ bool PlanOperation::read(int _i)
     if (id == 0)
         return false;
 
-    q.prepare("SELECT day, month, descr, auto FROM plan_oper WHERE id = :id");
+    q.prepare("SELECT day,month,descr,auto,dt FROM plan_oper WHERE id = :id");
     q.bindValue(":id", id);
     if (!q.exec() || !q.next()) {
         qDebug() << "Select Error:" << q.lastError().text();
@@ -449,7 +367,7 @@ bool PlanOperation::read(int _i)
     //        year = q.value(3).toInt();
     descr = q.value(2).toString();
     auto_exec = q.value(3).toInt();
-    date = QDate::currentDate();
+    date = q.value(4).toDate();
 
     calcStatus();
 

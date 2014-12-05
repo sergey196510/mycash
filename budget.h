@@ -21,6 +21,9 @@ public:
     int Month() { return mon; }
     Account account() { return acc; }
     MyCurrency Summ() { return summ; }
+    QList<Budget> read_list(int mon = 0);
+    bool add_budget(account_summ &d);
+    bool find_parent(int, int);
     void set_Value(int i, int m, int a, double s);
     bool read(int id);
     bool insert();

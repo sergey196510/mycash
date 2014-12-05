@@ -7,6 +7,7 @@
 #include "global.h"
 #include "database.h"
 #include "editbudget.h"
+#include "budget.h"
 
 class ListBudgetModel : public QAbstractTableModel
 {

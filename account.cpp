@@ -128,3 +128,39 @@ QString Account::fullName()
 
     return QVariant().toString();
 }
+
+double Account::get_summ()
+{
+    QSqlQuery q;
+    double summ = 0;
+    Transaction tr;
+    Account acc;
+
+//    if (!var.database_Opened())
+//        return summ;
+
+    tr.begin();
+
+    q.prepare("SELECT id,ccod,balance FROM account WHERE id = :id AND hidden = 0");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        tr.rollback();
+        return 0;
+    }
+    if (q.next())
+        summ += q.value(2).toDouble();
+
+    q.prepare("SELECT id,ccod,balance FROM account WHERE parent = :parent AND hidden = 0");
+    q.bindValue(":parent", id);
+    if (!q.exec()) {
+        tr.rollback();
+        return 0;
+    }
+    while (q.next()) {
+        acc.read(q.value(0).toInt());
+        summ += acc.get_summ();
+    }
+
+    tr.commit();
+    return summ;
+}

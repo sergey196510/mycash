@@ -5,7 +5,7 @@ ListPlanOperModel::ListPlanOperModel(Database *d, QObject *parent) :
     QAbstractTableModel(parent)
 {
     db = d;
-    header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Auto") << tr("Description");
+    header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("Summ") << tr("To Account") << tr("Summ") << tr("Auto") << tr("Description");
     list = read_list();
 //    acc_list = db->get_accounts_list();
     var = new Globals;
@@ -44,11 +44,7 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
                 return QVariant();
         }
         else if (index.column() == 3) {
-            data = list.at(index.row());
-//            if (data.Year())
-//                return data.Year();
-//            else
-                return QVariant();
+            return QVariant();
         }
         else if (index.column() == 4) {
             data = list.at(index.row());
@@ -56,23 +52,26 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
         }
         else if (index.column() == 5) {
             data = list.at(index.row());
-            return data.To().at(0).account().fullName();
+            Currency curr(data.From().at(0).account().Curr());
+            return default_locale->toString(data.From().at(0).balance().toDouble(),'f',2) + " " + curr.SCod();
         }
         else if (index.column() == 6) {
             data = list.at(index.row());
-            return default_locale->toString(data.From().at(0).balance().toDouble(),'f',2);
-//            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
-//            QMap<int,double>::iterator i = oper.begin();
-//            return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
+            return data.To().at(0).account().fullName();
         }
         else if (index.column() == 7) {
+            data = list.at(index.row());
+            Currency curr(data.To().at(0).account().Curr());
+            return default_locale->toString(data.To().at(0).balance().toDouble(),'f',2) + " " + curr.SCod();
+        }
+        else if (index.column() == 8) {
             data = list.at(index.row());
             if (data.Auto() == 1)
                 return tr("Y");
             else
                 return QVariant();
         }
-        else if (index.column() == 8) {
+        else if (index.column() == 9) {
             data = list.at(index.row());
             return data.Descr();
         }
@@ -86,7 +85,9 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
                 return int(Qt::AlignRight | Qt::AlignVCenter);
             else if (index.column() == 3)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
-            else if (index.column() == 6)
+            else if (index.column() == 5)
+                return int(Qt::AlignRight | Qt::AlignVCenter);
+            else if (index.column() == 7)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
             else
                 return QVariant();

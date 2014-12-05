@@ -7,7 +7,7 @@ MainWidgetModel::MainWidgetModel(Database *d, QObject *parent) :
 {
     db = d;
     list = PlanOperation().get_list(1);
-    header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("To Account") << tr("Summ") << tr("Status") << tr("Descr");
+    header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("Summ") << tr("To Account") << tr("Summ") << tr("Status") << tr("Descr");
 //    acc_list = db->get_accounts_list();
     var = new Globals;
 }
@@ -49,32 +49,27 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
                 return "";
         }
         else if (index.column() == 3) {
-            PlanOperation data = list.at(index.row());
-//            if (data.Year())
-//                return data.Year();
-//            else
-                return QVariant();
+            return QVariant();
         }
         else if (index.column() == 4) {
             PlanOperation data = list.at(index.row());
             return data.From().at(0).account().fullName();
-//            return acc_list[data.From().at(0).account().Id()];
         }
         else if (index.column() == 5) {
             PlanOperation data = list.at(index.row());
-            return data.To().at(0).account().fullName();
-//            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
-//            QMap<int,double>::iterator i = oper.begin();
-//            return acc_list[i.key()];
+            Currency curr(data.From().at(0).account().Curr());
+            return default_locale->toString(data.From().at(0).balance().toDouble(),'f',2) + " " + curr.SCod();
         }
         else if (index.column() == 6) {
             PlanOperation data = list.at(index.row());
-            return default_locale->toString(data.From().at(0).balance().toDouble(),'f',2);
-//            QMap<int,double> oper = data.get_plan_account_oper_list(data.Id(),2);
-//            QMap<int,double>::iterator i = oper.begin();
-//            return default_locale->toString(i.value()/Currency(var->Currency()).Kurs(),'f',2);
+            return data.To().at(0).account().fullName();
         }
         else if (index.column() == 7) {
+            PlanOperation data = list.at(index.row());
+            Currency curr(data.To().at(0).account().Curr());
+            return default_locale->toString(data.To().at(0).balance().toDouble(),'f',2) + " " + curr.SCod();
+        }
+        else if (index.column() == 8) {
             PlanOperation data = list.at(index.row());
             if (data.Status() == Plan_Status::expired)
                 return tr("Expired");
@@ -83,7 +78,7 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
             else
                 return QVariant();
         }
-        else if (index.column() == 8) {
+        else if (index.column() == 9) {
             PlanOperation data = list.at(index.row());
             return data.Descr();
         }
@@ -97,7 +92,9 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
                 return int(Qt::AlignRight | Qt::AlignVCenter);
             if (index.column() == 3)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
-            if (index.column() == 6)
+            if (index.column() == 5)
+                return int(Qt::AlignRight | Qt::AlignVCenter);
+            if (index.column() == 7)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
     case Qt::BackgroundColorRole:

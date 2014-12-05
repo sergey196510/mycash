@@ -5,6 +5,7 @@
 #include <QDate>
 #include <QtSql>
 #include "widgets/mycurrency.h"
+#include "transaction.h"
 
 class Account {
     int id;
@@ -26,6 +27,7 @@ public:
     bool change_balance(MyCurrency val);
     QString get_parent_account(int id);
     QString fullName();
+    double get_summ();
 
     void setBalance(MyCurrency bal) { balance = bal; }
     void setAgent(int a) { agent = a; }

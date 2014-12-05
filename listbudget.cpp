@@ -5,7 +5,7 @@ ListBudgetModel::ListBudgetModel(Database *d, QObject *parent) :
 {
     db = d;
     header_data << tr("Month") << tr("Account") << tr("Summ") << tr("Description");
-    list = db->read_budget_list(0);
+    list = Budget().read_list(0);
 //    accounts_list = db->get_accounts_list();
 }
 
@@ -67,7 +67,7 @@ void ListBudgetModel::update_list()
 {
     beginResetModel();
     list.clear();
-    list = db->read_budget_list(0);
+    list = Budget().read_list(0);
     endResetModel();
 }
 
