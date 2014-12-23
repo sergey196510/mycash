@@ -8,6 +8,7 @@
 #include "widgets/mycurrency.h"
 #include "editbudget.h"
 #include "account.h"
+#include "accountsumm.h"
 
 class Budget
 {

@@ -35,14 +35,14 @@ public slots:
 private:
     Globals *var;
     QStringList header_data;
-    QList<PlanOperation> list;
+    QVector<PlanOperation> list;
 //    QMap<int,QString> acc_list;
     QMap<QString,double> currency;
     QString symbol;
     Database *db;
 
 private slots:
-    QList<PlanOperation> read_list();
+    QVector<PlanOperation> read_list();
 };
 
 class ListPlanOper : public QWidget

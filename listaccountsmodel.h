@@ -29,7 +29,7 @@ private:
 //    QMap<int,QString> list;
     QMap<int,QModelIndex> list_index;
 //    QMap<QString,double> list_curs;
-    QList<PlanOperation> plan_list;
+    QVector<PlanOperation> plan_list;
     Globals var;
     MyCurrency get_reserv(int id);
 

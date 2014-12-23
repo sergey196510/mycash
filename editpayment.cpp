@@ -1,5 +1,6 @@
 #include "editpayment.h"
 #include "ui_editpayment.h"
+#include "payment.h"
 
 EditPayment::EditPayment(QWidget *parent) :
     QDialog(parent),
@@ -28,6 +29,7 @@ EditPayment::~EditPayment()
 void EditPayment::calc_summ()
 {
     double oval, nval, prval, summ;
+    Payment p;
 
     oval = ui->oldEdit->text().toDouble();
     nval = ui->newEdit->text().toDouble();

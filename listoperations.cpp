@@ -131,14 +131,14 @@ QVariant ListOperationsModel::data(const QModelIndex &index, int role) const
             }
         }
         else if (index.column() == col_Debet) {
-            qDebug() << current_account << from.account().Id();
+//            qDebug() << current_account << from.account().Id();
             if (from.account().Id() != current_account)
                 return default_locale->toString(to.balance().toDouble()/Currency(var->Currency()).Kurs(),'f',2);
             else
                 return QVariant();
         }
         else if (index.column() == col_Credit) {
-            qDebug() << current_account << to.account().Id();
+//            qDebug() << current_account << to.account().Id();
             if (to.account().Id() != current_account)
                 return default_locale->toString(from.balance().toDouble()/Currency(var->Currency()).Kurs(),'f',2);
             else
@@ -211,7 +211,7 @@ ListOperations::ListOperations(QWidget *parent) :
 
     db = new Database;
 
-    ui->listAccounts->setValue(var.Account());
+//    ui->listAccounts->setValue(var.Account());
     ui->fdate->setDate(QDate().currentDate().addDays(-29));
     fdate = ui->fdate->value();
     ldate = ui->ldate->value();
@@ -375,10 +375,9 @@ void ListOperations::del_operation()
     if (id == 0)
         return;
 
+    data.read(id);
     int r = QMessageBox::warning(this, tr("Operation"),
-                                 tr("You want to delete operation?\n" \
-                 "Nadeusj, vi ponimaete chto delaeye,\n" \
-                 "tak kak v etom sluchae budut izmeneni balansi accounts"),
+                                 tr("You want to delete operation?\n"),
                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
     if (r == QMessageBox::No)
@@ -441,7 +440,7 @@ void ListOperations::print_balance()
     else
         ui->account_ostatok->clear();
 
-    var.setAccount(ui->listAccounts->value());
+//    var.setAccount(ui->listAccounts->value());
 }
 
 void ListOperations::reload_model()

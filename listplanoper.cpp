@@ -16,9 +16,9 @@ ListPlanOperModel::~ListPlanOperModel()
     delete var;
 }
 
-QList<PlanOperation> ListPlanOperModel::read_list()
+QVector<PlanOperation> ListPlanOperModel::read_list()
 {
-    QList<PlanOperation> list = PlanOperation().get_list(0);
+    QVector<PlanOperation> list = PlanOperation().read_list(0);
     return list;
 }
 
@@ -98,6 +98,8 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
             return QVariant(QColor(Qt::gray));
         else if (data.Status() == Plan_Status::cancelled)
             return QVariant(QColor(Qt::gray));
+        else if (data.Status() == Plan_Status::expired)
+            return QVariant(QColor(Qt::white));
         else
             return QVariant();
 
@@ -143,7 +145,7 @@ void ListPlanOperModel::change_data()
 {
     beginResetModel();
     list.clear();
-    list = PlanOperation().get_list(0);
+    list = PlanOperation().read_list(0);
     endResetModel();
 }
 
@@ -243,9 +245,9 @@ QList<int> ListPlanOper::get_selected_id()
         QMessageBox::critical(this, tr("Operation cancellation"), tr("Nothing selected"));
         return l;
     }
-    qDebug() << list.size();
+//    qDebug() << list.size();
 
-    for (int i = 0; i < list.size(); i+=9)
+    for (int i = 0; i < list.size(); i+=10)
         l.append(list.at(i).data(Qt::DisplayRole).toInt());
 
     return l;

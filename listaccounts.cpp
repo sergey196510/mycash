@@ -267,10 +267,10 @@ void ListAccounts::correct_balance()
     }
 
     data.read(id);
-    if (data.Top() != 1 && data.Top() != 2) {
+    if (data.Top() != Account_Type::active && data.Top() != Account_Type::passive) {
 	QMessageBox::critical(this, tr("Account"),
                                  tr("You can correct balans only active or passive accounts"));
-	return;
+        return;
     }
 
     cb->setBalance(data.Balance().toDouble());
@@ -288,18 +288,23 @@ void ListAccounts::correct_balance()
             Account d;
 
             d.read(id);
+            if (d.Top() == Account_Type::passive)
+                summ = -summ;
+
             a.set_account(d);
             a.set_balance(summ);
-            lst.clear();
-            lst.append(a);
-            od.setFrom(lst);
+            od.append_from(a);
+//            lst.clear();
+//            lst.append(a);
+//            od.setFrom(lst);
 
             d.read(cb->account());
             a.set_account(d);
             a.set_balance(summ);
-            lst.clear();
-            lst.append(a);
-            od.setTo(lst);
+            od.append_to(a);
+//            lst.clear();
+//            lst.append(a);
+//            od.setTo(lst);
         }
         else {
             double summ = new_balance-current_balance;
@@ -308,16 +313,21 @@ void ListAccounts::correct_balance()
             d.read(cb->account());
             a.set_account(d);
             a.set_balance(summ);
-            lst.clear();
-            lst.append(a);
-            od.setFrom(lst);
+            od.append_from(a);
+//            lst.clear();
+//            lst.append(a);
+//            od.setFrom(lst);
 
             d.read(id);
+            if (d.Top() == Account_Type::passive)
+                summ = -summ;
+
             a.set_account(d);
             a.set_balance(summ);
-            lst.clear();
-            lst.append(a);
-            od.setTo(lst);
+            od.append_to(a);
+//            lst.clear();
+//            lst.append(a);
+//            od.setTo(lst);
         }
         od.insert();
 

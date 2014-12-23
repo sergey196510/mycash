@@ -67,13 +67,12 @@ int Account::insert()
         return q.value(0).toInt();
     return 0;
 }
-bool Account::change_balance(MyCurrency val)
+bool Account::change_balance2(MyCurrency val)
 {
     QSqlQuery query;
     MyCurrency summ;
-    int flag = 1;
 
-    summ = val * flag;
+    summ = val;
 
     query.prepare("UPDATE account set balance = balance + :summ WHERE id = :id");
     query.bindValue(":id", id);
@@ -84,6 +83,29 @@ bool Account::change_balance(MyCurrency val)
 
     return true;
 }
+
+bool Account::debet(MyCurrency val)
+{
+    if (Top() == Account_Type::passive ||
+            Top() == Account_Type::debet ||
+            Top() == Account_Type::initial) {
+        val = val * -1;
+    }
+
+    return change_balance2(val);
+}
+
+bool Account::credit(MyCurrency val)
+{
+//    val = val * -1;
+    if (Top() == Account_Type::active ||
+            Top() == Account_Type::credit) {
+        val = val * -1;
+    }
+
+    return change_balance2(val);
+}
+
 QString Account::get_parent_account(int id)
 {
     QString name;

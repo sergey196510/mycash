@@ -27,7 +27,7 @@ void ViewCurrency::paint(QPainter *painter, const QStyleOptionViewItem &option, 
 MyCurrency ListAccountsModel::get_reserv(int id)
 {
     Account acc;
-    QList<PlanOperation>::iterator i;
+    QVector<PlanOperation>::iterator i;
     Operation oper;
     account_summ as;
     MyCurrency summ = 0;
@@ -167,7 +167,7 @@ ListAccountsModel::ListAccountsModel(QObject *parent) :
     db = new Database;
     PlanOperation op;
 
-    plan_list = op.get_list(1);
+    plan_list = op.read_list(1);
 }
 
 ListAccountsModel::~ListAccountsModel()

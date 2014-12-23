@@ -4,7 +4,7 @@ AccountOper2::AccountOper2(QWidget *parent) :
     QLineEdit(parent)
 {
     val = 0;
-    db = new Database;
+//    db = new Database;
 //    list = db->get_accounts_list();
 
     this->setReadOnly(true);
@@ -14,7 +14,7 @@ AccountOper2::AccountOper2(QWidget *parent) :
 
 AccountOper2::~AccountOper2()
 {
-    delete db;
+//    delete db;
 }
 
 void AccountOper2::select_account()
@@ -40,7 +40,7 @@ void AccountOper2::setValue(int i)
     Account acc;
 
     acc.read(i);
-//    val = i;
+    val = i;
     this->setText(acc.fullName());
 }
 

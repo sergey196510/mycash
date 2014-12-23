@@ -91,6 +91,12 @@ bool Operation::insert() {
 
     tr.begin();
 
+    if (from.size() == 0 || to.size() == 0) {
+        qDebug() << "New opertation don't has accounts";
+        tr.rollback();
+        return false;
+    }
+
     if ((oper_id = new_operation()) == 0) {
         tr.rollback();
         return false;
@@ -105,10 +111,11 @@ bool Operation::insert() {
             tr.rollback();
             return false;
         }
-        if (data.Top() == Account_Type::active ||
-                data.Top() == Account_Type::credit)
-            d.set_balance(-d.balance().toDouble()); // сменить знак
-        if (data.change_balance(d.balance()) == false) {
+//        if (data.Top() == Account_Type::active ||
+//                data.Top() == Account_Type::credit)
+//            d.set_balance(-d.balance().toDouble()); // сменить знак
+//        if (data.change_balance(d.balance()) == false) {
+        if (data.credit(d.balance()) == false) {
             tr.rollback();
             return false;
         }
@@ -127,11 +134,12 @@ bool Operation::insert() {
             tr.rollback();
             return false;
         }
-        if (data.Top() == Account_Type::passive ||
-                data.Top() == Account_Type::debet ||
-                data.Top() == Account_Type::initial)
-            d.set_balance(-d.balance().toDouble()); // сменить знак
-        if (data.change_balance(d.balance()) == false) {
+//        if (data.Top() == Account_Type::passive ||
+//                data.Top() == Account_Type::debet ||
+//                data.Top() == Account_Type::initial)
+//            d.set_balance(-d.balance().toDouble()); // сменить знак
+//       if (data.change_balance(d.balance()) == false) {
+        if (data.debet(d.balance()) == false) {
             tr.rollback();
             return false;
         }
@@ -245,9 +253,9 @@ QMap<int,double> Operation::get_account_oper_list(int oper, int type, QString ta
     return list;
 }
 
-QList<PlanOperation> PlanOperation::get_list(int status)
+QVector<PlanOperation> PlanOperation::read_list(int status)
 {
-    QList<PlanOperation> list;
+    QVector<PlanOperation> list;
     QSqlQuery q;
 
     q.prepare("SELECT id,dt FROM plan_oper ORDER BY day,month");
@@ -257,7 +265,8 @@ QList<PlanOperation> PlanOperation::get_list(int status)
     }
     while (q.next()) {
         PlanOperation oper;
-        oper.read(q.value(0).toInt());
+        if (!oper.read(q.value(0).toInt()))
+            continue;
         if (status && (oper.Status() == Plan_Status::actual || oper.Status() == Plan_Status::committed || oper.Status() == Plan_Status::cancelled))
             continue;
         list.append(oper);
@@ -374,6 +383,10 @@ bool PlanOperation::read(int _i)
     // поиск близких планвых операций учетом перехода через границу месяца
     bool from_top = false;
     list = get_account_oper_list(id, Direction::from, "plan_oper_acc");
+    if (list.size() < 1) {
+        qDebug() << id << "Null from account";
+        return false;
+    }
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         Account acc;
@@ -388,6 +401,10 @@ bool PlanOperation::read(int _i)
     }
 
     list = get_account_oper_list(id, Direction::to, "plan_oper_acc");
+    if (list.size() < 1) {
+        qDebug() << id << "Null to account";
+        return false;
+    }
     for (i = list.begin(); i != list.end(); i++) {
         account_summ d;
         Account acc;
@@ -516,7 +533,7 @@ bool Operation::del_operation(int id)
                         data.Top() == Account_Type::initial) ?
                            -i.value() :
                            i.value());
-        if (data.change_balance(acc.balance()) == false) {
+        if (data.change_balance2(acc.balance()) == false) {
             tr.rollback();
             return false;
         }
@@ -529,7 +546,7 @@ bool Operation::del_operation(int id)
         data.read(i.key());
         acc.set_account(data);
         acc.set_balance(-i.value());
-        if (data.change_balance(acc.balance()) == false) {
+        if (data.change_balance2(acc.balance()) == false) {
             tr.rollback();
             return false;
         }

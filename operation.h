@@ -64,7 +64,7 @@ public:
         day = month = auto_exec = 0;
     }
 
-    QList<PlanOperation> get_list(int status);
+    QVector<PlanOperation> read_list(int status);
     bool read(int id);
     int new_operation();
     int insert();

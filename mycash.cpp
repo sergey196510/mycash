@@ -130,7 +130,7 @@ void MyCash::readsettings()
     QSettings settings("MyCash", "MyCash");
     restoreGeometry(settings.value("geometry").toByteArray());
     dbname = settings.value("dbname").toString();
-    var.setAccount(settings.value("current_account", 1).toInt());
+//    var.setAccount(settings.value("current_account", 1).toInt());
     var.setCurrency(settings.value("current_currency", 1).toInt());
     var.setCorrectAccount(settings.value("correct_account").toInt());
     var.setInitialAccount(settings.value("initial_account").toInt());
@@ -150,7 +150,7 @@ void MyCash::writesettings()
     QSettings settings("MyCash", "MyCash");
     settings.setValue("geometry", saveGeometry());
     settings.setValue("dbname", dbname);
-    settings.setValue("current_account", var.Account());
+//    settings.setValue("current_account", var.Account());
     settings.setValue("current_currency", var.Currency());
     settings.setValue("correct_account", var.CorrectAccount());
     settings.setValue("initial_account", var.InitialAccount());
@@ -390,18 +390,29 @@ void MyCash::report2()
 void MyCash::check_plan_oper()
 {
 //    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
-    QList<PlanOperation> list = PlanOperation().get_list(0);
-    QList<PlanOperation>::iterator i;
+    QVector<PlanOperation> list = PlanOperation().read_list(0);
+    QVector<PlanOperation>::iterator i;
     Account from, to;
+    int k = 0;
 
 //    qDebug() << mon << year;
 
     for (i = list.begin(); i != list.end(); i++) {
+        k++;
         PlanOperation pop = *i;
           if (pop.Auto() == 0)
             continue;
         if (pop.Status() != Plan_Status::expired)
             continue;
+        qDebug() << list.size() << k << pop.From().size() << pop.To().size();
+        if (pop.From().size() < 1) {
+            qDebug() << pop.Id() << "Null from account";
+            continue;
+        }
+        if (pop.To().size() < 1) {
+            qDebug() << pop.Id() << "Null to account";
+            continue;
+        }
         from.read(pop.From().at(0).account().Id());
         to.read(pop.To().at(0).account().Id());
 

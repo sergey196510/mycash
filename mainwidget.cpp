@@ -6,7 +6,7 @@ MainWidgetModel::MainWidgetModel(Database *d, QObject *parent) :
     QAbstractTableModel(parent)
 {
     db = d;
-    list = PlanOperation().get_list(1);
+    list = PlanOperation().read_list(1);
     header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("Summ") << tr("To Account") << tr("Summ") << tr("Status") << tr("Descr");
 //    acc_list = db->get_accounts_list();
     var = new Globals;
@@ -31,18 +31,20 @@ QVariant MainWidgetModel::headerData(int section,Qt::Orientation orientation, in
 
 QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
 {
+    PlanOperation data = list.at(index.row());
+
     switch (role) {
-        case Qt::DisplayRole:
+    case Qt::DisplayRole:
         if (index.column() == 0) {
-            PlanOperation data = list.at(index.row());
+//            PlanOperation data = list.at(index.row());
             return data.Id();
         }
         else if (index.column() == 1) {
-            PlanOperation data = list.at(index.row());
+//            PlanOperation data = list.at(index.row());
             return data.Day();
         }
         else if (index.column() == 2) {
-            PlanOperation data = list.at(index.row());
+//            PlanOperation data = list.at(index.row());
             if (data.Month())
                 return data.Month();
             else
@@ -52,25 +54,25 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
         else if (index.column() == 4) {
-            PlanOperation data = list.at(index.row());
+//            PlanOperation data = list.at(index.row());
             return data.From().at(0).account().fullName();
         }
         else if (index.column() == 5) {
-            PlanOperation data = list.at(index.row());
+//            PlanOperation data = list.at(index.row());
             Currency curr(data.From().at(0).account().Curr());
             return default_locale->toString(data.From().at(0).balance().toDouble(),'f',2) + " " + curr.SCod();
         }
         else if (index.column() == 6) {
-            PlanOperation data = list.at(index.row());
+//            PlanOperation data = list.at(index.row());
             return data.To().at(0).account().fullName();
         }
         else if (index.column() == 7) {
-            PlanOperation data = list.at(index.row());
+//            PlanOperation data = list.at(index.row());
             Currency curr(data.To().at(0).account().Curr());
             return default_locale->toString(data.To().at(0).balance().toDouble(),'f',2) + " " + curr.SCod();
         }
         else if (index.column() == 8) {
-            PlanOperation data = list.at(index.row());
+//            PlanOperation data = list.at(index.row());
             if (data.Status() == Plan_Status::expired)
                 return tr("Expired");
             else if (data.Status() == Plan_Status::minimum)
@@ -79,31 +81,37 @@ QVariant MainWidgetModel::data(const QModelIndex &index, int role) const
                 return QVariant();
         }
         else if (index.column() == 9) {
-            PlanOperation data = list.at(index.row());
+//            PlanOperation data = list.at(index.row());
             return data.Descr();
         }
         else
             return QVariant();
 
-        case Qt::TextAlignmentRole:
-            if (index.column() == 1)
-                return int(Qt::AlignRight | Qt::AlignVCenter);
-            if (index.column() == 2)
-                return int(Qt::AlignRight | Qt::AlignVCenter);
-            if (index.column() == 3)
-                return int(Qt::AlignRight | Qt::AlignVCenter);
-            if (index.column() == 5)
-                return int(Qt::AlignRight | Qt::AlignVCenter);
-            if (index.column() == 7)
-                return int(Qt::AlignRight | Qt::AlignVCenter);
+    case Qt::TextAlignmentRole:
+        if (index.column() == 1)
+            return int(Qt::AlignRight | Qt::AlignVCenter);
+        if (index.column() == 2)
+            return int(Qt::AlignRight | Qt::AlignVCenter);
+        if (index.column() == 3)
+            return int(Qt::AlignRight | Qt::AlignVCenter);
+        if (index.column() == 5)
+            return int(Qt::AlignRight | Qt::AlignVCenter);
+        if (index.column() == 7)
+            return int(Qt::AlignRight | Qt::AlignVCenter);
+        return QVariant();
+
+    case Qt::TextColorRole:
+//        PlanOperation data = list.at(index.row());
+        if (data.Status() == Plan_Status::expired)
+            return QVariant(QColor(Qt::white));
+        return QVariant();
 
     case Qt::BackgroundColorRole:
-        PlanOperation data = list.at(index.row());
         if (data.Status() == Plan_Status::minimum)
             return QVariant(QColor(Qt::yellow));
         if (data.Status() == Plan_Status::expired)
             return QVariant(QColor(Qt::red));
-
+        return QVariant();
     }
 
     return QVariant();

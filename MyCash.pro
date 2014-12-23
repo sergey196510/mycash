@@ -61,7 +61,9 @@ SOURCES += \
     operation.cpp \
     account.cpp \
     regoperation.cpp \
-    editplanoperation.cpp
+    editplanoperation.cpp \
+    payment.cpp \
+    accountsumm.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -110,7 +112,9 @@ HEADERS  += \
     operation.h \
     account.h \
     regoperation.h \
-    editplanoperation.h
+    editplanoperation.h \
+    payment.h \
+    accountsumm.h
 
 FORMS    += \
     debetcreditreport.ui \

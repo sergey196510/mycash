@@ -9,7 +9,7 @@ QLocale *default_locale;
 //QLocale *english;
 //QFont   fnt;
 
-int Globals::account = 0;
+//int Globals::account = 0;
 int Globals::currency = 0;
 int Globals::correct_account = 0;
 int Globals::initial_account = 0;

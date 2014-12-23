@@ -4,7 +4,7 @@
 ListCurrencyModel::ListCurrencyModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
-    header_data << tr("") << tr("Name") << tr("Icod") << tr("Scod") << tr("Nominal") << tr("Kurs");
+    header_data << tr("") << tr("Icod") << tr("Scod") << tr("Nominal") << tr("Kurs")<< tr("Name") ;
     list = read_list();
 }
 
@@ -55,29 +55,29 @@ QVariant ListCurrencyModel::data(const QModelIndex &index, int role) const
         }
         if (index.column() == 1) {
             Currency data = list.at(index.row());
-            return data.Name();
+            return data.ICod();
         }
         if (index.column() == 2) {
             Currency data = list.at(index.row());
-            return data.ICod();
+            return data.SCod();
         }
         if (index.column() == 3) {
             Currency data = list.at(index.row());
-            return data.SCod();
+            return data.Nominal();
         }
         if (index.column() == 4) {
             Currency data = list.at(index.row());
-            return data.Nominal();
+            return default_locale->toString(data.Kurs(),'f',4);
         }
         if (index.column() == 5) {
             Currency data = list.at(index.row());
-            return default_locale->toString(data.Kurs());
+            return data.Name();
         }
         else
             return QVariant();
 
         case Qt::TextAlignmentRole:
-            if (index.column() == 2 || index.column() == 4 || index.column() == 5)
+            if (index.column() == 1 || index.column() == 3 || index.column() == 4)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
     case Qt::TextColorRole:

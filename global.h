@@ -31,7 +31,7 @@ struct Font {
 };
 
 class Globals {
-    static int account;
+//    static int account;
     static int currency;
     static int correct_account;
     static int initial_account;
@@ -48,8 +48,8 @@ class Globals {
     static QString proxy_user;
     static QString proxy_password;
 public:
-    int Account() { return account; }
-    void setAccount(int i) { account = i; }
+//    int Account() { return account; }
+//    void setAccount(int i) { account = i; }
     int Currency() { return currency; }
     void setCurrency(int i) { currency = i; }
     int CorrectAccount() { return correct_account; }
@@ -90,21 +90,6 @@ public:
     static const int cancelled;
 };
 
-
-class account_summ {
-    Account acc;
-    MyCurrency s;
-public:
-    account_summ() {
-//        acc = 0;
-//        s = 0;
-    };
-    Account account() const { return acc; }
-//    double balance() const { return s; }
-    MyCurrency balance() const { return s; }
-    void set_account(Account val) { acc = val; }
-    void set_balance(MyCurrency val) { s = val; }
-};
 
 class Agent {
     int id;

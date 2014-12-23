@@ -56,8 +56,16 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
         }
         if (index.column() == 2) {
             Budget data = list.at(index.row());
-            return data.Summ().toDouble();
+            Currency curr(data.account().Curr());
+            return default_locale->toString(data.Summ().toDouble(),'f',2) + " " + curr.SCod();
         }
+    }
+
+    if (role == Qt::TextAlignmentRole) {
+        if (index.column() == 2)
+            return int(Qt::AlignRight | Qt::AlignVCenter);
+        else
+            return QVariant();
     }
 
     return QVariant();

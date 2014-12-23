@@ -8,6 +8,7 @@
 #include "database.h"
 #include "editbudget.h"
 #include "budget.h"
+#include "currency.h"
 
 class ListBudgetModel : public QAbstractTableModel
 {

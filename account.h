@@ -6,6 +6,7 @@
 #include <QtSql>
 #include "widgets/mycurrency.h"
 #include "transaction.h"
+#include "global.h"
 
 class Account {
     int id;
@@ -24,7 +25,9 @@ public:
     Account();
     bool read(int i);
     int insert();
-    bool change_balance(MyCurrency val);
+    bool change_balance2(MyCurrency val);
+    bool debet(MyCurrency val);
+    bool credit(MyCurrency val);
     QString get_parent_account(int id);
     QString fullName();
     double get_summ();

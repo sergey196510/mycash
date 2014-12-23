@@ -121,27 +121,27 @@ void EditOperation::setdata(Operation &d)
 
     if (!d.From().empty()) {
         account_summ a = d.From().at(0);
-        qDebug() << a.account().Id();
+//        qDebug() << a.account().Id();
         ui->fromWidget->setValue(a.account().Id());
         ui->from_cod->setText(Currency(a.account().Curr()).SCod());
         ui->fromSpinBox->setValue(a.balance().toDouble());
+        ui->fromSpinBox->setEnabled(true);
     }
-    ui->fromSpinBox->setEnabled(!d.From().empty());
 
     if (!d.To().empty()) {
         account_summ a = d.To().at(0);
-        qDebug() << a.account().Id();
+//        qDebug() << a.account().Id();
         ui->toWidget->setValue(a.account().Id());
         ui->to_cod->setText(Currency(a.account().Curr()).SCod());
         ui->toSpinBox->setValue(a.balance().toDouble());
+        ui->toSpinBox->setEnabled(true);
     }
-    ui->toSpinBox->setEnabled(!d.To().empty());
 
     ui->agent_comboBox->setValue(d.Agent());
     ui->kursEdit->setValue(d.Kurs());
     ui->descrEdit->setText(d.Descr());
 
-    check_Ok();
+//    check_Ok();
 }
 
 void EditOperation::separate_account()
