@@ -240,6 +240,12 @@ ListOperations::ListOperations(QWidget *parent) :
     connect(tran, SIGNAL(triggered()), SLOT(transfer_operation()));
     acts.append(tran);
 
+    paym = new QAction(tr("Payment"), this);
+    paym->setShortcut(tr("Ctrl+P"));
+    paym->setToolTip(tr("Payment operation"));
+    connect(paym, SIGNAL(triggered()), SLOT(payment_operation()));
+    acts.append(paym);
+
     repe = new QAction(tr("Repeat"), this);
     repe->setShortcut(tr("Ctrl+R"));
     repe->setToolTip(tr("Repeat operation"));
@@ -288,11 +294,11 @@ ListOperations::~ListOperations()
 void ListOperations::edit_operation(Operation &d)
 {
     RegOperation eo(this);
-    EditPayment ep;
+//    EditPayment ep;
     QModelIndex idx = ui->tableView->currentIndex();
     Operation data;
 
-    ep.exec();
+//    ep.exec();
 
     eo.setData(d);
     if (eo.exec() == QDialog::Accepted) {
@@ -350,6 +356,13 @@ void ListOperations::transfer_operation()
     d.setFrom(lst);
 
     edit_operation(d);
+}
+
+void ListOperations::payment_operation()
+{
+    EditPayment ep;
+
+    ep.exec();
 }
 
 void ListOperations::repeat_operation()

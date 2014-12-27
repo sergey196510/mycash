@@ -64,6 +64,7 @@ public:
     QAction *debt;
     QAction *cred;
     QAction *tran;
+    QAction *paym;
     QAction *repe;
     QAction *plan;
     QAction *dele;
@@ -95,6 +96,7 @@ private slots:
     void print_balance();
     void del_operation();
     void plann_operation();
+    void payment_operation();
 };
 
 #endif // LISTOPERATIONS_H
