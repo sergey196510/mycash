@@ -13,6 +13,7 @@
 #include "editpayment.h"
 #include "currency.h"
 #include "editplanoperation.h"
+#include "updatedescrioption.h"
 
 namespace Ui {
 class ListOperations;
@@ -68,6 +69,7 @@ public:
     QAction *repe;
     QAction *plan;
     QAction *dele;
+    QAction *chcomm;
     QList<QAction*> acts;
 
 public slots:
@@ -97,6 +99,7 @@ private slots:
     void del_operation();
     void plann_operation();
     void payment_operation();
+    void change_comment();
 };
 
 #endif // LISTOPERATIONS_H

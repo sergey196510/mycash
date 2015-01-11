@@ -264,6 +264,12 @@ ListOperations::ListOperations(QWidget *parent) :
     connect(dele, SIGNAL(triggered()), SLOT(del_operation()));
     acts.append(dele);
 
+    chcomm = new QAction(tr("Change comment"), this);
+    chcomm->setShortcut(tr("Ctrl+A"));
+    chcomm->setText(tr("Change comment"));
+    connect(chcomm, SIGNAL(triggered()), SLOT(change_comment()));
+    acts.append(chcomm);
+
     ui->tableView->addActions(acts);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -480,4 +486,22 @@ void ListOperations::clear_model()
 {
     ui->account_ostatok->setText("0");
 //    model->clear();
+}
+
+void ListOperations::change_comment()
+{
+    Operation oper;
+    updateDescrioption ud(tr("Change description"));
+    int id = ui->tableView->get_selected_id();
+
+    if (id == 0)
+        return;
+
+    oper.read(id);
+
+    if (ud.exec() == QDialog::Accepted) {
+        oper.setDescr(ud.Description());
+        oper.update_descr();
+        reload_model();
+    }
 }

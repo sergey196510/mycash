@@ -578,3 +578,18 @@ void Operation::append_to(account_summ &as)
 {
     to.append(as);
 }
+
+void Operation::update_descr()
+{
+    QSqlQuery q;
+
+    if (id == 0)
+        return;
+
+    q.prepare("UPDATE oper SET descr = :descr WHERE id = :id");
+    q.bindValue(":descr", descr);
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+    }
+}

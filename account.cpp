@@ -1,6 +1,8 @@
 #include "account.h"
 
 Account::Account() {
+    P p;
+
     id = 0;
     name.clear();
     type = 0;
@@ -13,7 +15,24 @@ Account::Account() {
     balance = 0;
     descr.clear();
     dt = QDate::currentDate();
+
+    p.credit = -1;
+    p.debet = 1;
+    array[Account_Type::active] = p;
+
+    p.credit = 1;
+    p.debet = -1;
+    array[Account_Type::passive] = p;
+
+    p.credit = -1;
+    p.debet = 1;
+    array[Account_Type::credit] = p;
+
+    p.credit = 1;
+    p.debet = -1;
+    array[Account_Type::debet] = p;
 }
+
 bool Account::read(int i)
 {
     QSqlQuery q;
@@ -86,24 +105,38 @@ bool Account::change_balance2(MyCurrency val)
 
 bool Account::debet(MyCurrency val)
 {
-    if (Top() == Account_Type::passive ||
-            Top() == Account_Type::debet ||
-            Top() == Account_Type::initial) {
-        val = val * -1;
+    if (array.contains(top)) {
+        val = val * array[top].debet;
+        return change_balance2(val);
     }
+    else
+        return false;
 
-    return change_balance2(val);
+//    if (top == Account_Type::passive ||
+//            Top() == Account_Type::debet ||
+//            Top() == Account_Type::initial) {
+//        val = val * -1;
+//    }
+
+//    return change_balance2(val);
 }
 
 bool Account::credit(MyCurrency val)
 {
-//    val = val * -1;
-    if (Top() == Account_Type::active ||
-            Top() == Account_Type::credit) {
-        val = val * -1;
+    if (array.contains(top)) {
+        val = val * array[top].credit;
+        return change_balance2(val);
     }
+    else
+        return false;
 
-    return change_balance2(val);
+//    val = val * -1;
+//    if (Top() == Account_Type::active ||
+//            Top() == Account_Type::credit) {
+//        val = val * -1;
+//    }
+
+//    return change_balance2(val);
 }
 
 QString Account::get_parent_account(int id)

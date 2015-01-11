@@ -63,7 +63,8 @@ SOURCES += \
     regoperation.cpp \
     editplanoperation.cpp \
     payment.cpp \
-    accountsumm.cpp
+    accountsumm.cpp \
+    updatedescrioption.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -114,7 +115,8 @@ HEADERS  += \
     regoperation.h \
     editplanoperation.h \
     payment.h \
-    accountsumm.h
+    accountsumm.h \
+    updatedescrioption.h
 
 FORMS    += \
     debetcreditreport.ui \
@@ -137,7 +139,8 @@ FORMS    += \
     editbudget.ui \
     editpayment.ui \
     regoperation.ui \
-    editplanoperation.ui
+    editplanoperation.ui \
+    updatedescrioption.ui
 
 TRANSLATIONS += \
     mycash_ru.ts

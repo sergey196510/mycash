@@ -35,6 +35,7 @@ public:
     virtual bool read(int id);
     void append_from(account_summ &);
     void append_to( account_summ &);
+    void update_descr();
 
     QDate Date() { return date; }
     QString Descr() { return descr; }

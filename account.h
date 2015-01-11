@@ -21,6 +21,13 @@ class Account {
     int agent;
     QString descr;
     QDate dt;
+    struct P {
+        int debet;
+        int credit;
+    };
+
+    QMap<int,P> array;
+
 public:
     Account();
     bool read(int i);
