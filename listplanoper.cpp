@@ -207,8 +207,14 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->tableView->setAlternatingRowColors(true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 //    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+
+#ifdef HAVE_QT5
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#else
+    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#endif
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), SLOT(check_selected()));

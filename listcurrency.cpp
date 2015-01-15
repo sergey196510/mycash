@@ -119,7 +119,11 @@ ListCurrency::ListCurrency(QWidget *parent) :
     ld = new Downloader(this);
     connect(ld, SIGNAL(done(QUrl,QByteArray)), SLOT(done_load(QUrl,QByteArray)));
 //    connect(ld, &Downloader::done, this, &ListCurrency::done_load);
+#ifdef HAVE_QT5
     connect(ld, &Downloader::error, this, &ListCurrency::eror_load);
+#else
+    connect(ld, SIGNAL(error()), SLOT(eror_load()));
+#endif
 
     dumpObjectInfo();
 
@@ -148,7 +152,13 @@ ListCurrency::ListCurrency(QWidget *parent) :
 
     connect(ui->newButton, SIGNAL(clicked()), SLOT(new_currency()));
     connect(ui->editButton, SIGNAL(clicked()), SLOT(update_currency()));
+
+#ifdef HAVE_QT5
     connect(ui->loadButton, &QToolButton::clicked, this, &ListCurrency::load);
+#else
+    connect(ui->loadButton, SIGNAL(clicked()), SLOT(load()));
+#endif
+
     connect(ui->delButton, SIGNAL(clicked()), SLOT(delete_currency()));
     connect(ui->clearButton, SIGNAL(clicked()), SLOT(clear_currency()));
 }

@@ -6,8 +6,15 @@ MyTableView::MyTableView(QWidget *parent) :
     setAlternatingRowColors(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
+
+#ifdef HAVE_QT5
     verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#else
+    verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#endif
+
     horizontalHeader()->setStretchLastSection(true);
 }
 
