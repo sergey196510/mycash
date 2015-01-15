@@ -17,6 +17,7 @@ public:
     void setValue(double i) { val = i; }
     MyCurrency operator+=(const MyCurrency &v) { return val += v.val; }
     MyCurrency operator*(const MyCurrency &v) { return val*v.val; }
+    MyCurrency operator+(const MyCurrency &v) { return val+v.val; }
     double operator-(const MyCurrency &v) { return val-v.val; }
     double operator/(const MyCurrency &v) { return val/v.val; }
     bool operator>(const MyCurrency &v) { return val>v.val; }

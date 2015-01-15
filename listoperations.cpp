@@ -491,7 +491,6 @@ void ListOperations::clear_model()
 void ListOperations::change_comment()
 {
     Operation oper;
-    updateDescrioption ud(tr("Change description"));
     int id = ui->tableView->get_selected_id();
 
     if (id == 0)
@@ -499,6 +498,7 @@ void ListOperations::change_comment()
 
     oper.read(id);
 
+    updateDescrioption ud(tr("Change description"), oper.Descr());
     if (ud.exec() == QDialog::Accepted) {
         oper.setDescr(ud.Description());
         oper.update_descr();

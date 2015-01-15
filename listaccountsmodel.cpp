@@ -47,13 +47,13 @@ MyCurrency ListAccountsModel::get_reserv(int id)
     return summ;
 }
 
-double ListAccountsModel::get_list(int parent, QModelIndex idx)
+MyCurrency ListAccountsModel::get_list(int parent, QModelIndex idx)
 {
     QSqlQuery q;
 //    int id;
     int i = 0;
 //    int row = 0;
-    double summ = 0, summ2 = 0;
+    MyCurrency summ = 0, summ2 = 0, summ3;
     MyCurrency reserv;
 
     q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = :parent ORDER BY name");
@@ -88,7 +88,8 @@ double ListAccountsModel::get_list(int parent, QModelIndex idx)
         setData(index(i,5,idx), q.value(3).toString());
         setData(index(i,6,idx), q.value(0).toInt());
         summ2 = get_list(q.value(0).toInt(), index(i,0,idx));
-        setData(index(i,1,idx), summ2+q.value(2).toDouble());
+        summ3 = summ2 + q.value(2).toDouble();
+        setData(index(i,1,idx), summ3.toDouble());
         if (reserv>0 && reserv > q.value(2).toDouble()) {
             for (int j = 0; j < 7; j++) {
                 setData(index(i,j,idx), QColor(Qt::red), Qt::BackgroundColorRole);
@@ -111,7 +112,7 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
     QSqlQuery query;
 //    int type;
 //    int row = 0;
-    double summ, summ2;
+    MyCurrency summ, summ2, summ3;
     QModelIndex idx;
     QFont fnt;
     header_data << tr("Name") << tr("Balance") << ("Reserved") << tr("C") << tr("H") << tr("Description") << "" << "";
@@ -153,7 +154,8 @@ QMap<int,QModelIndex> ListAccountsModel::fill_model()
         setData(index(i,5,QModelIndex()), q.value(3).toString());
         setData(index(i,6,QModelIndex()), q.value(0).toInt());
         summ2 = get_list(q.value(0).toInt(), index(i,0,QModelIndex()));
-        setData(index(i,1), summ2+q.value(2).toDouble());
+        summ3 = summ2 + q.value(2).toDouble();
+        setData(index(i,1), summ3.toDouble());
         summ += summ2;
         i += 1;
     }

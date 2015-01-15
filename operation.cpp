@@ -395,6 +395,7 @@ bool PlanOperation::read(int _i)
         d.set_balance(i.value());
         append_from(d);
         if (acc.Top() == Account_Type::active) {
+            qDebug() << acc.fullName();
             from_top = true;
             summ_from += acc.Balance();
         }
@@ -412,9 +413,11 @@ bool PlanOperation::read(int _i)
         d.set_account(acc);
         d.set_balance(i.value());
         append_to(d);
-        if (acc.Top() == Account_Type::credit)
+//        if (acc.Top() == Account_Type::credit)
+            qDebug() << acc.fullName();
             summ_to += i.value();
     }
+    qDebug() << this->day << summ_from.toDouble() << summ_to.toDouble();
     if (from_top == true && (status == Plan_Status::minimum || status == Plan_Status::expired) && summ_from < summ_to)
         descr += QObject::tr(" [Nedostatochno sredstv]");
 

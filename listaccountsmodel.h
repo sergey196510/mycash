@@ -36,7 +36,7 @@ private:
 public:
     explicit ListAccountsModel(QObject *parent = 0);
     ~ListAccountsModel();
-    double get_list(int, QModelIndex);
+    MyCurrency get_list(int, QModelIndex);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 
