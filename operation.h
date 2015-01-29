@@ -60,6 +60,8 @@ private:
     QString table;
     int day,month;
     int auto_exec;
+    bool ins_account_oper(QList<account_summ>, QString str, int id, int direction);
+
 public:
     PlanOperation() {
         day = month = auto_exec = 0;
@@ -75,7 +77,7 @@ public:
     int Auto() { return auto_exec; }
     void calcStatus();
     void setDay(int d) { day = d; }
-    void setMonth(int m) { month = m; }
+    void setMonth(int m) { month = (m == -1) ? 0 : m; }
     void setAuto(int a) { auto_exec = a; }
 };
 

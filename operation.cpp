@@ -32,6 +32,7 @@ int PlanOperation::new_operation()
 {
     QSqlQuery q;
     Transaction tr;
+    int id;
 
     tr.begin();
 
@@ -48,14 +49,15 @@ int PlanOperation::new_operation()
     }
 
     q.prepare("SELECT MAX(id) FROM plan_oper");
-    if (!q.exec()) {
+    if (!q.exec() || !q.next()) {
         qDebug() << q.lastError().text();
         tr.rollback();
         return 0;
     }
+    id = q.value(0).toInt();
 
     tr.commit();
-    return q.value(0).toInt();
+    return id;
 }
 
 bool Operation::new_account_oper(QString table, const int o_id, account_summ &acc, int direction, int agent)
@@ -159,17 +161,46 @@ bool Operation::insert() {
     return true;
 }
 
+bool PlanOperation::ins_account_oper(QList<account_summ> lst, QString str, int id, int direction)
+{
+    QList<account_summ>::iterator i;
+
+    for (i = lst.begin(); i != lst.end(); i++) {
+        account_summ d = *i;
+        if (!new_account_oper(str, id, d, direction)) {
+//            qDebug() << q.lastError().text();
+//            tr.rollback();
+            return false;
+        }
+    }
+
+    return true;
+}
+
 int PlanOperation::insert()
 {
     QSqlQuery q;
     int oper_id = 0;
+    QList<account_summ> lst;
     QList<account_summ>::iterator i;
     Transaction tr;
 
     tr.begin();
 
     oper_id = new_operation();
+    if (!oper_id) {
+        qDebug() << "Null operation id";
+        tr.rollback();
+        return 0;
+    }
 
+    if (ins_account_oper(from, "plan_oper_acc", oper_id, Direction::from) == false ||
+            ins_account_oper(to, "plan_oper_acc", oper_id, Direction::to) == false) {
+        tr.rollback();
+        return 0;
+    }
+
+/*
     for (i = from.begin(); i != from.end(); i++) {
         account_summ d = *i;
         if (!new_account_oper("plan_oper_acc", oper_id, d, Direction::from)) {
@@ -186,6 +217,7 @@ int PlanOperation::insert()
             return 0;
         }
     }
+*/
 
     tr.commit();
     return oper_id;

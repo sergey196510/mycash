@@ -4,7 +4,7 @@ ListBudgetModel::ListBudgetModel(Database *d, QObject *parent) :
     QAbstractTableModel(parent)
 {
     db = d;
-    header_data << tr("Month") << tr("Account") << tr("Summ") << tr("Description");
+    header_data << tr("Month") << tr("Account") << tr("Plan") << tr("Fact") << tr("Description");
     list = Budget().read_list(0);
 //    accounts_list = db->get_accounts_list();
 }
@@ -57,7 +57,7 @@ QVariant ListBudgetModel::data(const QModelIndex &index, int role) const
         if (index.column() == 2) {
             Budget data = list.at(index.row());
             Currency curr(data.account().Curr());
-            return default_locale->toString(data.Summ().toDouble(),'f',2) + " " + curr.SCod();
+            return default_locale->toString(data.Plan().toDouble(),'f',2) + " " + curr.SCod();
         }
     }
 

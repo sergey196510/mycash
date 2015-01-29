@@ -5,7 +5,7 @@ Budget::Budget(int i)
     id = 0;
     mon = 0;
 //    accunt = 0;
-    summ = 0;
+    plan = 0;
 
     if (i != 0)
         read(i);
@@ -16,7 +16,7 @@ void Budget::set_Value(int i, int m, int a, double s)
     id = i;
     mon = m;
     acc.read(a);
-    summ = s;
+    plan = s;
 }
 
 bool Budget::read(int i)
@@ -35,7 +35,7 @@ bool Budget::read(int i)
         id = i;
         mon = q.value(0).toInt();
         acc.read(q.value(1).toInt());
-        summ = q.value(2).toDouble();
+        plan = q.value(2).toDouble();
         return true;
     }
 
@@ -75,7 +75,7 @@ bool Budget::update()
 
     eb.setMonth(mon);
     eb.setAccount(acc.Id());
-    eb.setSumm(summ);
+    eb.setSumm(plan);
     if (eb.exec() != QDialog::Accepted)
         return false;
 
@@ -107,7 +107,7 @@ bool Budget::remove()
                           QString("You want remove budget:\n\nMonth: %1\nAccount: %2\nSumm: %3")
                           .arg(mon)
                           .arg(acc.fullName())
-                          .arg(summ.toDouble()));
+                          .arg(plan.toDouble()));
 
     if (n == QMessageBox::Accepted) {
 
@@ -152,6 +152,7 @@ bool Budget::add_budget(account_summ &d)
         if (find_parent(data.account().Id(), d.account().Id())) {
             int id = data.Id();
             qDebug() << id;
+            update_fact(id, d.balance());
         }
     }
 
@@ -179,4 +180,56 @@ bool Budget::find_parent(int budget, int acc)
     }
 
     return false;
+}
+
+bool Budget::update_fact(int _id, MyCurrency bal)
+{
+    QSqlQuery q;
+    int id;
+
+    if ((id = find_fact(_id)) == 0)
+        if ((id = insert_fact(_id)) == 0)
+            return false;
+
+    q.prepare("UPDATE budget_fact SET summ = summ + :summ WHERE id = :id");
+    q.bindValue(":summ", bal.toDouble());
+    q.bindValue(":id", id);
+    if (!q.exec())
+        return false;
+
+    return true;
+}
+
+int Budget::find_fact(int id)
+{
+    QSqlQuery q;
+    QDate curr = QDate::currentDate();
+
+    q.prepare("SELECT id FROM budget_fact WHERE a_id = :id AND year = :year AND mon = :mon");
+    q.bindValue(":id", id);
+    q.bindValue(":year", curr.year());
+    q.bindValue(":mon", curr.month());
+    if (!q.exec() || !q.next())
+        return 0;
+
+    return q.value(0).toInt();
+}
+
+int Budget::insert_fact(int id)
+{
+    QSqlQuery q;
+    QDate curr = QDate::currentDate();
+
+    q.prepare("INSERT INTO budget_fact(a_id, year, mon, summ) VALUES(:id, :year, :mon, 0)");
+    q.bindValue(":id", id);
+    q.bindValue(":year", curr.year());
+    q.bindValue(":mon", curr.month());
+    if (!q.exec())
+        return 0;
+
+    q.prepare("SELECT MAX(id) FROM budget_fact");
+    if (!q.exec() || !q.next())
+        return 0;
+
+    return q.value(0).toInt();
 }
