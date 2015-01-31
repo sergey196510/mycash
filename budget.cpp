@@ -103,8 +103,8 @@ bool Budget::remove()
         return false;
 
     int n = QMessageBox::question(0,
-                          "Remove budget",
-                          QString("You want remove budget:\n\nMonth: %1\nAccount: %2\nSumm: %3")
+                          QObject::tr("Remove budget"),
+                          QObject::tr("You want remove budget:\n\nMonth: %1\nAccount: %2\nSumm: %3")
                           .arg(mon)
                           .arg(acc.fullName())
                           .arg(plan.toDouble()));
