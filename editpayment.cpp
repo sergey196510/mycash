@@ -8,6 +8,9 @@ EditPayment::EditPayment(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->typeBox->addItem(tr("Fixed payment"));
+    ui->typeBox->addItem(tr("Number counter"));
+
     connect(ui->oldEdit, SIGNAL(editingFinished()),
             this, SLOT(calc_summ()));
     connect(ui->newEdit, SIGNAL(editingFinished()),

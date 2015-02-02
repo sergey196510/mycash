@@ -25,6 +25,8 @@ CREATE TABLE plan_oper_acc(id integer primary key autoincrement, a_id int, o_id 
 CREATE TABLE plan_oper_mon(id integer primary key autoincrement, mon int, year int, p_id int, dt date, status int default 0);
 CREATE TABLE budget_plan(id integer primary key autoincrement, mon int, a_id int, summ real);
 CREATE TABLE budget_fact(id integer primary key autoincrement, year int, mon int, a_id int, summ real);
+CREATE TABLE payment_codif(id integer primary key autoincrement, name text);
+CREATE TABLE payment_real(id integer primary key autoincrement, type int, p_id int, value real, price real, summ real, dt date);
 INSERT INTO "sqlite_sequence" VALUES('account_type',4);
 INSERT INTO "sqlite_sequence" VALUES('account',7);
 INSERT INTO "sqlite_sequence" VALUES('currency',3);
