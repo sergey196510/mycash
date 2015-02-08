@@ -22,6 +22,7 @@ class ListCurrencyModel : public QAbstractTableModel
 private:
     QStringList header_data;
     QList<Currency> list;
+    bool compare(int, int, int, Qt::SortOrder);
 
 private slots:
     QList<Currency> read_list();
@@ -36,6 +37,7 @@ public:
 
 public slots:
     void changed_data();
+    void sort(int, Qt::SortOrder);
 };
 
 class ListCurrency : public QWidget

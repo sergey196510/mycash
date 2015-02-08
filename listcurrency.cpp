@@ -110,6 +110,51 @@ void ListCurrencyModel::changed_data()
     endResetModel();
 }
 
+bool ListCurrencyModel::compare(int i, int j, int col, Qt::SortOrder order)
+{
+    Currency f, n;
+
+    if (order == 0) {
+        f = list.at(i);
+        n = list.at(j);
+    }
+    else {
+        f = list.at(j);
+        n = list.at(i);
+    }
+
+    if (col == 1 && f.ICod() > n.ICod())
+            return true;
+    if (col == 2 && f.SCod() > n.SCod())
+            return true;
+    if (col == 5 && f.Name() > n.Name())
+            return true;
+
+    return false;
+}
+
+void ListCurrencyModel::sort(int col, Qt::SortOrder order)
+{
+    int i = 0;
+
+//    return;
+
+    beginResetModel();
+
+    while (i < list.size()-1) {
+        Currency f = list.at(i), n = list.at(i+1);
+        qDebug() << col << order << i << list.size() << f.ICod() << n.ICod();
+        if (compare(i, i+1, col, order)) {
+            list.swap(i, i+1);
+            i = 0;
+            continue;
+        }
+        i++;
+    }
+
+    endResetModel();
+}
+
 ListCurrency::ListCurrency(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ListCurrency)
@@ -161,6 +206,10 @@ ListCurrency::ListCurrency(QWidget *parent) :
 
     connect(ui->delButton, SIGNAL(clicked()), SLOT(delete_currency()));
     connect(ui->clearButton, SIGNAL(clicked()), SLOT(clear_currency()));
+
+    ui->tableView->setSortingEnabled(true);
+    ui->tableView->horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
+    connect(ui->tableView->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), model, SLOT(sort(int,int)));
 }
 
 ListCurrency::~ListCurrency()
