@@ -142,8 +142,8 @@ void ListCurrencyModel::sort(int col, Qt::SortOrder order)
     beginResetModel();
 
     while (i < list.size()-1) {
-        Currency f = list.at(i), n = list.at(i+1);
-        qDebug() << col << order << i << list.size() << f.ICod() << n.ICod();
+//        Currency f = list.at(i), n = list.at(i+1);
+//        qDebug() << col << order << i << list.size() << f.ICod() << n.ICod();
         if (compare(i, i+1, col, order)) {
             list.swap(i, i+1);
             i = 0;
