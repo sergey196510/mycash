@@ -9,8 +9,12 @@ Transaction::Transaction()
 
 Transaction::~Transaction()
 {
-    if (level > 0)
+    QSqlQuery q;
+
+    if (level == 1) {
+        q.exec("ROLLBACK");
         level--;
+    }
 }
 
 void Transaction::begin()
@@ -25,14 +29,18 @@ void Transaction::commit()
 {
     QSqlQuery q;
 
-    if (level == 1)
+    if (level == 1) {
         q.exec("COMMIT");
+        level--;
+    }
 }
 
 void Transaction::rollback()
 {
     QSqlQuery q;
 
-    if (level == 1)
+    if (level == 1) {
         q.exec("ROLLBACK");
+        level -= 1;
+    }
 }
