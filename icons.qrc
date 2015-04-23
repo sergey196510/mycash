@@ -12,5 +12,6 @@
         <file>icons/home.png</file>
         <file>mycash.sql</file>
         <file>mycash_ru.qm</file>
+        <file>mycash-pgsql.sql</file>
     </qresource>
 </RCC>
