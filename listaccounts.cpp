@@ -25,14 +25,14 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
 //    query = "SELECT a.id,a.name,t.name,a.balance,a.descr,a.hidden FROM account a, account_type t WHERE a.type = t.id AND a.type = " + QString("%1").arg(type) + " ORDER BY type,a.name";
 
 //    fill_model();
-    model = new ListAccountsModel;
-    model->fill_model();
+    model = new ListAccountsModel2;
+//    model->fill_model();
 
     ui->treeView->setItemDelegate(new ViewCurrency(1));
     ui->treeView->setModel(model);
 //    ui->treeView->expandAll();
 //    ui->treeView->hideColumn(4);
-    ui->treeView->hideColumn(6);
+//    ui->treeView->hideColumn(6);
 //    ui->treeView->header()->ResizeToContents;
     for (int i = 0; i < 5; i++)
         ui->treeView->resizeColumnToContents(i);
@@ -119,14 +119,14 @@ void ListAccounts::keyPressEvent(QKeyEvent *event)
 void ListAccounts::clear_model()
 {
     ui->act_summ->setText(default_locale->toCurrencyString(0));
-    model->clear();
+//    model->clear();
 }
 
 void ListAccounts::reload_model()
 {
     summAccount active(1);
 
-    model->fill_model();
+//    model->fill_model();
     ui->treeView->expandAll();
     ui->act_summ->setText(active.text());
     ui->treeView->hideColumn(6);

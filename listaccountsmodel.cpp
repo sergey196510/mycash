@@ -235,3 +235,93 @@ QVariant ListAccountsModel::headerData(int section,Qt::Orientation orientation, 
     else
         return QString("%1").arg(section+1);
 }
+
+//=================================== new model =====================================
+
+ListAccountsModel2::ListAccountsModel2(QObject *parent) :
+    QAbstractTableModel(parent)
+{
+    header_data << tr("Name") << tr("Balance") << ("Reserved") << tr("C") << tr("H") << tr("Description") << "" << "";
+    list = read_list();
+}
+
+ListAccountsModel2::~ListAccountsModel2()
+{
+}
+
+QModelIndex ListAccountsModel2::index(int row, int column, const QModelIndex &parent) const
+{
+    if (!hasIndex(row, column, parent)) {
+        return QModelIndex();
+    }
+
+    return createIndex(row,column);
+}
+
+QModelIndex ListAccountsModel2::parent(const QModelIndex &child) const
+{
+    return QModelIndex();
+}
+
+int ListAccountsModel2::rowCount(const QModelIndex &parent) const
+{
+    return list.size();
+}
+
+int ListAccountsModel2::columnCount(const QModelIndex &parent) const
+{
+    return header_data.size();
+}
+
+QVariant ListAccountsModel2::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid())
+        return QVariant();
+
+    switch (role) {
+        case Qt::DisplayRole:
+        if (index.column() == 0) {
+            Account data = list.at(index.row());
+            return data.Id();
+        }
+        if (index.column() == 1) {
+            Account data = list.at(index.row());
+            return data.Name();
+        }
+    }
+
+    return QVariant();
+}
+
+QVariant ListAccountsModel2::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        return header_data.at(section);
+    }
+    else
+        return QString("%1").arg(section+1);
+}
+
+QVector<Account> ListAccountsModel2::read_list()
+{
+    QSqlQuery q;
+    QVector<Account> lst;
+    int i = 0;
+
+    q.prepare("SELECT id FROM account ORDER BY parent,id");
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return lst;
+    }
+    while (q.next()) {
+        Account data;
+        data.read(q.value(0).toInt());
+        list_index[q.value(0).toInt()] = index(i,0,QModelIndex());
+        list.append(data);
+        i++;
+    }
+
+    return lst;
+}

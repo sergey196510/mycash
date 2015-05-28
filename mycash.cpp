@@ -404,7 +404,7 @@ void MyCash::check_plan_oper()
             continue;
         if (pop.Status() != Plan_Status::expired)
             continue;
-        qDebug() << list.size() << k << pop.From().size() << pop.To().size();
+//        qDebug() << list.size() << k << pop.From().size() << pop.To().size();
         if (pop.From().size() < 1) {
             qDebug() << pop.Id() << "Null from account";
             continue;

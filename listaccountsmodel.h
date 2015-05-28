@@ -5,6 +5,7 @@
 #include "database.h"
 #include "currency.h"
 #include "operation.h"
+#include "account.h"
 
 class ViewCurrency : public QItemDelegate
 {
@@ -42,6 +43,35 @@ public:
 
 public slots:
     QMap<int,QModelIndex> fill_model();
+};
+
+class ListAccountsModel2 : public QAbstractTableModel
+{
+    Q_OBJECT
+
+private:
+    Database *db;
+    QStringList header_data;
+    QMap<int,QModelIndex> list_index;
+    QVector<Account> list;
+    QVector<Account> read_list();
+    QVector<PlanOperation> plan_list;
+    Globals var;
+    MyCurrency get_reserv(int);
+
+public:
+    explicit ListAccountsModel2(QObject *parent = 0);
+    ~ListAccountsModel2();
+    MyCurrency get_list(int QModelIndex);
+    QVariant data(const QModelIndex &index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
+    QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    QModelIndex parent(const QModelIndex &child) const;
+
+public slots:
+//    QMap<int,QModelIndex> fill_model();
 };
 
 #endif // LISTACCOUNTSMODEL_H

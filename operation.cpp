@@ -16,7 +16,7 @@ int Operation::new_operation()
     query.prepare("INSERT INTO oper(dt, descr) VALUES(:dt, :descr)");
     query.bindValue(":dt", date);
     query.bindValue(":descr", descr);
-    qDebug() << query.executedQuery();
+//    qDebug() << query.executedQuery();
     if (!query.exec())
         return 0;
 
@@ -65,8 +65,8 @@ bool Operation::new_account_oper(QString table, const int o_id, account_summ &ac
     QString str;
     QSqlQuery q;
 
-    qDebug() << acc.balance().toDouble();
-    qDebug() << acc.account().Id();
+//    qDebug() << acc.balance().toDouble();
+//    qDebug() << acc.account().Id();
     str = QString("INSERT INTO %1(a_id, o_id, summ, direction, agent) VALUES(%2, %3, %4, %5, %6)")
             .arg(table)
             .arg(acc.account().Id())
@@ -74,7 +74,7 @@ bool Operation::new_account_oper(QString table, const int o_id, account_summ &ac
             .arg(acc.balance().toDouble())
             .arg(direction)
             .arg(agent);
-    qDebug() << str;
+//    qDebug() << str;
     if (!q.exec(str)) {
         qDebug() << q.lastError().text();
         return false;
@@ -427,7 +427,7 @@ bool PlanOperation::read(int _i)
         d.set_balance(i.value());
         append_from(d);
         if (acc.Top() == Account_Type::active) {
-            qDebug() << acc.fullName();
+//            qDebug() << acc.fullName();
             from_top = true;
             summ_from += acc.Balance();
         }
@@ -446,10 +446,10 @@ bool PlanOperation::read(int _i)
         d.set_balance(i.value());
         append_to(d);
 //        if (acc.Top() == Account_Type::credit)
-            qDebug() << acc.fullName();
+//            qDebug() << acc.fullName();
             summ_to += i.value();
     }
-    qDebug() << this->day << summ_from.toDouble() << summ_to.toDouble();
+//    qDebug() << this->day << summ_from.toDouble() << summ_to.toDouble();
     if (from_top == true && (status == Plan_Status::minimum || status == Plan_Status::expired) && summ_from < summ_to)
         descr += QObject::tr(" [Nedostatochno sredstv]");
 
