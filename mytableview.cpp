@@ -12,8 +12,9 @@ MyTableView::MyTableView(QWidget *parent) :
     horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     verticalHeader()->setDefaultSectionSize(verticalHeader()->minimumSectionSize());
 #else
-    verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+//    verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    verticalHeader()->setDefaultSectionSize(verticalHeader()->minimumSectionSize());
 #endif
 
     horizontalHeader()->setStretchLastSection(true);

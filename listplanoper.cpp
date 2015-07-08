@@ -214,7 +214,8 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->tableView->verticalHeader()->setDefaultSectionSize(ui->tableView->verticalHeader()->minimumSectionSize());
 #else
     ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+//    ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->verticalHeader()->setDefaultSectionSize(ui->tableView->verticalHeader()->minimumSectionSize());
 #endif
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
