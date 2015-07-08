@@ -8,8 +8,9 @@ MyTableView::MyTableView(QWidget *parent) :
     setSelectionMode(QAbstractItemView::SingleSelection);
 
 #ifdef HAVE_QT5
-    verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+//    verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    verticalHeader()->setDefaultSectionSize(verticalHeader()->minimumSectionSize());
 #else
     verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);

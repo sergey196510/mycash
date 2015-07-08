@@ -7,6 +7,7 @@
 #include "listseparateoper.h"
 #include "editagent.h"
 #include "operation.h"
+#include "listaccountsmodel.h"
 
 namespace Ui {
 class EditOperation;
