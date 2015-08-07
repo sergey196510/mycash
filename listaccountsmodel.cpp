@@ -238,11 +238,17 @@ QVariant ListAccountsModel::headerData(int section,Qt::Orientation orientation, 
 
 //=================================== new model =====================================
 
+Node::Node(const Account &a, Node *parentNode)
+{
+    acc = a;
+    parent = parentNode;
+}
+
 ListAccountsModel2::ListAccountsModel2(QObject *parent) :
     QAbstractTableModel(parent)
 {
     header_data << tr("Name") << tr("Balance") << ("Reserved") << tr("C") << tr("H") << tr("Description") << "" << "";
-    list = read_list();
+//    list = read_list();
 }
 
 ListAccountsModel2::~ListAccountsModel2()
@@ -263,9 +269,19 @@ QModelIndex ListAccountsModel2::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+Node *ListAccountsModel2::nodeFromIndex(const QModelIndex &index) const
+{
+    if (index.isValid())
+        return static_cast<Node*>(index.internalPointer());
+    return rootNode;
+}
+
 int ListAccountsModel2::rowCount(const QModelIndex &parent) const
 {
-    return list.size();
+    Node *node = nodeFromIndex(parent);
+    if (node)
+        return node->children.count();
+    return 0;
 }
 
 int ListAccountsModel2::columnCount(const QModelIndex &parent) const
@@ -275,17 +291,21 @@ int ListAccountsModel2::columnCount(const QModelIndex &parent) const
 
 QVariant ListAccountsModel2::data(const QModelIndex &index, int role) const
 {
+    int col = index.column();
+    Node *node = nodeFromIndex(index);
+    Account data = node->acc;
+
     if (!index.isValid())
         return QVariant();
 
     switch (role) {
         case Qt::DisplayRole:
-        if (index.column() == 0) {
-            Account data = list.at(index.row());
+        if (col == 0) {
+//            Account data = node->acc;
             return data.Id();
         }
         if (index.column() == 1) {
-            Account data = list.at(index.row());
+//            Account data = node->acc;
             return data.Name();
         }
     }
@@ -304,6 +324,42 @@ QVariant ListAccountsModel2::headerData(int section, Qt::Orientation orientation
         return QString("%1").arg(section+1);
 }
 
+bool ListAccountsModel2::hasChildren(const QModelIndex &parent) const
+{
+    Node *parentNode = nodeFromIndex(parent);
+    if (!parentNode)
+        return false;
+    return (parentNode->children.count() > 0);
+}
+
+void ListAccountsModel2::read_children(Node *parent, int id)
+{
+    QSqlQuery q;
+
+    q.prepare("SELECT id FROM account WHERE pid = :id ORDER BY parent,id");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return;
+    }
+    while (q.next()) {
+//        Node *node = new Node;
+        Account data;
+        data.read(q.value(0).toInt());
+        Node *node = new Node(data, parent);
+        node->acc = data;
+//        parent->children.append(Node);
+    }
+}
+
+void ListAccountsModel2::read_data()
+{
+//    Account *acc = new Account;
+    rootNode = new Node(Account());
+    read_children(rootNode, 0);
+}
+
+/*
 QVector<Account> ListAccountsModel2::read_list()
 {
     QSqlQuery q;
@@ -325,3 +381,4 @@ QVector<Account> ListAccountsModel2::read_list()
 
     return lst;
 }
+*/

@@ -45,6 +45,17 @@ public slots:
     QMap<int,QModelIndex> fill_model();
 };
 
+/***************************************************************************************/
+
+class Node {
+public:
+    Node(const Account &a, Node *parentNode = 0);
+    ~Node();
+    Account acc;
+    Node *parent;
+    QList<Node*> children;
+};
+
 class ListAccountsModel2 : public QAbstractTableModel
 {
     Q_OBJECT
@@ -52,10 +63,13 @@ class ListAccountsModel2 : public QAbstractTableModel
 private:
     Database *db;
     QStringList header_data;
-    QMap<int,QModelIndex> list_index;
-    QVector<Account> list;
-    QVector<Account> read_list();
-    QVector<PlanOperation> plan_list;
+    Node *nodeFromIndex(const QModelIndex &index) const;
+    Node *rootNode;
+//    QMap<int,QModelIndex> list_index;
+//    QVector<Account> list;
+    void read_data();
+    void read_children(Node *parent, int id);
+//    QVector<PlanOperation> plan_list;
     Globals var;
     MyCurrency get_reserv(int);
 
@@ -69,6 +83,10 @@ public:
     int columnCount(const QModelIndex &parent) const;
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &child) const;
+    bool hasChildren(const QModelIndex &parent) const;
+    void setRootNode(Node *node);
+//    Qt::ItemFlags flags(const QModelIndex &index) const;
+//    bool setData(const QModelIndex &index, const QVariant &value, int role);
 
 public slots:
 //    QMap<int,QModelIndex> fill_model();

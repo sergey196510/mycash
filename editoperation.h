@@ -2,6 +2,7 @@
 #define EDITOPERATION_H
 
 #include <QDialog>
+#include <QTreeView>
 #include "database.h"
 #include "global.h"
 #include "listseparateoper.h"
@@ -26,6 +27,7 @@ public:
 private:
     Ui::EditOperation *ui;
     Database *db;
+    ListAccountsModel *model;
 //    QMap<QString,double> list;
 
 private slots:

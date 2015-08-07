@@ -56,6 +56,9 @@
          <widget class="AccountOper2" name="fromWidget"/>
         </item>
         <item>
+         <widget class="QComboBox" name="comboBox"/>
+        </item>
+        <item>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
