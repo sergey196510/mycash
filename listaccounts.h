@@ -56,7 +56,7 @@ private slots:
 
 private:
     Ui::ListAccounts *ui;
-    ListAccountsModel2 *model;
+    ListAccountsModel *model;
 //    QString query;
     Database *db;
     Globals var;

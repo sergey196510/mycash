@@ -19,10 +19,6 @@ EditOperation::EditOperation(QWidget *parent) :
 
     model = new ListAccountsModel(this);
     model->fill_model();
-    ui->comboBox->setModel(model);
-    ui->comboBox->setModelColumn(0);
-    ui->comboBox->setView(new QTreeView(this));
-    static_cast<QTreeView*>(ui->comboBox->view())->expandAll();
 
     ui->fromSpinBox->setEnabled(false);
     ui->toSpinBox->setEnabled(false);

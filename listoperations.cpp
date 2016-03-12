@@ -22,22 +22,23 @@ QList<Operation> ListOperationsModel::read_list(int account, QDate fdate, QDate 
     QSqlQuery q1, q2;
     QList<Operation> list;
     account_summ summ;
-    int a1, a2;
+    int a1, a2, num = 0;
     double s1, s2;
 
     if (account == 0)
         return list;
 
-    q1.prepare("SELECT id,dt,descr FROM oper WHERE dt >= :fdate AND dt <= :ldate ORDER BY dt");
+//    q1.prepare("SELECT id,dt,descr FROM oper WHERE dt >= :fdate AND dt <= :ldate ORDER BY dt");
+    q1.prepare("SELECT id,dt,descr FROM oper ORDER BY dt DESC");
     q2.prepare("SELECT a_id,summ FROM account_oper WHERE o_id = :oid and direction = :direct");
 
-    q1.bindValue(":fdate", fdate.toString("yyyy-MM-dd"));
-    q1.bindValue(":ldate", ldate.toString("yyyy-MM-dd"));
+//    q1.bindValue(":fdate", fdate.toString("yyyy-MM-dd"));
+//    q1.bindValue(":ldate", ldate.toString("yyyy-MM-dd"));
     if (!q1.exec()) {
         qDebug() << q1.lastError();
         return list;
     }
-    while (q1.next()) {
+    while (q1.next() && num<10) {
         Operation data;
         data.setId(q1.value(0).toInt());
         data.setDate(q1.value(1).toDate());
@@ -90,6 +91,8 @@ QList<Operation> ListOperationsModel::read_list(int account, QDate fdate, QDate 
         data.setTo(lst);
 
         list.append(data);
+
+        num++;
     }
 
 //    qDebug() << list.size();

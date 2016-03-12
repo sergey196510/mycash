@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>476</width>
-    <height>262</height>
+    <height>313</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,9 +54,6 @@
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="AccountOper2" name="fromWidget"/>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBox"/>
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
