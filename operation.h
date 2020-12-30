@@ -1,11 +1,14 @@
 #ifndef OPERATION_H
 #define OPERATION_H
 
+#include <vector>
 #include <QObject>
 #include <QDate>
 #include "database.h"
 #include "widgets/mycurrency.h"
 #include "transaction.h"
+
+using namespace std;
 
 class Operation
 {
@@ -67,7 +70,7 @@ public:
         day = month = auto_exec = 0;
     }
 
-    QVector<PlanOperation> read_list(int status);
+    vector<PlanOperation> read_list(int status);
     bool read(int id);
     int new_operation();
     int insert();

@@ -124,7 +124,7 @@ bool Operation::insert() {
         if (data.Top() == Account_Type::debet) {
             Budget().add_budget(d);
         }
-        mfrom += abs(d.balance().toDouble());
+        mfrom += std::abs(d.balance().toDouble());
     }
     for (i = to.begin(); i != to.end(); i++) {
         account_summ d = *i;
@@ -148,7 +148,7 @@ bool Operation::insert() {
         if (data.Top() == Account_Type::credit) {
             Budget().add_budget(d);
         }
-        mto += abs(d.balance().toDouble());
+        mto += std::abs(d.balance().toDouble());
     }
 
     if (mfrom != mto) {
@@ -285,9 +285,9 @@ QMap<int,double> Operation::get_account_oper_list(int oper, int type, QString ta
     return list;
 }
 
-QVector<PlanOperation> PlanOperation::read_list(int status)
+vector<PlanOperation> PlanOperation::read_list(int status)
 {
-    QVector<PlanOperation> list;
+    vector<PlanOperation> list;
     QSqlQuery q;
 
     q.prepare("SELECT id,dt FROM plan_oper ORDER BY day,month");
@@ -301,7 +301,7 @@ QVector<PlanOperation> PlanOperation::read_list(int status)
             continue;
         if (status && (oper.Status() == Plan_Status::actual || oper.Status() == Plan_Status::committed || oper.Status() == Plan_Status::cancelled))
             continue;
-        list.append(oper);
+        list.push_back(oper);
     }
 
     return list;

@@ -26,17 +26,18 @@ ListAccounts::ListAccounts(Database *d, QWidget *parent) :
 
 //    fill_model();
     model = new ListAccountsModel;
-    model->fill_model();
+//    model->fill_model();
 
     ui->treeView->setItemDelegate(new ViewCurrency(1));
     ui->treeView->setModel(model);
+    ui->treeView->hideColumn(6);
 //    ui->treeView->expandAll();
-//    ui->treeView->hideColumn(4);
-//    ui->treeView->hideColumn(6);
 //    ui->treeView->header()->ResizeToContents;
-    for (int i = 0; i < 5; i++)
-        ui->treeView->resizeColumnToContents(i);
+//    for (int i = 0; i < 5; i++)
+//        ui->treeView->resizeColumnToContents(i);
 //        ui->treeView->header()->setResizeMode(i, QHeaderView::ResizeToContents);
+
+    ui->treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     if (var.ListFont().length() > 0)
         fnt.setFamily(var.ListFont());

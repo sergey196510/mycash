@@ -14,7 +14,7 @@ private:
     QMap<int,QModelIndex> index_list;
 
 public:
-    explicit accountsView(QWidget *parent = 0);
+    explicit accountsView(QWidget *parent = nullptr);
     ~accountsView();
     int value();
     void setValue(int);

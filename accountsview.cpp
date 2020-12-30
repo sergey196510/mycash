@@ -3,7 +3,7 @@
 accountsView::accountsView(QWidget *parent) :
     QTreeView(parent)
 {
-    model = new ListAccountsModel;
+    model = new ListAccountsModel();
     setModel(model);
     reload();
 //    setAlternatingRowColors(true);
@@ -50,7 +50,7 @@ void accountsView::setValue(int idx)
 
 void accountsView::reload()
 {
-    model->fill_model();
+//    model->fill_model();
     expandAll();
     for (int i = 1; i < 7; i++)
         hideColumn(i);

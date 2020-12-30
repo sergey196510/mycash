@@ -67,7 +67,8 @@ SOURCES += \
     editplanoperation.cpp \
     payment.cpp \
     accountsumm.cpp \
-    updatedescrioption.cpp
+    updatedescrioption.cpp \
+    twolist.cpp
 
 HEADERS  += \
     widgets/accountcombobox.h \
@@ -119,7 +120,8 @@ HEADERS  += \
     editplanoperation.h \
     payment.h \
     accountsumm.h \
-    updatedescrioption.h
+    updatedescrioption.h \
+    twolist.h
 
 FORMS    += \
     debetcreditreport.ui \

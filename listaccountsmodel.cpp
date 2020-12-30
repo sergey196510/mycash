@@ -27,7 +27,7 @@ void ViewCurrency::paint(QPainter *painter, const QStyleOptionViewItem &option, 
 MyCurrency ListAccountsModel::get_reserv(int id)
 {
     Account acc;
-    QVector<PlanOperation>::iterator i;
+//    QVector<PlanOperation>::iterator i;
     Operation oper;
     account_summ as;
     MyCurrency summ = 0;
@@ -36,9 +36,10 @@ MyCurrency ListAccountsModel::get_reserv(int id)
     if (acc.Top() != Account_Type::active)
         return 0;
 
-    for (i = plan_list.begin(); i != plan_list.end(); i++) {
-        oper = *i;
-        if (oper.From().at(0).account().Id() == id) {
+//    for (i = plan_list.begin(); i != plan_list.end(); i++) {
+    for(auto item: plan_list) {
+//        oper = *i;
+        if (item.From().at(0).account().Id() == id) {
             as = oper.From().at(0);
             summ += as.balance();
         }
@@ -47,124 +48,50 @@ MyCurrency ListAccountsModel::get_reserv(int id)
     return summ;
 }
 
-MyCurrency ListAccountsModel::get_list(int parent, QModelIndex idx)
-{
-    QSqlQuery q;
-//    int id;
-    int i = 0;
-//    int row = 0;
-    MyCurrency summ = 0, summ2 = 0, summ3;
-    MyCurrency reserv;
-
-    q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = :parent ORDER BY name");
-    q.bindValue(":parent", parent);
-    if (!q.exec()) {
-        qDebug() << q.lastError().text();
-        return 0;
-    }
-    while (q.next()) {
-        if (q.value(5) == false) {
-            summ += db->convert_currency(q.value(2).toDouble(), q.value(4).toInt());
-
-//            QString scod = list[q.value(4).toInt()];
-//            double account_kurs = list_curs[scod];
-//            double global_kurs = list_curs[var.Symbol()];
-//            double kurs = account_kurs / global_kurs;
-//            summ += q.value(2).toDouble() * kurs;
-        }
-        else
-            continue;
-        if (i == 0)
-            insertColumns(0,7,idx);
-        insertRow(i, idx);
-        reserv = get_reserv(q.value(0).toInt());
-        list_index[q.value(0).toInt()] = index(i,0,idx);
-//        qDebug() << q.value(0).toInt() << index(i,0,idx);
-        setData(index(i,0,idx), q.value(1).toString());
-        setData(index(i,1,idx), q.value(2).toDouble());
-        setData(index(i,2,idx), reserv.toDouble());
-        setData(index(i,3,idx), q.value(4).toInt());
-        setData(index(i,4,idx), q.value(5).toBool());
-        setData(index(i,5,idx), q.value(3).toString());
-        setData(index(i,6,idx), q.value(0).toInt());
-        summ2 = get_list(q.value(0).toInt(), index(i,0,idx));
-        summ3 = summ2 + q.value(2).toDouble();
-        setData(index(i,1,idx), summ3.toDouble());
-        if (reserv>0 && reserv > q.value(2).toDouble()) {
-            for (int j = 0; j < 7; j++) {
-                setData(index(i,j,idx), QColor(Qt::red), Qt::BackgroundColorRole);
-                setData(index(i,j,idx), QColor(Qt::white), Qt::TextColorRole);
-            }
-            setData(index(i,0,idx), tr("Plan operation\nNedostatochno sredstv\nTrebuetsa %1; v nalichii %2")
-                    .arg(default_locale->toCurrencyString(reserv.toDouble()))
-                    .arg(default_locale->toCurrencyString(q.value(2).toDouble())),
-                    Qt::ToolTipRole);
-        }
-        summ += summ2;
-        i++;
-    }
-
-    return summ;
-}
-
-QMap<int,QModelIndex> ListAccountsModel::fill_model()
+QMap<int,QModelIndex> ListAccountsModel::fill_model(Node *p, const int parent)
 {
     QSqlQuery query;
-//    int type;
-//    int row = 0;
     MyCurrency summ, summ2, summ3;
-    QModelIndex idx;
     QFont fnt;
     header_data << tr("Name") << tr("Balance") << ("Reserved") << tr("C") << tr("H") << tr("Description") << "" << "";
+    int row = 0;
 
-    clear();
+    //clear();
 
     if (!var.database_Opened())
         return list_index;
 
-//    list = db->get_scod_list();
-//    list_curs = db->get_currency_list();
-    fnt.setBold(true);
-
-    insertColumns(0,7);
-
-    int i = 0;
     summ = 0;
     QSqlQuery q;
-    q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = 0 ORDER BY id");
+    q.prepare("SELECT id,name,balance,descr,ccod,hidden FROM account WHERE parent = :parent ORDER BY id");
+    q.bindValue(":parent", parent);
     if (!q.exec()) {
         qDebug() << q.lastError().text();
         return list_index;
     }
     while (q.next()) {
-        if (q.value(5) == false) {
-            summ += db->convert_currency(q.value(2).toDouble(), q.value(4).toInt());
-        }
-        else
-            continue;
-        insertRow(i);
-        list_index[q.value(0).toInt()] = index(i,0,QModelIndex());
-//        for (int j = 0; j < 7; j++)
-//            setData(index(i,j), QColor(Qt::gray), Qt::BackgroundColorRole);
-        setData(index(i,0,QModelIndex()), QFont(fnt), Qt::FontRole);
-        setData(index(i,0,QModelIndex()), q.value(1).toString());
-        setData(index(i,1,QModelIndex()), q.value(2).toDouble());
-        setData(index(i,3,QModelIndex()), q.value(4).toInt());
-        setData(index(i,4,QModelIndex()), q.value(5).toBool());
-        setData(index(i,5,QModelIndex()), q.value(3).toString());
-        setData(index(i,6,QModelIndex()), q.value(0).toInt());
-        summ2 = get_list(q.value(0).toInt(), index(i,0,QModelIndex()));
-        summ3 = summ2 + q.value(2).toDouble();
-        setData(index(i,1), summ3.toDouble());
-        summ += summ2;
-        i += 1;
+        Account acc;
+        acc.setId(q.value(0).toInt());
+        acc.setName(q.value(1).toString());
+        acc.setBalance(q.value(2).toDouble());
+        acc.setDescr(q.value(3).toString());
+        acc.setCurr(q.value(4).toBool());
+        acc.setHidden(q.value(5).toBool());
+
+        Node *n1 = new Node;
+        n1->parent = p;
+        n1->acc = acc;
+        n1->row = row;
+        p->children.push_back(n1);
+        fill_model(n1, acc.Id());
+        row++;
     }
 
     return list_index;
 }
 
 ListAccountsModel::ListAccountsModel(QObject *parent) :
-    QStandardItemModel(parent)
+    QAbstractItemModel(parent)
 {
     db = new Database;
     PlanOperation op;
@@ -179,7 +106,7 @@ ListAccountsModel::~ListAccountsModel()
 
 QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
 {
-    QVariant value = QStandardItemModel::data(index, role);
+    QVariant value = QVariant();
 
     if (!index.isValid())
         return QVariant();
@@ -192,7 +119,7 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
             return default_locale->toString(value.toDouble(),'f',2);
         }
         else if (index.column() == 2)
-            if (value.toDouble())
+            if (value.toDouble() >= 0.01)
                 return default_locale->toString(value.toDouble(),'f',2);
             else
                 return QVariant();
@@ -213,13 +140,12 @@ QVariant ListAccountsModel::data(const QModelIndex &index, int role) const
             if (index.column() == 2)
                 return int(Qt::AlignRight | Qt::AlignVCenter);
 
-    case Qt::TextColorRole:
-//        qDebug() << index.data(Qt::DisplayRole) << value.toString();
-        if (index.data(Qt::DisplayRole).toString() == "true") {
-            return QVariant(QColor(Qt::gray));
-        }
-
-        return value;
+        case Qt::TextColorRole:
+//          qDebug() << index.data(Qt::DisplayRole) << value.toString();
+            if (index.data(Qt::DisplayRole).toString() == "true") {
+                return QVariant(QColor(Qt::gray));
+            }
+            return value;
     }
 
     return value;
@@ -236,149 +162,61 @@ QVariant ListAccountsModel::headerData(int section,Qt::Orientation orientation, 
         return QString("%1").arg(section+1);
 }
 
-//=================================== new model =====================================
-
-Node::Node(const Account &a, Node *parentNode)
+QModelIndex ListAccountsModel::index(int row, int column, const QModelIndex &parent) const
 {
-    acc = a;
-    parent = parentNode;
-}
+    size_t r = static_cast<size_t>(row);
 
-ListAccountsModel2::ListAccountsModel2(QObject *parent) :
-    QAbstractTableModel(parent)
-{
-    header_data << tr("Name") << tr("Balance") << ("Reserved") << tr("C") << tr("H") << tr("Description") << "" << "";
-//    list = read_list();
-}
-
-ListAccountsModel2::~ListAccountsModel2()
-{
-}
-
-QModelIndex ListAccountsModel2::index(int row, int column, const QModelIndex &parent) const
-{
     if (!hasIndex(row, column, parent)) {
         return QModelIndex();
     }
 
-    return createIndex(row,column);
+    if (!parent.isValid()) { // запрашивают индексы корневых узлов
+        return createIndex(row, column, const_cast<Node*>(&nodes[r]));
+    }
+
+    Node* parentInfo = static_cast<Node*>(parent.internalPointer());
+    return createIndex(row, column, &parentInfo->children[r]);
 }
 
-QModelIndex ListAccountsModel2::parent(const QModelIndex &child) const
+QModelIndex ListAccountsModel::parent(const QModelIndex &child) const
 {
+    if (!child.isValid()) {
+        return QModelIndex();
+    }
+
+    Node* childInfo = static_cast<Node*>(child.internalPointer());
+    Node* parentInfo = childInfo->parent;
+    if (parentInfo != nullptr) { // parent запрашивается не у корневого элемента
+//        auto offset = parentInfo->row;
+        return createIndex(parentInfo->row, 0, parentInfo);
+    }
     return QModelIndex();
 }
 
-Node *ListAccountsModel2::nodeFromIndex(const QModelIndex &index) const
+/*
+int ListAccountsModel::findRow(Node *node) const
 {
-    if (index.isValid())
-        return static_cast<Node*>(index.internalPointer());
-    return rootNode;
+    const vector<Node> &parentInfoChildren = node->parent != nullptr ? node->parent->children: nodes;
+    vector<Node>::const_iterator position = qFind(parentInfoChildren, *node);
+    return std::distance(parentInfoChildren.begin(), position);
+}
+*/
+
+int ListAccountsModel::rowCount(const QModelIndex &parent) const
+{
+    if (!parent.isValid()) {
+        return nodes.size();
+    }
+    const Node* parentInfo = static_cast<const Node*>(parent.internalPointer());
+    return parentInfo->children.size();
 }
 
-int ListAccountsModel2::rowCount(const QModelIndex &parent) const
+int ListAccountsModel::columnCount(const QModelIndex &parent) const
 {
-    Node *node = nodeFromIndex(parent);
-    if (node)
-        return node->children.count();
-    return 0;
-}
-
-int ListAccountsModel2::columnCount(const QModelIndex &parent) const
-{
+//    if (!parent.isValid()) {
+//        return nodes.size();
+//    }
+//    qDebug() << header_data.size();
     return header_data.size();
 }
 
-QVariant ListAccountsModel2::data(const QModelIndex &index, int role) const
-{
-    int col = index.column();
-    Node *node = nodeFromIndex(index);
-    Account data = node->acc;
-
-    if (!index.isValid())
-        return QVariant();
-
-    switch (role) {
-        case Qt::DisplayRole:
-        if (col == 0) {
-//            Account data = node->acc;
-            return data.Id();
-        }
-        if (index.column() == 1) {
-//            Account data = node->acc;
-            return data.Name();
-        }
-    }
-
-    return QVariant();
-}
-
-QVariant ListAccountsModel2::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole)
-        return QVariant();
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-        return header_data.at(section);
-    }
-    else
-        return QString("%1").arg(section+1);
-}
-
-bool ListAccountsModel2::hasChildren(const QModelIndex &parent) const
-{
-    Node *parentNode = nodeFromIndex(parent);
-    if (!parentNode)
-        return false;
-    return (parentNode->children.count() > 0);
-}
-
-void ListAccountsModel2::read_children(Node *parent, int id)
-{
-    QSqlQuery q;
-
-    q.prepare("SELECT id FROM account WHERE pid = :id ORDER BY parent,id");
-    q.bindValue(":id", id);
-    if (!q.exec()) {
-        qDebug() << q.lastError();
-        return;
-    }
-    while (q.next()) {
-//        Node *node = new Node;
-        Account data;
-        data.read(q.value(0).toInt());
-        Node *node = new Node(data, parent);
-        node->acc = data;
-//        parent->children.append(Node);
-    }
-}
-
-void ListAccountsModel2::read_data()
-{
-//    Account *acc = new Account;
-    rootNode = new Node(Account());
-    read_children(rootNode, 0);
-}
-
-/*
-QVector<Account> ListAccountsModel2::read_list()
-{
-    QSqlQuery q;
-    QVector<Account> lst;
-    int i = 0;
-
-    q.prepare("SELECT id FROM account ORDER BY parent,id");
-    if (!q.exec()) {
-        qDebug() << q.lastError();
-        return lst;
-    }
-    while (q.next()) {
-        Account data;
-        data.read(q.value(0).toInt());
-        list_index[q.value(0).toInt()] = index(i,0,QModelIndex());
-        list.append(data);
-        i++;
-    }
-
-    return lst;
-}
-*/

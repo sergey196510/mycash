@@ -39,6 +39,7 @@ public:
     QString fullName();
     double get_summ();
 
+    void setId(int i) { id = i; }
     void setBalance(MyCurrency bal) { balance = bal; }
     void setAgent(int a) { agent = a; }
     void setCurr(int c) { curr = c; }
@@ -49,7 +50,7 @@ public:
     void setHidden(bool h) { hidden = h; }
     void setDate(QDate d) { dt = d; }
     void setTop(int t) { top = t; }
-    int Id() { return id; }
+    int Id() const { return id; }
     int Agent() { return agent; }
     int Top() { return top; }
     MyCurrency Balance() { return balance; }

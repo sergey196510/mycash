@@ -1,11 +1,12 @@
 #include "listplanoper.h"
 #include "ui_listplanoper.h"
+#include <QAction>
 
 ListPlanOperModel::ListPlanOperModel(Database *d, QObject *parent) :
     QAbstractTableModel(parent)
 {
     db = d;
-    header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("Summ") << tr("To Account") << tr("Summ") << tr("Auto") << tr("Description");
+    header_data << tr("") << tr("Day") << tr("Month") << tr("Year") << tr("From Account") << tr("Balance") << tr("To Account") << tr("Summ") << tr("Auto") << tr("Description");
     list = read_list();
 //    acc_list = db->get_accounts_list();
     var = new Globals;
@@ -16,9 +17,9 @@ ListPlanOperModel::~ListPlanOperModel()
     delete var;
 }
 
-QVector<PlanOperation> ListPlanOperModel::read_list()
+vector<PlanOperation> ListPlanOperModel::read_list()
 {
-    QVector<PlanOperation> list = PlanOperation().read_list(0);
+    vector<PlanOperation> list = PlanOperation().read_list(0);
     return list;
 }
 
@@ -53,7 +54,8 @@ QVariant ListPlanOperModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 5) {
             data = list.at(index.row());
             Currency curr(data.From().at(0).account().Curr());
-            return default_locale->toString(data.From().at(0).balance().toDouble(),'f',2) + " " + curr.SCod();
+//            return default_locale->toString(data.From().at(0).balance().toDouble(),'f',2) + " " + curr.SCod();
+            return default_locale->toString(data.From().at(0).account().Balance().toDouble(),'f',2) + " " + curr.SCod();
         }
         else if (index.column() == 6) {
             data = list.at(index.row());
@@ -131,7 +133,7 @@ int ListPlanOperModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
         return 0;
-    return list.size();
+    return static_cast<int>(list.size());
 }
 
 int ListPlanOperModel::columnCount(const QModelIndex &parent) const
@@ -171,7 +173,7 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->tableView->hideColumn(0);
 
     // новая плановая операция
-    tran = new QAction(tr("New plan operation"), this);
+    tran = new QAction("New plan operation", nullptr);
     acts.append(tran);
     connect(tran, SIGNAL(triggered()), SLOT(new_oper()));
 
@@ -208,16 +210,10 @@ ListPlanOper::ListPlanOper(QWidget *parent) :
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 //    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-#ifdef HAVE_QT5
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 //    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->verticalHeader()->setDefaultSectionSize(ui->tableView->verticalHeader()->minimumSectionSize());
-#else
-    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-//    ui->tableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->verticalHeader()->setDefaultSectionSize(ui->tableView->verticalHeader()->minimumSectionSize());
-#endif
-    ui->tableView->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableView->verticalHeader()->setDefaultSectionSize(ui->tableView->verticalHeader()->minimumSectionSize());
+    ui->tableView->header()->setStretchLastSection(true);
 
     connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), SLOT(check_selected()));
 }

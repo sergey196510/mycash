@@ -1,6 +1,7 @@
 #ifndef LISTACCOUNTS_H
 #define LISTACCOUNTS_H
 
+#include <QAction>
 #include <QtGui>
 #include <QWidget>
 #include "QtSql"
@@ -21,7 +22,7 @@ class ListAccounts : public QWidget
     Q_OBJECT
 
 public:
-    explicit ListAccounts(Database *d, QWidget *parent = 0);
+    explicit ListAccounts(Database *d, QWidget *parent = nullptr);
     ~ListAccounts();
     QAction *nacct;
     QAction *chacc;

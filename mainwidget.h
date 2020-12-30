@@ -39,7 +39,7 @@ public slots:
 
 private:
     Database *db;
-    QVector<PlanOperation> list;
+    vector<PlanOperation> list;
 //    QMap<int,QString> acc_list;
     QStringList header_data;
     Globals *var;

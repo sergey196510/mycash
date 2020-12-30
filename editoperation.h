@@ -19,7 +19,7 @@ class EditOperation : public QWidget
     Q_OBJECT
     
 public:
-    explicit EditOperation(QWidget *parent = 0);
+    explicit EditOperation(QWidget *parent = nullptr);
     ~EditOperation();
     Operation data();
     void setdata(Operation &);

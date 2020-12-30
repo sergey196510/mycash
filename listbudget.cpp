@@ -1,4 +1,5 @@
 #include "listbudget.h"
+#include <QAction>
 
 ListBudgetModel::ListBudgetModel(Database *d, QObject *parent) :
     QAbstractTableModel(parent)

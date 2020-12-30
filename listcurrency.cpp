@@ -208,8 +208,8 @@ ListCurrency::ListCurrency(QWidget *parent) :
     connect(ui->clearButton, SIGNAL(clicked()), SLOT(clear_currency()));
 
     ui->tableView->setSortingEnabled(true);
-    ui->tableView->horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
-    connect(ui->tableView->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), model, SLOT(sort(int,int)));
+    ui->tableView->header()->setSortIndicator(1, Qt::AscendingOrder);
+    connect(ui->tableView->header(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), model, SLOT(sort(int,int)));
 }
 
 ListCurrency::~ListCurrency()

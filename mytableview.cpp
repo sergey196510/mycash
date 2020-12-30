@@ -1,7 +1,7 @@
 #include "mytableview.h"
 
 MyTableView::MyTableView(QWidget *parent) :
-    QTableView(parent)
+    QTreeView(parent)
 {
     setAlternatingRowColors(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -9,15 +9,15 @@ MyTableView::MyTableView(QWidget *parent) :
 
 #ifdef HAVE_QT5
 //    verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    verticalHeader()->setDefaultSectionSize(verticalHeader()->minimumSectionSize());
+    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    //verticalHeader()->setDefaultSectionSize(verticalHeader()->minimumSectionSize());
 #else
 //    verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     verticalHeader()->setDefaultSectionSize(verticalHeader()->minimumSectionSize());
 #endif
 
-    horizontalHeader()->setStretchLastSection(true);
+    header()->setStretchLastSection(true);
 }
 
 int MyTableView::get_selected_id()

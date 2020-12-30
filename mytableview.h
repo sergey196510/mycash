@@ -2,10 +2,10 @@
 #define MYTABLEVIEW_H
 
 #include <QWidget>
-#include <QTableView>
+#include <QTreeView>
 #include <QHeaderView>
 
-class MyTableView : public QTableView
+class MyTableView : public QTreeView
 {
     Q_OBJECT
 public:

@@ -18,7 +18,7 @@ EditOperation::EditOperation(QWidget *parent) :
 //    to = Currency(acc.Curr()).SCod();
 
     model = new ListAccountsModel(this);
-    model->fill_model();
+//    model->fill_model();
 
     ui->fromSpinBox->setEnabled(false);
     ui->toSpinBox->setEnabled(false);

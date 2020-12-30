@@ -1,4 +1,5 @@
 #include "accountgraph.h"
+#include "twolist.h"
 
 AccountGraph::AccountGraph(QWidget *parent) :
     QWidget(parent)
@@ -17,6 +18,7 @@ void AccountGraph::calc_array(int id)
     QSqlQuery q, q2;
     Account data;
     QStack<SbD> stack1, stack2, stack3;
+    TwoList *tl = new TwoList;
 //    QList<SbD> summ;
 //    QMap<QDate,MyCurrency> result;
     QDate ldate = QDate::currentDate();
@@ -65,6 +67,7 @@ void AccountGraph::calc_array(int id)
             val.dt = q.value(1).toDate();
 //            qDebug() << val.dt << val.value.toDouble();
             stack1.push(val);
+            tl->Add(&val);
         }
     }
 
@@ -131,6 +134,10 @@ void AccountGraph::calc_array(int id)
     while (!stack3.empty()) {
         list.append(stack3.pop());
     }
+//    for (tl->Last(); tl->Prev();) {
+//        SbD *val = (SbD *)tl->Value();
+//        list.append(*val);
+//    }
 
     isFree = true;
     this->update();

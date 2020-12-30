@@ -390,16 +390,17 @@ void MyCash::report2()
 void MyCash::check_plan_oper()
 {
 //    int mon = QDate::currentDate().month(), year = QDate::currentDate().year();
-    QVector<PlanOperation> list = PlanOperation().read_list(0);
-    QVector<PlanOperation>::iterator i;
+    vector<PlanOperation> list = PlanOperation().read_list(0);
+//    QVector<PlanOperation>::iterator i;
     Account from, to;
     int k = 0;
 
 //    qDebug() << mon << year;
 
-    for (i = list.begin(); i != list.end(); i++) {
+//    for (i = list.begin(); i != list.end(); i++) {
+    for (auto pop: list) {
         k++;
-        PlanOperation pop = *i;
+//        PlanOperation pop = *i;
           if (pop.Auto() == 0)
             continue;
         if (pop.Status() != Plan_Status::expired)

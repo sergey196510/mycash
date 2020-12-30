@@ -1,6 +1,10 @@
 #ifndef LISTPLANOPER_H
 #define LISTPLANOPER_H
 
+using namespace std;
+
+#include <vector>
+#include <QObject>
 #include <QtGui>
 #include <QWidget>
 #include <QtSql>
@@ -21,7 +25,7 @@ class ListPlanOperModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    explicit ListPlanOperModel(Database *db, QObject *parent = 0);
+    explicit ListPlanOperModel(Database *db, QObject *parent = nullptr);
     ~ListPlanOperModel();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
@@ -35,14 +39,14 @@ public slots:
 private:
     Globals *var;
     QStringList header_data;
-    QVector<PlanOperation> list;
+    vector<PlanOperation> list;
 //    QMap<int,QString> acc_list;
     QMap<QString,double> currency;
     QString symbol;
     Database *db;
 
 private slots:
-    QVector<PlanOperation> read_list();
+    vector<PlanOperation> read_list();
 };
 
 class ListPlanOper : public QWidget
@@ -50,7 +54,7 @@ class ListPlanOper : public QWidget
     Q_OBJECT
 
 public:
-    explicit ListPlanOper(QWidget *parent = 0);
+    explicit ListPlanOper(QWidget *parent = nullptr);
     ~ListPlanOper();
     QAction *tran, *comm, *delo, *upd, *can;
     QList<QAction *> acts;

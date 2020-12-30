@@ -1,6 +1,7 @@
 #include "listoperations.h"
 #include "ui_listoperations.h"
 #include "global.h"
+#include <QAction>
 
 ListOperationsModel::ListOperationsModel(int account, QDate fdate, QDate ldate, QObject *parent) :
     QAbstractTableModel(parent)
