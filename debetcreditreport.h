@@ -1,6 +1,7 @@
 #ifndef DEBETCREDITREPORT_H
 #define DEBETCREDITREPORT_H
 
+#include <QLocale>
 #include <QDialog>
 #include "database.h"
 
